@@ -1,56 +1,166 @@
 <template>
-  <v-app>
-    <v-app-bar app color="primary" dark>
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
+  <v-app id="inspire">
+    <v-navigation-drawer v-model="drawer" app>
+      <v-list dense>
+        <v-list-item link>
+          <v-list-item-action>
+            <v-icon>mdi-home</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Home</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item link>
+          <v-list-item-action>
+            <v-icon>mdi-contact-mail</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Contact</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
 
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
+    <v-app-bar app color="indigo" dark>
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+      <v-toolbar-title>Application</v-toolbar-title>
     </v-app-bar>
 
     <v-content>
-      <HelloWorld />
+      <v-container fluid>
+        <v-row align="start" justify="center">
+          <v-file-input
+            v-model="image"
+            color="deep-purple accent-4"
+            label="Image input"
+            accept="image/*"
+            placeholder="Select your image"
+            prepend-icon="mdi-camera"
+            outlined
+            @change="uploadedImage"
+            :show-size="1000"
+          />
+        </v-row>
+        <v-row align="start" justify="center">
+          <div class="custom-file">
+            <input
+              type="file"
+              multiple="false"
+              accept="image/*"
+              id="inputfile"
+              @change="uploadedImage"
+            />
+            <label class="custom-file-label" for="input-file">
+              Choose image
+            </label>
+          </div>
+        </v-row>
+        <v-row align="start" justify="center">
+          <div id="voronoiCanvas" />
+        </v-row>
+        <v-row align="start" justify="center">
+          <div id="voronoiResult" />
+        </v-row>
+        <v-row align="start" justify="center">
+          <canvas id="canvas" />
+        </v-row>
+        <v-row align="start" justify="center">
+          <canvas id="greyscaleCanvas" />
+        </v-row>
+        <v-row align="start" justify="center">
+          <canvas id="centroidCanvas" />
+        </v-row>
+        <!-- <v-row align="start" justify="center">
+          <v-img :src="image" />
+        </v-row> -->
+      </v-container>
     </v-content>
+    <v-footer color="indigo" app>
+      <span class="white--text">&copy; 2019</span>
+    </v-footer>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld";
+import { renderVoronoi } from "./scripts/knnLogic";
+import {
+  uploadImage,
+  greyScaleImage,
+  computeCentroidsFromGreyScale,
+  colorCentroidsByCoordinates
+} from "./scripts/imageHandler";
+// import { renderVoronoiUsingD3, renderColoredVoronoi } from "./voronoiUsingD3";
 
 export default {
-  name: "App",
-
-  components: {
-    HelloWorld
+  props: {
+    source: String
   },
 
-  data: () => ({
-    //
-  })
+  data() {
+    return {
+      drawer: null,
+      image: []
+    };
+  },
+
+  methods: {
+    uploadedImage() {
+      // Store all canvas elements that can be present on the page
+      const canvas = ["canvas", "greyscaleCanvas", "centroidCanvas"];
+      let centroids = [];
+
+      // Clear all present canvas elements
+      canvas.map(d => {
+        const canvasElement = document.getElementById(d);
+        const context = canvasElement.getContext("2d");
+        context.clearRect(0, 0, d.width, d.height);
+      });
+
+      // Transfer the image to greyscale and compute the centroids
+      uploadImage(document.getElementById("inputfile")).then(imageData => {
+        const originalImageData = {
+          width: imageData.width,
+          height: imageData.height,
+          data: [...imageData.data]
+        };
+        const greyScaleImageData = greyScaleImage(imageData);
+        centroids = [
+          ...computeCentroidsFromGreyScale(
+            greyScaleImageData,
+            0.8,
+            false,
+            20,
+            10
+          ),
+          ...computeCentroidsFromGreyScale(
+            greyScaleImageData,
+            0.5,
+            true,
+            20,
+            10
+          )
+        ];
+        const coloredCentroids = colorCentroidsByCoordinates(
+          originalImageData,
+          centroids
+        );
+        // renderVoronoi(centroids, imageData.width, imageData.height, 1);
+        renderVoronoi(coloredCentroids, imageData.width, imageData.height, 4);
+      });
+
+      // Rescale the images to fit the page
+      canvas.map(d => {
+        const canvasElement = document.getElementById(d);
+        canvasElement.width = window.innerWidth;
+        canvasElement.height = window.innerHeight;
+      });
+    }
+  }
 };
 </script>
+
+<style>
+html {
+  overflow-y: auto !important;
+}
+</style>
