@@ -1,0 +1,9 @@
+language: node_js
+
+os: linux
+
+script:
+  - npm run lint
+  - npm run serve
+
+dist: trusty
