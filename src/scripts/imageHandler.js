@@ -115,7 +115,6 @@ export const colorCentroidsByCoordinates = (imageData, centroids) => {
  * */
 export const uploadImage = image => {
   return new Promise((resolve, reject) => {
-    console.log(image);
     const canvas = document.getElementById("canvas");
     const context = canvas.getContext("2d");
     const reader = new FileReader();
@@ -139,6 +138,6 @@ export const uploadImage = image => {
       image.onerror = reject;
     };
 
-    reader.readAsDataURL(image.files[0]);
+    reader.readAsDataURL(image);
   });
 };

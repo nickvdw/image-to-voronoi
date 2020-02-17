@@ -69,14 +69,17 @@
 </template>
 
 <script>
-import { renderVoronoi } from "./scripts/knnLogic";
+// import { renderVoronoi } from "./scripts/knnLogic";
 import {
   uploadImage,
   greyScaleImage,
   computeCentroidsFromGreyScale,
   colorCentroidsByCoordinates
 } from "./scripts/imageHandler";
-// import { renderVoronoiUsingD3, renderColoredVoronoi } from "./voronoiUsingD3";
+import {
+  // renderVoronoiUsingD3,
+  renderColoredVoronoi
+} from "./scripts/voronoiUsingD3";
 
 export default {
   props: {
@@ -104,7 +107,7 @@ export default {
       });
 
       // Transfer the image to greyscale and compute the centroids
-      uploadImage(document.getElementById("inputimage")).then(imageData => {
+      uploadImage(this.image).then(imageData => {
         const originalImageData = {
           width: imageData.width,
           height: imageData.height,
@@ -132,7 +135,13 @@ export default {
           centroids
         );
         // renderVoronoi(centroids, imageData.width, imageData.height, 1);
-        renderVoronoi(coloredCentroids, imageData.width, imageData.height, 4);
+        //renderVoronoi(coloredCentroids, imageData.width, imageData.height, 4);
+        renderColoredVoronoi(
+          coloredCentroids,
+          imageData.width,
+          imageData.height,
+          4
+        );
       });
 
       // Rescale the images to fit the page

@@ -91,7 +91,6 @@ export const renderVoronoi = (centroids, width, height, k) => {
         )
       );
   }
-  console.log(colourMap);
 
   // Array that stores dictionarities in the form of {point: [x_coor, y_coor], nearest_centroid: number}
   const nearestCentroids = [];
@@ -124,7 +123,7 @@ export const renderVoronoi = (centroids, width, height, k) => {
         });
     });
 
-  console.log(svg);
+  console.log("This is the svg" + svg);
 };
 
 export default renderVoronoi;
