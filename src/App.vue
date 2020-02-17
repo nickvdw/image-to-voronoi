@@ -37,23 +37,10 @@
             placeholder="Select your image"
             prepend-icon="mdi-camera"
             outlined
+            id="inputimage"
             @change="uploadedImage"
             :show-size="1000"
           />
-        </v-row>
-        <v-row align="start" justify="center">
-          <div class="custom-file">
-            <input
-              type="file"
-              multiple="false"
-              accept="image/*"
-              id="inputfile"
-              @change="uploadedImage"
-            />
-            <label class="custom-file-label" for="input-file">
-              Choose image
-            </label>
-          </div>
         </v-row>
         <v-row align="start" justify="center">
           <div id="voronoiCanvas" />
@@ -117,7 +104,7 @@ export default {
       });
 
       // Transfer the image to greyscale and compute the centroids
-      uploadImage(document.getElementById("inputfile")).then(imageData => {
+      uploadImage(document.getElementById("inputimage")).then(imageData => {
         const originalImageData = {
           width: imageData.width,
           height: imageData.height,
