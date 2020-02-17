@@ -1,5 +1,7 @@
 # image-to-voronoi
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/499db813-f9da-47aa-adca-a7dd05c7fe7e/deploy-status)](https://app.netlify.com/sites/voronoier/deploys)
+
 ## Project setup
 
 ```bash
