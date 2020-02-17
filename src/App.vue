@@ -1,32 +1,134 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view />
-  </div>
+  <v-app id="inspire">
+    <v-app-bar app color="indigo" dark>
+      <v-toolbar-title>Application</v-toolbar-title>
+    </v-app-bar>
+
+    <v-content>
+      <v-container fluid>
+        <v-row align="start" justify="center">
+          <v-file-input
+            v-model="image"
+            color="deep-purple accent-4"
+            label="Image input"
+            accept="image/*"
+            placeholder="Select your image"
+            prepend-icon="mdi-camera"
+            outlined
+            id="inputimage"
+            @change="uploadedImage"
+            :show-size="1000"
+          />
+        </v-row>
+        <v-row align="start" justify="center">
+          <div id="voronoiCanvas" />
+        </v-row>
+        <v-row align="start" justify="center">
+          <div id="voronoiResult" />
+        </v-row>
+        <v-row align="start" justify="center">
+          <canvas id="canvas" />
+        </v-row>
+        <v-row align="start" justify="center">
+          <canvas id="greyscaleCanvas" />
+        </v-row>
+        <v-row align="start" justify="center">
+          <canvas id="centroidCanvas" />
+        </v-row>
+      </v-container>
+    </v-content>
+    <v-footer color="indigo" app>
+      <span class="white--text">&copy; De Soyboys 2k20</span>
+    </v-footer>
+  </v-app>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+// import { renderVoronoi } from "./scripts/knnLogic";
 
-#nav {
-  padding: 30px;
+import {
+  uploadImage,
+  greyScaleImage,
+  computeCentroidsFromGreyScale,
+  colorCentroidsByCoordinates
+} from "./scripts/imageHandler";
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+import {
+  // renderVoronoiUsingD3,
+  renderColoredVoronoi
+} from "./scripts/voronoiUsingD3";
 
-    &.router-link-exact-active {
-      color: #42b983;
+export default {
+  data() {
+    return {
+      image: []
+    };
+  },
+
+  methods: {
+    uploadedImage() {
+      // Store all canvas elements that can be present on the page
+      const canvas = ["canvas", "greyscaleCanvas", "centroidCanvas"];
+      let centroids = [];
+
+      // Clear all present canvas elements
+      canvas.map(d => {
+        const canvasElement = document.getElementById(d);
+        const context = canvasElement.getContext("2d");
+        context.clearRect(0, 0, d.width, d.height);
+      });
+
+      // Transfer the image to greyscale and compute the centroids
+      uploadImage(this.image).then(imageData => {
+        const originalImageData = {
+          width: imageData.width,
+          height: imageData.height,
+          data: [...imageData.data]
+        };
+        const greyScaleImageData = greyScaleImage(imageData);
+        centroids = [
+          ...computeCentroidsFromGreyScale(
+            greyScaleImageData,
+            0.8,
+            false,
+            20,
+            10
+          ),
+          ...computeCentroidsFromGreyScale(
+            greyScaleImageData,
+            0.5,
+            true,
+            20,
+            10
+          )
+        ];
+        const coloredCentroids = colorCentroidsByCoordinates(
+          originalImageData,
+          centroids
+        );
+        // renderVoronoi(centroids, imageData.width, imageData.height, 1);
+        //renderVoronoi(coloredCentroids, imageData.width, imageData.height, 4);
+        renderColoredVoronoi(
+          coloredCentroids,
+          imageData.width,
+          imageData.height,
+          4
+        );
+      });
+
+      // Rescale the images to fit the page
+      canvas.map(d => {
+        const canvasElement = document.getElementById(d);
+        canvasElement.width = window.innerWidth;
+        canvasElement.height = window.innerHeight;
+      });
     }
   }
+};
+</script>
+
+<style>
+html {
+  overflow-y: auto !important;
 }
 </style>
