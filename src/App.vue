@@ -1,26 +1,5 @@
 <template>
   <v-app id="inspire">
-    <v-navigation-drawer v-model="drawer" app>
-      <v-list dense>
-        <v-list-item link>
-          <v-list-item-action>
-            <v-icon>mdi-home</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Home</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item link>
-          <v-list-item-action>
-            <v-icon>mdi-contact-mail</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Contact</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-
     <v-app-bar app color="indigo" dark>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title>Application</v-toolbar-title>
@@ -57,38 +36,32 @@
         <v-row align="start" justify="center">
           <canvas id="centroidCanvas" />
         </v-row>
-        <!-- <v-row align="start" justify="center">
-          <v-img :src="image" />
-        </v-row> -->
       </v-container>
     </v-content>
     <v-footer color="indigo" app>
-      <span class="white--text">&copy; 2019</span>
+      <span class="white--text">&copy; De Soyboys 2k20</span>
     </v-footer>
   </v-app>
 </template>
 
 <script>
 // import { renderVoronoi } from "./scripts/knnLogic";
+
 import {
   uploadImage,
   greyScaleImage,
   computeCentroidsFromGreyScale,
   colorCentroidsByCoordinates
 } from "./scripts/imageHandler";
+
 import {
   // renderVoronoiUsingD3,
   renderColoredVoronoi
 } from "./scripts/voronoiUsingD3";
 
 export default {
-  props: {
-    source: String
-  },
-
   data() {
     return {
-      drawer: null,
       image: []
     };
   },
