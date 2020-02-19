@@ -1,4 +1,4 @@
-import { computeEuclideanDistance } from './knnLogic.js';
+import { computeEuclideanDistance } from "./knnLogic.js";
 
 const pickRandomIndexFromArray = array => {
   return Math.floor(Math.random() * Math.floor(array.length - 1));
@@ -16,7 +16,7 @@ export const randomDelete = (centroids, count) => {
       count--;
     }
   } else {
-    console.warn('randomDelete was called with empty set of centroids');
+    console.warn("randomDelete was called with empty set of centroids");
   }
   return centroids;
 };

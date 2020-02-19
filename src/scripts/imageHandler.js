@@ -94,7 +94,6 @@ export const greyScaleImage = imageData => {
 };
 
 export const colorCentroidsByCoordinates = (imageData, centroids) => {
-  console.log(imageData);
   return centroids.map(centroid => {
     const imageDataIndex = centroid.y * 4 * imageData.width + centroid.x * 4;
 
@@ -138,6 +137,7 @@ export const uploadImage = image => {
       image.onerror = reject;
     };
 
-    reader.readAsDataURL(image);
+    // Only use the image when there is an actual image
+    image && reader.readAsDataURL(image);
   });
 };

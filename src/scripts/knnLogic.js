@@ -40,7 +40,6 @@ const computeNearestCentroid = (centroids, x, y, k) => {
 };
 
 export const renderVoronoi = (centroids, width, height, k) => {
-  console.log(centroids);
   // Create SVG element
   const svg = d3
     .select("#voronoiResult")
@@ -122,8 +121,6 @@ export const renderVoronoi = (centroids, width, height, k) => {
             .attr("fill", colourMap[nearestCentroid]);
         });
     });
-
-  console.log("This is the svg" + svg);
 };
 
 export default renderVoronoi;
