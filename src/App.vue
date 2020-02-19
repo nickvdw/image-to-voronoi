@@ -51,12 +51,14 @@ import {
   greyScaleImage,
   computeCentroidsFromGreyScale,
   colorCentroidsByCoordinates
-} from "./scripts/imageHandler";
+} from './scripts/imageHandler';
+
+import { randomDelete } from './scripts/pointCloudLogic';
 
 import {
   // renderVoronoiUsingD3,
   renderColoredVoronoi
-} from "./scripts/voronoiUsingD3";
+} from './scripts/voronoiUsingD3';
 
 export default {
   data() {
@@ -68,13 +70,13 @@ export default {
   methods: {
     uploadedImage() {
       // Store all canvas elements that can be present on the page
-      const canvas = ["canvas", "greyscaleCanvas", "centroidCanvas"];
+      const canvas = ['canvas', 'greyscaleCanvas', 'centroidCanvas'];
       let centroids = [];
 
       // Clear all present canvas elements
       canvas.map(d => {
         const canvasElement = document.getElementById(d);
-        const context = canvasElement.getContext("2d");
+        const context = canvasElement.getContext('2d');
         context.clearRect(0, 0, d.width, d.height);
       });
 
@@ -89,19 +91,24 @@ export default {
         centroids = [
           ...computeCentroidsFromGreyScale(
             greyScaleImageData,
-            0.8,
+            0.6,
             false,
             20,
-            10
+            20
           ),
           ...computeCentroidsFromGreyScale(
             greyScaleImageData,
-            0.5,
+            0.8,
             true,
-            20,
+            10,
             10
           )
         ];
+        // Sparsen the centroids
+        console.log(centroids);
+        randomDelete(centroids, 150);
+        console.log(centroids);
+
         const coloredCentroids = colorCentroidsByCoordinates(
           originalImageData,
           centroids
