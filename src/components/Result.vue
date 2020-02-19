@@ -1,7 +1,7 @@
 <template>
   <v-card elevation="12">
     <!-- Card title -->
-    <v-card-title class="indigo white--text">
+    <v-card-title class="blue-grey darken-3 white--text">
       <span class="title">Result</span>
       <v-spacer />
     </v-card-title>
@@ -15,7 +15,12 @@
             Generating the result
           </v-col>
           <v-col cols="6">
-            <v-progress-linear indeterminate rounded height="12" />
+            <v-progress-linear
+              indeterminate
+              rounded
+              color="blue-grey darken-3"
+              height="12"
+            />
           </v-col>
         </v-row>
       </div>

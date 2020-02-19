@@ -1,7 +1,7 @@
 <template>
   <v-card elevation="12">
     <!-- Card title -->
-    <v-card-title class="indigo white--text">
+    <v-card-title class="blue-grey darken-3 white--text">
       <span class="title">Configuration</span>
       <v-spacer />
     </v-card-title>
@@ -14,7 +14,7 @@
         <v-file-input
           v-model="image"
           class="mt-4"
-          color="deep-purple accent-4"
+          color="blue-grey darken-3"
           label="Image input"
           accept="image/*"
           prepend-icon="mdi-camera"
@@ -30,7 +30,7 @@
           </v-btn>
           <v-btn
             :disabled="!valid"
-            class="indigo white--text mr-4"
+            class="blue-grey darken-3 white--text mr-4"
             @click="validate"
           >
             Submit

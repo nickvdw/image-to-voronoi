@@ -19,7 +19,7 @@
     </v-navigation-drawer>
 
     <v-card flat tile dense>
-      <v-toolbar color="deep-purple accent-4" dense>
+      <v-toolbar color="blue-grey darken-3" dense>
         <span class="hidden-sm-and-up">
           <v-app-bar-nav-icon class="white--text" @click="sidebar = !sidebar" />
         </span>

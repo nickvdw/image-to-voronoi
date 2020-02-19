@@ -1,6 +1,6 @@
 <template>
-  <v-footer app>
-    <span class="white--text">This text is meaningless (fow now)</span>
+  <v-footer color="blue-grey darken-3" app>
+    <span class="body-2 white--text">This text is meaningless (fow now)</span>
   </v-footer>
 </template>
 
