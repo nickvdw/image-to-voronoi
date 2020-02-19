@@ -1,9 +1,50 @@
 <template>
   <v-app>
     <!-- Tool bar -->
-    <v-app-bar app color="indigo" dark>
-      <v-toolbar-title>Application</v-toolbar-title>
-    </v-app-bar>
+    <v-navigation-drawer v-model="sidebar" app>
+      <v-list dense>
+        <v-list-item
+          link
+          v-for="item in menuItems"
+          :key="item.title"
+          :to="item.path"
+        >
+          <v-list-item-action>
+            <v-icon>mdi-{{ item.icon }}</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+
+    <v-card flat tile dense>
+      <v-toolbar color="deep-purple accent-4" dense>
+        <span class="hidden-sm-and-up">
+          <v-app-bar-nav-icon class="white--text" @click="sidebar = !sidebar" />
+        </span>
+        <v-toolbar-title class="white--text">
+          <router-link to="/" tag="span" style="cursor: pointer">
+            {{ appTitle }}
+          </router-link>
+        </v-toolbar-title>
+        <v-spacer />
+
+        <v-toolbar-items class="hidden-sm-and-down">
+          <v-btn
+            class="white--text"
+            text
+            v-for="item in menuItems"
+            :key="item.title"
+            :to="item.path"
+          >
+            <v-icon left dark> mdi-{{ item.icon }} </v-icon>
+            {{ item.title }}
+          </v-btn>
+        </v-toolbar-items>
+      </v-toolbar>
+    </v-card>
 
     <!-- Page content -->
     <v-content class="grey lighten-5">
@@ -24,7 +65,7 @@
 
     <!-- Footer -->
     <v-footer color="indigo" app>
-      <span class="white--text">This text is meaningless</span>
+      <span class="white--text">This text is meaningless (fow now)</span>
     </v-footer>
   </v-app>
 </template>
@@ -36,7 +77,14 @@ import ImageResult from "@/components/ImageResult.vue";
 export default {
   data() {
     return {
-      image: new File([""], "placeholder")
+      appTitle: "Application",
+      menuItems: [
+        { title: "Home", path: "/home", icon: "home" },
+        { title: "Help", path: "/help", icon: "help" },
+        { title: "About", path: "/about", icon: "information-outline" }
+      ],
+      image: new File([""], "placeholder"),
+      sidebar: false
     };
   },
 
