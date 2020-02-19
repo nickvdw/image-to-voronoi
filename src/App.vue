@@ -31,15 +31,16 @@
         </v-toolbar-title>
         <v-spacer />
 
-        <v-toolbar-items class="hidden-sm-and-down">
+        <v-toolbar-items class="hidden-xs-only">
           <v-btn
-            class="white--text"
+            class="white--text caption"
             text
+            ripple
             v-for="item in menuItems"
             :key="item.title"
             :to="item.path"
           >
-            <v-icon left dark> mdi-{{ item.icon }} </v-icon>
+            <v-icon left medium dense> mdi-{{ item.icon }} </v-icon>
             {{ item.title }}
           </v-btn>
         </v-toolbar-items>
@@ -79,8 +80,8 @@ export default {
     return {
       appTitle: "Application",
       menuItems: [
-        { title: "Home", path: "/home", icon: "home" },
-        { title: "Help", path: "/help", icon: "help" },
+        { title: "Home", path: "/home", icon: "home-circle-outline" },
+        { title: "Help", path: "/help", icon: "help-circle-outline" },
         { title: "About", path: "/about", icon: "information-outline" }
       ],
       image: new File([""], "placeholder"),
