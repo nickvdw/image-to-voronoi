@@ -32,21 +32,19 @@ export const densityDelete = (centroids, distance, randomSelect) => {
   // Worst case n^2? where n = amount of centroids
   // Usually somewhat faster if a lot of centroids are removed in iterations
   if (randomSelect) {
-    newCentroids.forEach(() => {
-      // Just so we have a loop
+    for (let i = 0; i < newCentroids.length; i++) {
       let chosenIndex = pickRandomIndexFromArray(newCentroids);
-      console.log(chosenIndex, newCentroids);
       newCentroids = pruneCentroids(
         newCentroids[chosenIndex],
         newCentroids,
         distance
       );
-    });
+    }
   } else {
-    newCentroids.forEach(centroid => {
-      console.log(newCentroids.length);
-      newCentroids = pruneCentroids(centroid, newCentroids, distance);
-    });
+    for (let i = 0; i < newCentroids.length; i++) {
+      console.log(i, newCentroids.length);
+      newCentroids = pruneCentroids(newCentroids[i], newCentroids, distance);
+    }
   }
   console.log(centroids, newCentroids);
   return newCentroids;
