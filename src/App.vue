@@ -104,14 +104,11 @@ export default {
             10
           )
         ];
-        // Sparsen the centroids
-        console.log(centroids);
-        densityDelete(centroids, 20);
-        console.log(densityDelete(centroids, 20));
 
         const coloredCentroids = colorCentroidsByCoordinates(
           originalImageData,
-          densityDelete(centroids, 20)
+          // Sparsen the centroids
+          densityDelete(centroids, 25, false)
         );
         // renderVoronoi(centroids, imageData.width, imageData.height, 1);
         //renderVoronoi(coloredCentroids, imageData.width, imageData.height, 4);

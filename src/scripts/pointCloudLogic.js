@@ -1,5 +1,9 @@
 import { computeEuclideanDistance } from './knnLogic.js';
 
+const pickRandomIndexFromArray = array => {
+  return Math.floor(Math.random() * Math.floor(array.length - 1));
+};
+
 /**
  * Randomly picks centroids and removes them from the array
  * @param {Array of centroid objects {x, y, color}} centroids
@@ -8,11 +12,7 @@ import { computeEuclideanDistance } from './knnLogic.js';
 export const randomDelete = (centroids, count) => {
   if (centroids && centroids.length > 0) {
     while (count > 0) {
-      console.log(Math.floor(Math.random() * Math.floor(centroids.length - 1)));
-      centroids.splice(
-        Math.floor(Math.random() * Math.floor(centroids.length - 1)),
-        1
-      );
+      centroids.splice(pickRandomIndexFromArray(centroids), 1);
       count--;
     }
   } else {
@@ -26,14 +26,29 @@ export const randomDelete = (centroids, count) => {
  * @param {Array of centroid objects {x, y, color}} centroids
  * @param {Int, Float} distance - Threshold, centroids that have a distance smaller than 'distance' will be removed
  */
-export const densityDelete = (centroids, distance) => {
+export const densityDelete = (centroids, distance, randomSelect) => {
   let newCentroids = [...centroids];
   // For each centroid we check the distances to other centroids
   // Worst case n^2? where n = amount of centroids
   // Usually somewhat faster if a lot of centroids are removed in iterations
-  centroids.forEach(centroid => {
-    newCentroids = pruneCentroids(centroid, newCentroids, distance);
-  });
+  if (randomSelect) {
+    newCentroids.forEach(() => {
+      // Just so we have a loop
+      let chosenIndex = pickRandomIndexFromArray(newCentroids);
+      console.log(chosenIndex, newCentroids);
+      newCentroids = pruneCentroids(
+        newCentroids[chosenIndex],
+        newCentroids,
+        distance
+      );
+    });
+  } else {
+    newCentroids.forEach(centroid => {
+      console.log(newCentroids.length);
+      newCentroids = pruneCentroids(centroid, newCentroids, distance);
+    });
+  }
+  console.log(centroids, newCentroids);
   return newCentroids;
 };
 
