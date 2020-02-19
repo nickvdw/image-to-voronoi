@@ -1,4 +1,4 @@
-import * as d3 from "d3";
+import * as d3 from 'd3';
 // import { Delaunay } from "d3-delaunay";
 
 // Returns the hex code of a colour that belongs to the nearest centroid
@@ -8,14 +8,14 @@ import * as d3 from "d3";
 // };
 
 const generateRandomColour = () => {
-  return "#".concat(
+  return '#'.concat(
     Math.random()
       .toString(16)
       .substr(-6)
   );
 };
 
-const computeEuclideanDistance = (a, b) => {
+export const computeEuclideanDistance = (a, b) => {
   return Math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2);
 };
 
@@ -43,19 +43,19 @@ export const renderVoronoi = (centroids, width, height, k) => {
   console.log(centroids);
   // Create SVG element
   const svg = d3
-    .select("#voronoiResult")
-    .append("svg")
-    .attr("width", width)
-    .attr("height", height);
+    .select('#voronoiResult')
+    .append('svg')
+    .attr('width', width)
+    .attr('height', height);
 
   // Create and append rectangle element
   svg
-    .append("rect")
-    .attr("x", 0)
-    .attr("y", 0)
-    .attr("width", width)
-    .attr("height", height)
-    .attr("fill", "white"); // lol
+    .append('rect')
+    .attr('x', 0)
+    .attr('y', 0)
+    .attr('width', width)
+    .attr('height', height)
+    .attr('fill', 'white'); // lol
 
   // The centroids used for the Voronoi diagram generation
   // const testCentroids = [
@@ -114,16 +114,16 @@ export const renderVoronoi = (centroids, width, height, k) => {
 
           // Colour the pixels
           svg
-            .append("rect")
-            .attr("x", x)
-            .attr("y", y)
-            .attr("width", 1)
-            .attr("height", 1)
-            .attr("fill", colourMap[nearestCentroid]);
+            .append('rect')
+            .attr('x', x)
+            .attr('y', y)
+            .attr('width', 1)
+            .attr('height', 1)
+            .attr('fill', colourMap[nearestCentroid]);
         });
     });
 
-  console.log("This is the svg" + svg);
+  console.log('This is the svg' + svg);
 };
 
 export default renderVoronoi;
