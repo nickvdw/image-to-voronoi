@@ -94,7 +94,6 @@ export const greyScaleImage = imageData => {
 };
 
 export const colorCentroidsByCoordinates = (imageData, centroids) => {
-  console.log(imageData);
   return centroids.map(centroid => {
     const imageDataIndex = centroid.y * 4 * imageData.width + centroid.x * 4;
 

@@ -108,13 +108,11 @@ export const renderVoronoiUsingD3 = (centroids, width, height, k) => {
       mesh.attr("d", voronoi.render());
     }
 
-    console.log(svg);
     return svg.node();
   }
 
   renderColours();
   // const svg = renderColours();
-  // console.log(svg);
 
   return (
     d3
