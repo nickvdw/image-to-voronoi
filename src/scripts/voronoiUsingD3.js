@@ -4,7 +4,7 @@ import * as d3Delaunay from "d3-delaunay";
 // Render a Voronoi diagram based on some random points
 export const renderVoronoiUsingD3 = (centroids, width, height, k) => {
   console.log(k);
-  const canvas = document.getElementById("voronoiCanvas");
+  const canvas = document.getElementById("voronoiResult");
   canvas.width = width;
   canvas.height = height;
 

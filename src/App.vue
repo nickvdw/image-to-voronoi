@@ -1,5 +1,5 @@
 <template>
-  <v-app id="inspire">
+  <v-app>
     <v-app-bar app color="indigo" dark>
       <v-toolbar-title>Application</v-toolbar-title>
     </v-app-bar>
@@ -7,7 +7,7 @@
       <v-container fluid class="grey lighten-5">
         <v-row>
           <v-col cols="4">
-            <Menu @uploaded="uploadedImage" />
+            <Menu @submit="submittedForm" />
           </v-col>
           <v-col cols="8">
             <ImageResult :image="this.image" />
@@ -38,8 +38,10 @@ export default {
   },
 
   methods: {
-    uploadedImage(image) {
-      this.image = image;
+    submittedForm(object) {
+      object === "reset"
+        ? (this.image = undefined)
+        : (this.image = object.image);
     }
   }
 };

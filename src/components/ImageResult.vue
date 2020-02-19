@@ -1,24 +1,18 @@
 <template>
   <v-card>
     <v-card-title class="indigo white--text">
-      <span class="title">Configuration</span>
+      <span class="title">Result</span>
       <v-spacer />
     </v-card-title>
 
     <v-card-text>
-      <v-row align="start" justify="center">
-        <div id="voronoiCanvas" />
-      </v-row>
-      <v-row align="start" justify="center">
+      <v-row v-show="this.image" align="start" justify="center">
         <div id="voronoiResult" />
       </v-row>
-      <v-row align="start" justify="center">
+      <!-- Stuff that should not be here in production -->
+      <v-row v-show="this.image" align="start" justify="center">
         <canvas id="canvas" />
-      </v-row>
-      <v-row align="start" justify="center">
         <canvas id="greyscaleCanvas" />
-      </v-row>
-      <v-row align="start" justify="center">
         <canvas id="centroidCanvas" />
       </v-row>
     </v-card-text>
@@ -45,11 +39,18 @@ export default {
 
   props: {
     // Image needs to be of a File type
-    image: File
+    image: File,
+    hideResult: Boolean
   },
 
   watch: {
     image: function() {
+      // Don't continue when there is no actual image
+      if (!this.image) {
+        // TODO: Clear previous image that was/is stored in voronoiResult
+        return;
+      }
+
       // Store all canvas elements that can be present on the page
       const canvas = ["canvas", "greyscaleCanvas", "centroidCanvas"];
       let centroids = [];

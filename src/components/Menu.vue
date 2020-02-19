@@ -18,18 +18,19 @@
           required
           :rules="imageRules"
         />
+        <v-row align="start" justify="space-around">
+          <v-btn color="error" class="mr-4" @click="reset">
+            Reset
+          </v-btn>
 
-        <v-btn color="error" class="mr-4" @click="reset">
-          Reset
-        </v-btn>
-
-        <v-btn
-          :disabled="!valid"
-          class="indigo white--text mr-4"
-          @click="validate"
-        >
-          Submit
-        </v-btn>
+          <v-btn
+            :disabled="!valid"
+            class="indigo white--text mr-4"
+            @click="validate"
+          >
+            Submit
+          </v-btn>
+        </v-row>
       </v-form>
     </v-card-text>
   </v-card>
@@ -40,32 +41,21 @@ export default {
   name: "Menu",
 
   data: () => ({
+    // We have to define image as undefined in order to make the image rule for validation work
     image: undefined,
     imageRules: [v => (!!v && v !== []) || "An image is required"],
     valid: false
   }),
 
-  mounted() {
-    console.log(this.image);
-  },
-
-  watch: {
-    image: function() {
-      console.log(this.image);
-    }
-  },
-
   methods: {
     validate() {
       if (this.$refs.form.validate()) {
-        this.snackbar = true;
+        this.$emit("submit", { image: this.image });
       }
     },
     reset() {
       this.$refs.form.reset();
-    },
-    onImageUploaded() {
-      this.$emit("uploaded", this.image);
+      this.$emit("submit", "reset");
     }
   }
 };
