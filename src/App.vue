@@ -53,6 +53,8 @@ import {
   colorCentroidsByCoordinates
 } from "./scripts/imageHandler";
 
+import { densityDelete } from "./scripts/pointCloudLogic";
+
 import {
   // renderVoronoiUsingD3,
   renderColoredVoronoi
@@ -89,22 +91,24 @@ export default {
         centroids = [
           ...computeCentroidsFromGreyScale(
             greyScaleImageData,
-            0.8,
+            0.6,
             false,
             20,
-            10
+            20
           ),
           ...computeCentroidsFromGreyScale(
             greyScaleImageData,
-            0.5,
+            0.8,
             true,
-            20,
+            10,
             10
           )
         ];
+
         const coloredCentroids = colorCentroidsByCoordinates(
           originalImageData,
-          centroids
+          // Sparsen the centroids
+          densityDelete(centroids, 25, false)
         );
         // renderVoronoi(centroids, imageData.width, imageData.height, 1);
         //renderVoronoi(coloredCentroids, imageData.width, imageData.height, 4);
