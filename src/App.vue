@@ -6,8 +6,8 @@
     </v-app-bar>
 
     <!-- Page content -->
-    <v-content>
-      <v-container fluid class="grey lighten-5">
+    <v-content class="grey lighten-5">
+      <v-container fluid>
         <v-row>
           <!-- Left column -->
           <v-col cols="4">

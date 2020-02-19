@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card elevation="12">
     <!-- Card title -->
     <v-card-title class="indigo white--text">
       <span class="title">Result</span>
