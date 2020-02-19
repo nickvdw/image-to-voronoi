@@ -5,36 +5,36 @@
     </v-app-bar>
 
     <v-content>
-      <v-container fluid>
-        <v-row align="start" justify="center">
-          <v-file-input
-            v-model="image"
-            color="deep-purple accent-4"
-            label="Image input"
-            accept="image/*"
-            placeholder="Select your image"
-            prepend-icon="mdi-camera"
-            outlined
-            id="inputimage"
-            @change="uploadedImage"
-            :show-size="1000"
-          />
+      <v-container fluid class="grey lighten-5">
+        <v-row>
+          <v-col cols="6">
+            <Menu @uploaded="uploadedImage" />
+          </v-col>
+          <v-col cols="6">
+            <div id="voronoiCanvas" />
+            voronoiCanvas
+          </v-col>
         </v-row>
-        <v-row align="start" justify="center">
-          <div id="voronoiCanvas" />
-        </v-row>
-        <v-row align="start" justify="center">
-          <div id="voronoiResult" />
-        </v-row>
-        <v-row align="start" justify="center">
-          <canvas id="canvas" />
-        </v-row>
-        <v-row align="start" justify="center">
-          <canvas id="greyscaleCanvas" />
-        </v-row>
-        <v-row align="start" justify="center">
-          <canvas id="centroidCanvas" />
-        </v-row>
+        <v-col cols="6" align="start" justify="center">
+          <v-row align="start" justify="center">
+            <div id="voronoiCanvas" />
+            voronoiCanvas
+          </v-row>
+          <v-row align="start" justify="center">
+            <div id="voronoiResult" />
+            voronoiResult
+          </v-row>
+          <v-row align="start" justify="center">
+            <canvas id="canvas" />
+            canvas
+          </v-row>
+          <v-row align="start" justify="center">
+            <canvas id="greyscaleCanvas" />
+          </v-row>
+          <v-row align="start" justify="center">
+            <canvas id="centroidCanvas" />
+          </v-row>
+        </v-col>
       </v-container>
     </v-content>
     <v-footer color="indigo" app>
@@ -58,6 +58,8 @@ import {
   renderColoredVoronoi
 } from "./scripts/voronoiUsingD3";
 
+import Menu from "@/components/Menu.vue";
+
 export default {
   data() {
     return {
@@ -65,8 +67,12 @@ export default {
     };
   },
 
+  components: {
+    Menu
+  },
+
   methods: {
-    uploadedImage() {
+    uploadedImage(image) {
       // Store all canvas elements that can be present on the page
       const canvas = ["canvas", "greyscaleCanvas", "centroidCanvas"];
       let centroids = [];
@@ -79,7 +85,7 @@ export default {
       });
 
       // Transfer the image to greyscale and compute the centroids
-      uploadImage(this.image).then(imageData => {
+      uploadImage(image).then(imageData => {
         const originalImageData = {
           width: imageData.width,
           height: imageData.height,
