@@ -3,38 +3,16 @@
     <v-app-bar app color="indigo" dark>
       <v-toolbar-title>Application</v-toolbar-title>
     </v-app-bar>
-
     <v-content>
       <v-container fluid class="grey lighten-5">
         <v-row>
-          <v-col cols="6">
+          <v-col cols="4">
             <Menu @uploaded="uploadedImage" />
           </v-col>
-          <v-col cols="6">
-            <div id="voronoiCanvas" />
-            voronoiCanvas
+          <v-col cols="8">
+            <ImageResult :image="this.image" />
           </v-col>
         </v-row>
-        <v-col cols="6" align="start" justify="center">
-          <v-row align="start" justify="center">
-            <div id="voronoiCanvas" />
-            voronoiCanvas
-          </v-row>
-          <v-row align="start" justify="center">
-            <div id="voronoiResult" />
-            voronoiResult
-          </v-row>
-          <v-row align="start" justify="center">
-            <canvas id="canvas" />
-            canvas
-          </v-row>
-          <v-row align="start" justify="center">
-            <canvas id="greyscaleCanvas" />
-          </v-row>
-          <v-row align="start" justify="center">
-            <canvas id="centroidCanvas" />
-          </v-row>
-        </v-col>
       </v-container>
     </v-content>
     <v-footer color="indigo" app>
@@ -44,90 +22,24 @@
 </template>
 
 <script>
-// import { renderVoronoi } from "./scripts/knnLogic";
-
-import {
-  uploadImage,
-  greyScaleImage,
-  computeCentroidsFromGreyScale,
-  colorCentroidsByCoordinates
-} from "./scripts/imageHandler";
-
-import {
-  // renderVoronoiUsingD3,
-  renderColoredVoronoi
-} from "./scripts/voronoiUsingD3";
-
 import Menu from "@/components/Menu.vue";
+import ImageResult from "@/components/ImageResult.vue";
 
 export default {
   data() {
     return {
-      image: []
+      image: new File([""], "placeholder")
     };
   },
 
   components: {
-    Menu
+    Menu,
+    ImageResult
   },
 
   methods: {
     uploadedImage(image) {
-      // Store all canvas elements that can be present on the page
-      const canvas = ["canvas", "greyscaleCanvas", "centroidCanvas"];
-      let centroids = [];
-
-      // Clear all present canvas elements
-      canvas.map(d => {
-        const canvasElement = document.getElementById(d);
-        const context = canvasElement.getContext("2d");
-        context.clearRect(0, 0, d.width, d.height);
-      });
-
-      // Transfer the image to greyscale and compute the centroids
-      uploadImage(image).then(imageData => {
-        const originalImageData = {
-          width: imageData.width,
-          height: imageData.height,
-          data: [...imageData.data]
-        };
-        const greyScaleImageData = greyScaleImage(imageData);
-        centroids = [
-          ...computeCentroidsFromGreyScale(
-            greyScaleImageData,
-            0.8,
-            false,
-            20,
-            10
-          ),
-          ...computeCentroidsFromGreyScale(
-            greyScaleImageData,
-            0.5,
-            true,
-            20,
-            10
-          )
-        ];
-        const coloredCentroids = colorCentroidsByCoordinates(
-          originalImageData,
-          centroids
-        );
-        // renderVoronoi(centroids, imageData.width, imageData.height, 1);
-        //renderVoronoi(coloredCentroids, imageData.width, imageData.height, 4);
-        renderColoredVoronoi(
-          coloredCentroids,
-          imageData.width,
-          imageData.height,
-          4
-        );
-      });
-
-      // Rescale the images to fit the page
-      canvas.map(d => {
-        const canvasElement = document.getElementById(d);
-        canvasElement.width = window.innerWidth;
-        canvasElement.height = window.innerHeight;
-      });
+      this.image = image;
     }
   }
 };

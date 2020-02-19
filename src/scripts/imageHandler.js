@@ -138,6 +138,7 @@ export const uploadImage = image => {
       image.onerror = reject;
     };
 
-    reader.readAsDataURL(image);
+    // Only use the image when there is an actual image
+    image && reader.readAsDataURL(image);
   });
 };
