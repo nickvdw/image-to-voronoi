@@ -42,11 +42,9 @@ export const densityDelete = (centroids, distance, randomSelect) => {
     }
   } else {
     for (let i = 0; i < newCentroids.length; i++) {
-      console.log(i, newCentroids.length);
       newCentroids = pruneCentroids(newCentroids[i], newCentroids, distance);
     }
   }
-  console.log(centroids, newCentroids);
   return newCentroids;
 };
 
