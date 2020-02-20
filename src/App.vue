@@ -2,9 +2,7 @@
   <v-app>
     <Toolbar />
     <v-content class="grey lighten-5">
-      <v-container fluid>
-        <router-view />
-      </v-container>
+      <router-view />
     </v-content>
     <Footer />
   </v-app>
