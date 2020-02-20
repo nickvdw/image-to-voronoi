@@ -1,3 +1,5 @@
+import tracking from '../../node_modules/tracking'
+
 /**
  * Computes centroids from greyScale imageData using a threshold
  * Inverting the threshold 'flips' the >= operator
@@ -50,6 +52,9 @@ export const computeCentroidsFromGreyScale = (
     // The -1 offsets the addition to i in the loop iteration
     densityX > 0 && (i += 4 * (densityX - 1));
   }
+
+  let final = tracking.Fast.findCorners(imageData, imageData.width, imageData.height);
+
   // Draw the centroids on the canvas
   context.putImageData(
     imageData,
@@ -60,7 +65,8 @@ export const computeCentroidsFromGreyScale = (
     imageData.width,
     imageData.height
   );
-  return centroids;
+
+  return final;
 };
 
 /**

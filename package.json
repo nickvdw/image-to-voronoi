@@ -12,6 +12,7 @@
     "d3": "^5.15.0",
     "d3-delaunay": "^5.2.1",
     "register-service-worker": "^1.6.2",
+    "tracking": "^1.1.3",
     "vue": "^2.6.11",
     "vue-fullscreen": "^2.1.5",
     "vue-html2canvas": "0.0.4",
