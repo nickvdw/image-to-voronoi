@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-navigation-drawer v-model="sidebar" app>
+    <v-navigation-drawer disable-resize-watcher v-model="sidebar" app>
       <v-list dense>
         <v-list-item
           link
@@ -20,9 +20,10 @@
 
     <v-card flat tile dense>
       <v-toolbar color="blue-grey darken-3" dense>
-        <span class="hidden-sm-and-up">
-          <v-app-bar-nav-icon class="white--text" @click="sidebar = !sidebar" />
-        </span>
+        <v-app-bar-nav-icon
+          class="hidden-sm-and-up white--text"
+          @click="sidebar = !sidebar"
+        />
         <v-toolbar-title class="white--text">
           <router-link to="/" tag="span" style="cursor: pointer">
             {{ appTitle }}
@@ -39,7 +40,7 @@
             :key="item.title"
             :to="item.path"
           >
-            <v-icon left medium dense> mdi-{{ item.icon }} </v-icon>
+            <v-icon left medium dense>mdi-{{ item.icon }}</v-icon>
             {{ item.title }}
           </v-btn>
         </v-toolbar-items>

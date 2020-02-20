@@ -60,7 +60,6 @@ export const computeCentroidsFromGreyScale = (
     imageData.width,
     imageData.height
   );
-
   return centroids;
 };
 

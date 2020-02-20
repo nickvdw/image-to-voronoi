@@ -1,14 +1,16 @@
 <template>
-  <v-row>
-    <!-- Left column -->
-    <v-col cols="4">
-      <Menu @submit="submittedForm" />
-    </v-col>
-    <!-- Right column -->
-    <v-col cols="8">
-      <Result :image="this.image" />
-    </v-col>
-  </v-row>
+  <v-container fluid>
+    <v-row>
+      <!-- Left column -->
+      <v-col cols="4">
+        <Menu @submit="submittedForm" />
+      </v-col>
+      <!-- Right column -->
+      <v-col cols="8">
+        <Result :image="this.image" />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -18,7 +20,8 @@ import Result from "@/components/Result.vue";
 export default {
   data() {
     return {
-      image: new File([""], "placeholder")
+      // There is no image present initially
+      image: null
     };
   },
 
@@ -28,10 +31,11 @@ export default {
   },
 
   methods: {
+    /**
+     * Set the image if there is one. Otherwise, set the image to null.
+     */
     submittedForm(object) {
-      object === "reset"
-        ? (this.image = undefined)
-        : (this.image = object.image);
+      object === "reset" ? (this.image = null) : (this.image = object.image);
     }
   }
 };
