@@ -156,9 +156,9 @@ export const renderColoredVoronoi = (centroids, width, height, k) => {
         `rgb(${centroids[i].color[0]},${centroids[i].color[1]},${centroids[i].color[2]})`
       )
     );
-    // .style("opacity", 0.8)
-    // .style("stroke", "white")
-    // .style("stroke-opacity", 0.2);
+  // .style("opacity", 0.8)
+  // .style("stroke", "white")
+  // .style("stroke-opacity", 0.2);
 
   // append all of our points so that we can see how they line up with the voronoi
   // svg

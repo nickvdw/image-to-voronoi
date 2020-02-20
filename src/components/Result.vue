@@ -5,14 +5,14 @@
       <span class="title">Result</span>
       <v-spacer />
       <v-menu bottom left>
-        <template v-slot:activator="{ on }" v-slot:disabled="image">
-          <v-btn dark v-on="on" icon :disabled="!image">
+        <template v-slot:activator="{ on }" v-slot:disabled="selectedImage">
+          <v-btn dark v-on="on" icon :disabled="!selectedImage">
             <v-icon>mdi-dots-vertical</v-icon>
           </v-btn>
-          <v-btn dark @click="toggle" icon :disabled="!image">
+          <v-btn dark @click="toggle" icon :disabled="!selectedImage">
             <v-icon>mdi-fullscreen</v-icon>
           </v-btn>
-          <v-btn dark @click="saveImage" icon :disabled="!image">
+          <v-btn dark @click="saveImage" icon :disabled="!selectedImage">
             <v-icon>mdi-content-save-outline</v-icon>
           </v-btn>
         </template>
@@ -23,7 +23,11 @@
             </v-list-item-content>
           </v-list-item>
           <v-divider />
-          <v-list-item v-for="(item, i) in items" :key="i" @click="renderResult(item)">
+          <v-list-item
+            v-for="(item, i) in items"
+            :key="i"
+            @click="renderResult(item)"
+          >
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item>
         </v-list>
@@ -32,17 +36,26 @@
 
     <!-- Card content -->
     <v-card-text>
-      <div v-show="!this.image && !this.loading">
+      <div v-show="!this.selectedImage && !this.loading">
         <v-row class="fill-height" align-content="center" justify="center">
-          <v-col class="subtitle-1 text-center" cols="12">Please select an image.</v-col>
+          <v-col class="subtitle-1 text-center" cols="12"
+            >Please select an image.</v-col
+          >
         </v-row>
       </div>
       <!-- Progress bar -->
       <div v-show="this.loading">
         <v-row class="fill-height" align-content="center" justify="center">
-          <v-col class="subtitle-1 text-center" cols="12">Generating the result</v-col>
+          <v-col class="subtitle-1 text-center" cols="12"
+            >Generating the result</v-col
+          >
           <v-col cols="6">
-            <v-progress-linear indeterminate rounded color="blue-grey darken-3" height="12" />
+            <v-progress-linear
+              indeterminate
+              rounded
+              color="blue-grey darken-3"
+              height="12"
+            />
           </v-col>
         </v-row>
       </div>
@@ -56,7 +69,7 @@
           background="#eee"
         >
           <!-- The image represneting the result -->
-          <v-row v-show="this.image" align="start" justify="center">
+          <v-row v-show="this.selectedImage" align="start" justify="center">
             <!-- TODO: Only render a single result that is updated based on the user's needs -->
             <div ref="result" v-show="this.displayResult" id="voronoiResult" />
             <canvas v-show="this.displayCentroids" id="centroidCanvas" />
@@ -104,31 +117,54 @@ export default {
       displayCentroids: false,
       displayGreyScaleImage: false,
       displayEdges: true,
-      fullscreen: false,
-      output: null
+      fullscreen: false
     };
   },
 
   props: {
-    // Image needs to be of a File type or null
-    image: File
+    // The configuration that is set by the user
+    configuration: {
+      type: Object,
+      required: true,
+      default: function() {
+        return {
+          selectedImage: null,
+          selectedMethod: null,
+          selectedThreshold: null
+        };
+      }
+    }
   },
 
   components: {
     Fullscreen
   },
 
+  computed: {
+    // Set the parameters from the configurations
+    // Cannot use the configuration property directly in the code because of template slots not liking this
+    selectedImage() {
+      return this.configuration.selectedImage;
+    },
+    selectedMethod() {
+      return this.configuration.selectedMethod;
+    },
+    selectedThreshold() {
+      return this.configuration.selectedThreshold;
+    }
+  },
+
   watch: {
     /**
-     * Watcher on the image that removes the previous image if the user
-     * clicks on the "reset" button and renders the new image when
-     * form details are submitted.
+     * Watcher on the configuration provided by the user that removes
+     * the previous image if the user clicks on the "reset" button and
+     * renders the new image when form details are submitted.
      */
     // TODO: Make this async., but there are currently issues with generateResult
     // TODO: because we render all "results" inside this method.
-    image: function() {
+    configuration: function() {
       // Don't continue if there is no actual image
-      if (!this.image) {
+      if (!this.selectedImage) {
         // Clear the previous image
         document.getElementById("voronoiResult").innerHTML = "";
       } else {
@@ -156,23 +192,19 @@ export default {
       link.href = result;
       link.click();
     },
-
     /**
      * Toggles between fullscreen and windowed.
      */
     toggle() {
       this.$refs["fullscreen"].toggle();
     },
-
     fullscreenChange(fullscreen) {
       this.fullscreen = fullscreen;
     },
-
     /**
      * Hides and displays the result based on the @choice picked by the user.
      *
-     * TODO: This method should not be needed anymore after changing the way
-     * we render images.
+     * TODO: This method should not be needed anymore after changing the way we render images.
      */
     renderResult(choice) {
       // Pre-emptively hide all results
@@ -215,7 +247,7 @@ export default {
       });
 
       // Transfer the image to greyscale and compute the centroids
-      uploadImage(this.image).then(imageData => {
+      uploadImage(this.selectedImage).then(imageData => {
         const originalImageData = {
           width: imageData.width,
           height: imageData.height,
@@ -268,7 +300,7 @@ export default {
       });
 
       // Transfer the image to greyscale and compute the centroids
-      uploadImage(this.image).then(imageData => {
+      uploadImage(this.selectedImage).then(imageData => {
         const originalImageData = {
           width: imageData.width,
           height: imageData.height,
@@ -300,7 +332,11 @@ export default {
             originalImageData,
             centroids
           );
-          renderColoredVoronoi(coloredCentroids, imageData.width, imageData.height);
+          renderColoredVoronoi(
+            coloredCentroids,
+            imageData.width,
+            imageData.height
+          );
         };
 
         doFindFeatures();

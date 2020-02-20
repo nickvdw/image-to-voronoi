@@ -12,8 +12,8 @@
       <v-form ref="form" v-model="valid">
         <!-- Image upload field -->
         <v-file-input
-          v-model="image"
-          class="mt-4"
+          v-model="selectedImage"
+          class="mb-2"
           color="blue-grey darken-3"
           label="Image input"
           accept="image/*"
@@ -22,7 +22,26 @@
           required
           :rules="imageRules"
         />
-
+        <!-- Field to select method for centroid generation -->
+        <v-select
+          color="blue-grey darken-3"
+          :items="methods"
+          class="mb-2"
+          v-model="selectedMethod"
+          label="Method for centroid generation"
+          required
+          :rules="methodRules"
+        />
+        <!-- Threshold for number of centroids -->
+        <v-text-field
+          color="blue-grey darken-3"
+          v-if="selectedMethod === 'Edge detection'"
+          label="Number of centroids"
+          class="mb-2"
+          v-model="selectedThreshold"
+          :rules="thresholdRules"
+          type="number"
+        />
         <!-- Reset and submit button group -->
         <v-row align="start" justify="space-around">
           <v-btn color="error" class="mr-4" @click="reset">Reset</v-btn>
@@ -43,10 +62,24 @@ export default {
   name: "Menu",
 
   data: () => ({
-    // We have to define image as undefined in order to make the image rule for validation work
-    image: undefined,
-    // The rule we place on image submissions
+    // Initial image and associated rules
+    selectedImage: null,
     imageRules: [v => (!!v && v !== []) || "An image is required"],
+
+    // Available methods for the centroid generation and associated rules
+    methods: ["Edge detection", "Random"],
+    methodRules: [v => !!v || "A method is required"],
+    selectedMethod: "",
+
+    // Selected threshold and associated rules
+    selectedThreshold: 10,
+    thresholdRules: [
+      v =>
+        (!!v && v <= 1000 && v >= 10) ||
+        "A threshold of at least 10 and at most 1000 is required"
+    ],
+
+    // Whether or not the form is valid
     valid: false
   }),
 
@@ -59,7 +92,11 @@ export default {
      */
     validate() {
       if (this.$refs.form.validate()) {
-        this.$emit("submit", { image: this.image });
+        this.$emit("submit", {
+          selectedImage: this.selectedImage,
+          selectedMethod: this.selectedMethod,
+          selectedThreshold: this.selectedThreshold
+        });
       }
     },
 
@@ -69,8 +106,12 @@ export default {
      * Emits meaningless form data to indicate there is no image anymore.
      */
     reset() {
+      // Reset all form inputs
       this.$refs.form.reset();
+      // Emit a submit event with a rest flag to the toolpage
       this.$emit("submit", "reset");
+      // We have to set the default threshold again because it is removed after the reset
+      this.selectedThreshold = 10;
     }
   }
 };
