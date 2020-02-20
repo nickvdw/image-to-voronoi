@@ -70,7 +70,7 @@
         >
           <!-- The image represneting the result -->
           <v-row v-show="this.image" align="start" justify="center">
-            <img :src="output" />
+            <!-- TODO: Only render a single result that is updated based on the user's needs -->
             <div ref="result" v-show="this.displayResult" id="voronoiResult" />
             <canvas v-show="this.displayCentroids" id="centroidCanvas" />
             <canvas v-show="this.displayOriginalImage" id="canvas" />
@@ -105,6 +105,7 @@ export default {
         { title: "Result" },
         { title: "Centroids" }
       ],
+      // TODO: Remove this after we use a single div for rendering everything
       displayOriginalImage: false,
       displayResult: false,
       displayCentroids: false,
@@ -132,12 +133,13 @@ export default {
     // TODO: Make this async., but there are currently issues with generateResult
     // TODO: because we render all "results" inside this method.
     image: function() {
-      // Don't continue when there is no actual image
+      // Don't continue if there is no actual image
       if (!this.image) {
         // Clear the previous image
         document.getElementById("voronoiResult").innerHTML = "";
       } else {
         this.loading = true;
+        // TODO: Call method that checks what type of image (e.g., centroid, original, or voronoi) needs to be rendered.
         this.generateResult();
         this.loading = false;
         this.displayResult = true;
@@ -147,10 +149,10 @@ export default {
 
   methods: {
     /**
-     * Provides the option to save the "image" associated
-     * with ref=result.
+     * Opens a prompt with which an image can be saved.
      */
     async saveImage() {
+      // Convert the image from a div to a canvas element
       const result = await this.$html2canvas(this.$refs.result, {
         type: "dataURL"
       });
@@ -161,7 +163,7 @@ export default {
     },
 
     /**
-     * Toggles between fullscreen and not fullscreen.
+     * Toggles between fullscreen and windowed.
      */
     toggle() {
       this.$refs["fullscreen"].toggle();
@@ -172,7 +174,10 @@ export default {
     },
 
     /**
-     * Renders the result based on the @choice picked by the user.
+     * Hides and displays the result based on the @choice picked by the user.
+     *
+     * TODO: This method should not be needed anymore after changing the way
+     * we render images.
      */
     renderResult(choice) {
       // Pre-emptively hide all results
@@ -196,11 +201,12 @@ export default {
         // TODO: catch error
       }
     },
+
     /**
-     * Generates and stores the resulting image.
+     * Renders the original, greyscaled, centroid, and Vornoi diagram.
      */
     generateResult() {
-      // TODO: Make the image fit somehow
+      // TODO: Make the image fit to the div or vice versa.
 
       // Store all canvas elements that can be present on the page
       const canvas = ["canvas", "greyscaleCanvas", "centroidCanvas"];
@@ -241,8 +247,6 @@ export default {
           originalImageData,
           centroids
         );
-        // renderVoronoi(centroids, imageData.width, imageData.height, 1);
-        // renderVoronoi(coloredCentroids, imageData.width, imageData.height, 4);
         renderColoredVoronoi(
           coloredCentroids,
           imageData.width,
@@ -250,8 +254,6 @@ export default {
           4
         );
       });
-
-      new Promise(r => setTimeout(r, 2000));
 
       // Rescale the images to fit the page
       canvas.map(d => {
