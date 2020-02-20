@@ -4,10 +4,40 @@
     <v-card-title class="blue-grey darken-3 white--text">
       <span class="title">Result</span>
       <v-spacer />
+      <v-menu bottom left>
+        <template v-slot:activator="{ on }" v-slot:disabled="image">
+          <v-btn dark icon v-on="on" :disabled="!image">
+            <v-icon>mdi-dots-vertical</v-icon>
+          </v-btn>
+        </template>
+
+        <v-list>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title>What would you like to see?</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-divider />
+          <v-list-item
+            v-for="(item, i) in items"
+            :key="i"
+            @click="renderResult(item)"
+          >
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-card-title>
 
     <!-- Card content -->
     <v-card-text>
+      <div v-show="!this.image && !this.loading">
+        <v-row class="fill-height" align-content="center" justify="center">
+          <v-col class="subtitle-1 text-center" cols="12">
+            Please select an image.
+          </v-col>
+        </v-row>
+      </div>
       <!-- Progress bar -->
       <div v-show="this.loading">
         <v-row class="fill-height" align-content="center" justify="center">
@@ -28,14 +58,10 @@
       <div v-show="!this.loading">
         <!-- The image represneting the result -->
         <v-row v-show="this.image" align="start" justify="center">
-          <div id="voronoiResult" />
-        </v-row>
-
-        <!-- Stuff that should not be here in production -->
-        <v-row v-show="this.image" align="start" justify="center">
-          <canvas id="canvas" />
-          <canvas id="greyscaleCanvas" />
-          <canvas id="centroidCanvas" />
+          <div v-show="this.displayResult" id="voronoiResult" />
+          <canvas v-show="this.displayCentroids" id="centroidCanvas" />
+          <canvas v-show="this.displayOriginalImage" id="canvas" />
+          <canvas v-show="this.displayGreyScaleImage" id="greyscaleCanvas" />
         </v-row>
       </div>
     </v-card-text>
@@ -53,16 +79,25 @@ import {
 import { renderColoredVoronoi } from "@/scripts/voronoiUsingD3";
 
 export default {
-  name: "ImageResult",
+  name: "Result",
 
   data() {
     return {
-      loading: false
+      loading: false,
+      items: [
+        { title: "Original image" },
+        { title: "Result" },
+        { title: "Centroids" }
+      ],
+      displayOriginalImage: false,
+      displayResult: false,
+      displayCentroids: false,
+      displayGreyScaleImage: false
     };
   },
 
   props: {
-    // Image needs to be of a File type
+    // Image needs to be of a File type or null
     image: File
   },
 
@@ -81,11 +116,37 @@ export default {
         this.loading = true;
         await this.generateResult();
         this.loading = false;
+        this.displayResult = true;
       }
     }
   },
 
   methods: {
+    /**
+     * Renders the result based on the @choice picked by the user.
+     */
+    renderResult(choice) {
+      // Pre-emptively hide all results
+      this.displayOriginalImage = false;
+      this.displayResult = false;
+      this.displayCentroids = false;
+      this.displayGreyScaleImage = false;
+
+      // Only display the result chosen by the user
+      switch (choice.title) {
+        case "Original image":
+          this.displayOriginalImage = true;
+          break;
+        case "Result":
+          this.displayResult = true;
+          break;
+        case "Centroids":
+          this.displayCentroids = true;
+          break;
+        default:
+        // code block
+      }
+    },
     /**
      * Generates and stores the resulting image.
      */

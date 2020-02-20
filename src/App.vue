@@ -13,12 +13,6 @@ import Toolbar from "@/components/Toolbar.vue";
 import Footer from "@/components/Footer.vue";
 
 export default {
-  data() {
-    return {
-      image: new File([""], "placeholder")
-    };
-  },
-
   components: {
     Toolbar,
     Footer

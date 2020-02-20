@@ -39,7 +39,7 @@
             :key="item.title"
             :to="item.path"
           >
-            <v-icon left medium dense> mdi-{{ item.icon }} </v-icon>
+            <v-icon left medium dense>mdi-{{ item.icon }}</v-icon>
             {{ item.title }}
           </v-btn>
         </v-toolbar-items>
