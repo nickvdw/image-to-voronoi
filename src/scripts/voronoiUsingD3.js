@@ -155,20 +155,20 @@ export const renderColoredVoronoi = (centroids, width, height, k) => {
       d3.color(
         `rgb(${centroids[i].color[0]},${centroids[i].color[1]},${centroids[i].color[2]})`
       )
-    )
-    .style("opacity", 0.8)
-    .style("stroke", "white")
-    .style("stroke-opacity", 0.2);
+    );
+    // .style("opacity", 0.8)
+    // .style("stroke", "white")
+    // .style("stroke-opacity", 0.2);
 
   // append all of our points so that we can see how they line up with the voronoi
-  svg
-    .selectAll("circle")
-    .data(centroids)
-    .join("circle")
-    .attr("cx", d => d.x)
-    .attr("cy", d => d.y)
-    .attr("r", 1.5)
-    .style("fill", "white");
+  // svg
+  //   .selectAll("circle")
+  //   .data(centroids)
+  //   .join("circle")
+  //   .attr("cx", d => d.x)
+  //   .attr("cy", d => d.y)
+  //   .attr("r", 1.5)
+  //   .style("fill", "white");
 
   return svg.node();
 };

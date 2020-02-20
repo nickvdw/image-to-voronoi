@@ -274,7 +274,7 @@ export default {
           height: imageData.height,
           data: [...imageData.data]
         };
-        window.fastThreshold = 10;
+        window.fastThreshold = 5;
 
         var doFindFeatures = function() {
           window.tracking.Fast.THRESHOLD = window.fastThreshold;
@@ -301,10 +301,6 @@ export default {
             centroids
           );
           renderColoredVoronoi(coloredCentroids, imageData.width, imageData.height);
-          // for (var i = 0; i < corners.length; i += 2) {
-          //   context.fillStyle = "#f00";
-          //   context.fillRect(corners[i], corners[i + 1], 3, 3);
-          // }
         };
 
         doFindFeatures();
