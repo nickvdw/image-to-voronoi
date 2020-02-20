@@ -4,6 +4,9 @@ import "./registerServiceWorker";
 import router from "./router";
 import vuetify from "./plugins/vuetify";
 import "./registerServiceWorker";
+import VueHtml2Canvas from "vue-html2canvas";
+
+Vue.use(VueHtml2Canvas);
 
 Vue.config.productionTip = false;
 

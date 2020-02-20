@@ -25,16 +25,13 @@
 
         <!-- Reset and submit button group -->
         <v-row align="start" justify="space-around">
-          <v-btn color="error" class="mr-4" @click="reset">
-            Reset
-          </v-btn>
+          <v-btn color="error" class="mr-4" @click="reset">Reset</v-btn>
           <v-btn
             :disabled="!valid"
             class="blue-grey darken-3 white--text mr-4"
             @click="validate"
+            >Submit</v-btn
           >
-            Submit
-          </v-btn>
         </v-row>
       </v-form>
     </v-card-text>

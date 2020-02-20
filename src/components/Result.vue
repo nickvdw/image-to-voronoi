@@ -6,11 +6,16 @@
       <v-spacer />
       <v-menu bottom left>
         <template v-slot:activator="{ on }" v-slot:disabled="image">
-          <v-btn dark icon v-on="on" :disabled="!image">
+          <v-btn dark v-on="on" icon :disabled="!image">
             <v-icon>mdi-dots-vertical</v-icon>
           </v-btn>
+          <v-btn dark @click="toggle" icon :disabled="!image">
+            <v-icon>mdi-fullscreen</v-icon>
+          </v-btn>
+          <v-btn dark @click="saveImage" icon :disabled="!image">
+            <v-icon>mdi-content-save-outline</v-icon>
+          </v-btn>
         </template>
-
         <v-list>
           <v-list-item>
             <v-list-item-content>
@@ -33,17 +38,17 @@
     <v-card-text>
       <div v-show="!this.image && !this.loading">
         <v-row class="fill-height" align-content="center" justify="center">
-          <v-col class="subtitle-1 text-center" cols="12">
-            Please select an image.
-          </v-col>
+          <v-col class="subtitle-1 text-center" cols="12"
+            >Please select an image.</v-col
+          >
         </v-row>
       </div>
       <!-- Progress bar -->
       <div v-show="this.loading">
         <v-row class="fill-height" align-content="center" justify="center">
-          <v-col class="subtitle-1 text-center" cols="12">
-            Generating the result
-          </v-col>
+          <v-col class="subtitle-1 text-center" cols="12"
+            >Generating the result</v-col
+          >
           <v-col cols="6">
             <v-progress-linear
               indeterminate
@@ -56,13 +61,22 @@
       </div>
       <!-- Image result  -->
       <div v-show="!this.loading">
-        <!-- The image represneting the result -->
-        <v-row v-show="this.image" align="start" justify="center">
-          <div v-show="this.displayResult" id="voronoiResult" />
-          <canvas v-show="this.displayCentroids" id="centroidCanvas" />
-          <canvas v-show="this.displayOriginalImage" id="canvas" />
-          <canvas v-show="this.displayGreyScaleImage" id="greyscaleCanvas" />
-        </v-row>
+        <fullscreen
+          class="wrapper"
+          :fullscreen.sync="fullscreen"
+          ref="fullscreen"
+          @change="fullscreenChange"
+          background="#eee"
+        >
+          <!-- The image represneting the result -->
+          <v-row v-show="this.image" align="start" justify="center">
+            <img :src="output" />
+            <div ref="result" v-show="this.displayResult" id="voronoiResult" />
+            <canvas v-show="this.displayCentroids" id="centroidCanvas" />
+            <canvas v-show="this.displayOriginalImage" id="canvas" />
+            <canvas v-show="this.displayGreyScaleImage" id="greyscaleCanvas" />
+          </v-row>
+        </fullscreen>
       </div>
     </v-card-text>
   </v-card>
@@ -78,6 +92,8 @@ import {
 
 import { renderColoredVoronoi } from "@/scripts/voronoiUsingD3";
 
+import Fullscreen from "vue-fullscreen/src/component.vue";
+
 export default {
   name: "Result",
 
@@ -92,13 +108,19 @@ export default {
       displayOriginalImage: false,
       displayResult: false,
       displayCentroids: false,
-      displayGreyScaleImage: false
+      displayGreyScaleImage: false,
+      fullscreen: false,
+      output: null
     };
   },
 
   props: {
     // Image needs to be of a File type or null
     image: File
+  },
+
+  components: {
+    Fullscreen
   },
 
   watch: {
@@ -125,6 +147,31 @@ export default {
 
   methods: {
     /**
+     * Provides the option to save the "image" associated
+     * with ref=result.
+     */
+    async saveImage() {
+      const result = await this.$html2canvas(this.$refs.result, {
+        type: "dataURL"
+      });
+      const link = document.createElement("a");
+      link.download = "filename.png";
+      link.href = result;
+      link.click();
+    },
+
+    /**
+     * Toggles between fullscreen and not fullscreen.
+     */
+    toggle() {
+      this.$refs["fullscreen"].toggle();
+    },
+
+    fullscreenChange(fullscreen) {
+      this.fullscreen = fullscreen;
+    },
+
+    /**
      * Renders the result based on the @choice picked by the user.
      */
     renderResult(choice) {
@@ -146,7 +193,7 @@ export default {
           this.displayCentroids = true;
           break;
         default:
-        // code block
+        // TODO: catch error
       }
     },
     /**
@@ -216,3 +263,15 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.wrapper {
+  position: relative;
+  height: 400px;
+  &.fullscreen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+</style>
