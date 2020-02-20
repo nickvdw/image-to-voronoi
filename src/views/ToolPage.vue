@@ -31,10 +31,11 @@ export default {
   },
 
   methods: {
+    /**
+     * Set the image if there is one. Otherwise, set the image to null.
+     */
     submittedForm(object) {
-      object === "reset"
-        ? (this.image = undefined)
-        : (this.image = object.image);
+      object === "reset" ? (this.image = null) : (this.image = object.image);
     }
   }
 };

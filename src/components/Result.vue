@@ -107,14 +107,16 @@ export default {
      * clicks on the "reset" button and renders the new image when
      * form details are submitted.
      */
-    image: async function() {
+    // TODO: Make this async., but there are currently issues with generateResult
+    // TODO: because we render all "results" inside this method.
+    image: function() {
       // Don't continue when there is no actual image
       if (!this.image) {
         // Clear the previous image
         document.getElementById("voronoiResult").innerHTML = "";
       } else {
         this.loading = true;
-        await this.generateResult();
+        this.generateResult();
         this.loading = false;
         this.displayResult = true;
       }
@@ -150,22 +152,22 @@ export default {
     /**
      * Generates and stores the resulting image.
      */
-    async generateResult() {
+    generateResult() {
       // TODO: Make the image fit somehow
 
       // Store all canvas elements that can be present on the page
-      const canvas = await ["canvas", "greyscaleCanvas", "centroidCanvas"];
-      let centroids = await [];
+      const canvas = ["canvas", "greyscaleCanvas", "centroidCanvas"];
+      let centroids = [];
 
       // Clear all present canvas elements
-      await canvas.map(d => {
+      canvas.map(d => {
         const canvasElement = document.getElementById(d);
         const context = canvasElement.getContext("2d");
         context.clearRect(0, 0, d.width, d.height);
       });
 
       // Transfer the image to greyscale and compute the centroids
-      await uploadImage(this.image).then(imageData => {
+      uploadImage(this.image).then(imageData => {
         const originalImageData = {
           width: imageData.width,
           height: imageData.height,
@@ -202,10 +204,10 @@ export default {
         );
       });
 
-      await new Promise(r => setTimeout(r, 2000));
+      new Promise(r => setTimeout(r, 2000));
 
       // Rescale the images to fit the page
-      await canvas.map(d => {
+      canvas.map(d => {
         const canvasElement = document.getElementById(d);
         canvasElement.width = window.innerWidth;
         canvasElement.height = window.innerHeight;
