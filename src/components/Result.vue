@@ -23,11 +23,7 @@
             </v-list-item-content>
           </v-list-item>
           <v-divider />
-          <v-list-item
-            v-for="(item, i) in items"
-            :key="i"
-            @click="renderResult(item)"
-          >
+          <v-list-item v-for="(item, i) in items" :key="i" @click="renderResult(item)">
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item>
         </v-list>
@@ -38,24 +34,15 @@
     <v-card-text>
       <div v-show="!this.image && !this.loading">
         <v-row class="fill-height" align-content="center" justify="center">
-          <v-col class="subtitle-1 text-center" cols="12"
-            >Please select an image.</v-col
-          >
+          <v-col class="subtitle-1 text-center" cols="12">Please select an image.</v-col>
         </v-row>
       </div>
       <!-- Progress bar -->
       <div v-show="this.loading">
         <v-row class="fill-height" align-content="center" justify="center">
-          <v-col class="subtitle-1 text-center" cols="12"
-            >Generating the result</v-col
-          >
+          <v-col class="subtitle-1 text-center" cols="12">Generating the result</v-col>
           <v-col cols="6">
-            <v-progress-linear
-              indeterminate
-              rounded
-              color="blue-grey darken-3"
-              height="12"
-            />
+            <v-progress-linear indeterminate rounded color="blue-grey darken-3" height="12" />
           </v-col>
         </v-row>
       </div>
@@ -78,11 +65,17 @@
           </v-row>
         </fullscreen>
       </div>
+      <div>
+        <canvas v-show="this.displayEdges" id="findEdges" />
+      </div>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
+require("tracking");
+require("tracking/build/data/face-min");
+
 import {
   uploadImage,
   greyScaleImage,
@@ -110,6 +103,7 @@ export default {
       displayResult: false,
       displayCentroids: false,
       displayGreyScaleImage: false,
+      displayEdges: true,
       fullscreen: false,
       output: null
     };
@@ -141,6 +135,7 @@ export default {
         this.loading = true;
         // TODO: Call method that checks what type of image (e.g., centroid, original, or voronoi) needs to be rendered.
         this.generateResult();
+        this.generateEdges();
         this.loading = false;
         this.displayResult = true;
       }
@@ -253,6 +248,66 @@ export default {
           imageData.height,
           4
         );
+      });
+
+      // Rescale the images to fit the page
+      canvas.map(d => {
+        const canvasElement = document.getElementById(d);
+        canvasElement.width = window.innerWidth;
+        canvasElement.height = window.innerHeight;
+      });
+    },
+
+    generateEdges() {
+      const canvas = ["canvas", "findEdges"];
+      // Clear all present canvas elements
+      canvas.map(d => {
+        const canvasElement = document.getElementById(d);
+        const context = canvasElement.getContext("2d");
+        context.clearRect(0, 0, d.width, d.height);
+      });
+
+      // Transfer the image to greyscale and compute the centroids
+      uploadImage(this.image).then(imageData => {
+        const originalImageData = {
+          width: imageData.width,
+          height: imageData.height,
+          data: [...imageData.data]
+        };
+        window.fastThreshold = 10;
+
+        var doFindFeatures = function() {
+          window.tracking.Fast.THRESHOLD = window.fastThreshold;
+
+          var gray = window.tracking.Image.grayscale(
+            imageData.data,
+            imageData.width,
+            imageData.height
+          );
+          var corners = window.tracking.Fast.findCorners(
+            gray,
+            imageData.width,
+            imageData.height
+          );
+          let centroids = [{ x: 0, y: 0 }];
+          for (let i = 0; i < corners.length; i += 2) {
+            centroids.push({
+              x: corners[i],
+              y: corners[i + 1]
+            });
+          }
+          const coloredCentroids = colorCentroidsByCoordinates(
+            originalImageData,
+            centroids
+          );
+          renderColoredVoronoi(coloredCentroids, imageData.width, imageData.height);
+          // for (var i = 0; i < corners.length; i += 2) {
+          //   context.fillStyle = "#f00";
+          //   context.fillRect(corners[i], corners[i + 1], 3, 3);
+          // }
+        };
+
+        doFindFeatures();
       });
 
       // Rescale the images to fit the page
