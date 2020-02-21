@@ -178,9 +178,12 @@ export default {
      * Sets the voronoiResult div to the given image data
      */
     setImage(imageData) {
-      console.log(imageData);
       d3.select("#voronoiResult")
+        .attr("width", imageData.width)
+        .attr("height", imageData.height)
         .append("svg")
+        .attr("width", imageData.width)
+        .attr("height", imageData.height)
         .append("image")
         .attr("href", toImageDataUrl(imageData))
         .attr("width", imageData.width)

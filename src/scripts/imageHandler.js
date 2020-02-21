@@ -120,7 +120,11 @@ export const uploadImage = image => {
  * Converts imageData to a data url
  */
 export const toImageDataUrl = imageData => {
-  const canvas = document.createElement("CANVAS");
+  const canvas = document.createElement("canvas");
+  // Set the canvas width and height since this is not obtained from the child
+  canvas.width = imageData.width;
+  canvas.height = imageData.height;
+
   const context = canvas.getContext("2d");
   const imageDataObject = context.createImageData(
     imageData.width,
