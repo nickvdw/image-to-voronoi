@@ -7,7 +7,13 @@
       <!-- TODO: Refactor to for loop -->
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
-          <v-btn dark @click="toggle" v-on="on" icon :disabled="loading">
+          <v-btn
+            dark
+            @click="toggle"
+            v-on="on"
+            icon
+            :disabled="!configuration.selectedImage"
+          >
             <v-icon>mdi-fullscreen</v-icon>
           </v-btn>
         </template>
@@ -15,7 +21,13 @@
       </v-tooltip>
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
-          <v-btn dark @click="saveImage" v-on="on" icon :disabled="loading">
+          <v-btn
+            dark
+            @click="saveImage"
+            v-on="on"
+            icon
+            :disabled="!configuration.selectedImage"
+          >
             <v-icon>mdi-content-save-outline</v-icon>
           </v-btn>
         </template>
@@ -23,14 +35,14 @@
       </v-tooltip>
 
       <v-menu bottom left origin="center center" transition="scale-transition">
-        <template v-slot:activator="{ on: menu }" v-slot:disabled="{ loading }">
+        <template v-slot:activator="{ on: menu }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on: tooltip }">
               <v-btn
                 dark
                 v-on="{ ...tooltip, ...menu }"
                 icon
-                :disabled="loading"
+                :disabled="!configuration.selectedImage"
               >
                 <v-icon>mdi-dots-vertical</v-icon>
               </v-btn>
