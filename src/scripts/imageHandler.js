@@ -116,6 +116,9 @@ export const uploadImage = image => {
   });
 };
 
+/**
+ * Converts imageData to a data url
+ */
 export const toImageDataUrl = imageData => {
   const canvas = document.createElement("CANVAS");
   const context = canvas.getContext("2d");
@@ -123,7 +126,7 @@ export const toImageDataUrl = imageData => {
     imageData.width,
     imageData.height
   );
-  console.log(imageDataObject);
+  // Copy the data into the newly created object
   imageDataObject.data.set(imageData.data, 0);
 
   // Draw the imageData on the canvas

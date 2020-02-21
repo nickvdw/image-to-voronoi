@@ -174,6 +174,9 @@ export default {
       this.fullscreen = fullscreen;
     },
 
+    /**
+     * Sets the voronoiResult div to the given image data
+     */
     setImage(imageData) {
       console.log(imageData);
       d3.select("#voronoiResult")
