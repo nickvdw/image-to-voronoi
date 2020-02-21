@@ -87,6 +87,7 @@ import {
   computeCentroidsFromGreyScale,
   colorCentroidsByCoordinates
 } from "@/scripts/imageHandler";
+import { renderColoredVoronoi } from "@/scripts/voronoiUsingD3";
 
 import * as d3 from "d3";
 import Fullscreen from "vue-fullscreen/src/component.vue";
@@ -105,8 +106,7 @@ export default {
       displayResult: false,
       originalImageData: [],
       centroids: [],
-      fullscreen: false,
-      output: null
+      fullscreen: false
     };
   },
 
@@ -141,7 +141,7 @@ export default {
           width: result.width,
           height: result.height
         };
-        this.generateResult({ title: "Original image" });
+        this.generateResult({ title: "Result" });
         this.loading = false;
         this.displayResult = true;
       }
@@ -198,6 +198,7 @@ export default {
       // TODO: Make the image fit to the div or vice versa.
 
       let centroids = [];
+      let coloredCentroids = [];
       let greyScaleImageData;
       const imageDataCopy = {
         ...this.originalImageData,
@@ -209,6 +210,36 @@ export default {
           this.setImage(this.originalImageData);
           break;
         case "Result":
+          // TODO: Check all choices passed through the configuration here
+          greyScaleImageData = greyScaleImage(imageDataCopy);
+          centroids = [
+            ...computeCentroidsFromGreyScale(
+              greyScaleImageData,
+              0.8,
+              false,
+              20,
+              10
+            ),
+            ...computeCentroidsFromGreyScale(
+              greyScaleImageData,
+              0.5,
+              true,
+              20,
+              10
+            )
+          ];
+          coloredCentroids = colorCentroidsByCoordinates(
+            this.originalImageData,
+            centroids
+          );
+          renderColoredVoronoi(
+            coloredCentroids,
+            this.originalImageData.width,
+            this.originalImageData.height,
+            4
+          );
+          // TODO: Set the result through setImage
+          // this.setImage(greyScaleImageData);
           break;
         case "Centroids":
           greyScaleImageData = greyScaleImage(imageDataCopy);
@@ -233,13 +264,6 @@ export default {
         default:
         // TODO: catch error
       }
-
-      // Unused at the moment
-      const coloredCentroids = colorCentroidsByCoordinates(
-        this.originalImageData,
-        centroids
-      );
-      console.log(coloredCentroids);
     }
   }
 };
