@@ -121,9 +121,11 @@ export const toImageDataUrl = imageData => {
   const context = canvas.getContext("2d");
   const imageDataObject = context.createImageData(
     imageData.width,
-    imageData.height,
-    imageData.data
+    imageData.height
   );
+  console.log(imageDataObject);
+  imageDataObject.data.set(imageData.data, 0);
+
   // Draw the imageData on the canvas
   context.putImageData(
     imageDataObject,

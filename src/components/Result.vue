@@ -102,7 +102,6 @@ export default {
         { title: "Result" },
         { title: "Centroids" }
       ],
-      choice: {},
       displayResult: false,
       originalImageData: [],
       centroids: [],
@@ -194,6 +193,10 @@ export default {
 
       let centroids = [];
       let greyScaleImageData;
+      const imageDataCopy = {
+        ...this.originalImageData,
+        data: [...this.originalImageData.data]
+      };
       // Only display the result chosen by the user
       switch (choice.title) {
         case "Original image":
@@ -202,7 +205,7 @@ export default {
         case "Result":
           break;
         case "Centroids":
-          greyScaleImageData = greyScaleImage(this.originalImageData);
+          greyScaleImageData = greyScaleImage(imageDataCopy);
           centroids = [
             ...computeCentroidsFromGreyScale(
               greyScaleImageData,
@@ -224,17 +227,8 @@ export default {
         default:
         // TODO: catch error
       }
-      greyScaleImageData = greyScaleImage(this.originalImageData);
-      centroids = [
-        ...computeCentroidsFromGreyScale(
-          greyScaleImageData,
-          0.8,
-          false,
-          20,
-          10
-        ),
-        ...computeCentroidsFromGreyScale(greyScaleImageData, 0.5, true, 20, 10)
-      ];
+
+      // Unused at the moment
       const coloredCentroids = colorCentroidsByCoordinates(
         this.originalImageData,
         centroids
