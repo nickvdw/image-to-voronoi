@@ -5,7 +5,6 @@
       <span class="title">Configuration</span>
       <v-spacer />
     </v-card-title>
-
     <!-- Card content -->
     <v-card-text>
       <!-- Form -->
@@ -13,7 +12,7 @@
         <!-- Image upload field -->
         <v-file-input
           v-model="selectedImage"
-          class="mb-2"
+          class="mt-4"
           color="blue-grey darken-3"
           label="Image input"
           accept="image/*"
@@ -26,7 +25,6 @@
         <v-select
           color="blue-grey darken-3"
           :items="methods"
-          class="mb-2"
           v-model="selectedMethod"
           label="Method for centroid generation"
           required
@@ -42,18 +40,21 @@
           :rules="thresholdRules"
           type="number"
         />
-        <!-- Reset and submit button group -->
-        <v-row align="start" justify="space-around">
-          <v-btn color="error" class="mr-4" @click="reset">Reset</v-btn>
-          <v-btn
-            :disabled="!valid"
-            class="blue-grey darken-3 white--text mr-4"
-            @click="validate"
-            >Submit</v-btn
-          >
-        </v-row>
       </v-form>
     </v-card-text>
+    <v-divider />
+    <!-- Reset and submit button group -->
+    <v-card-actions>
+      <v-row align="center" justify="space-around">
+        <v-btn color="error" class="mr-4" @click="reset">Reset</v-btn>
+        <v-btn
+          :disabled="!valid"
+          class="blue-grey darken-3 white--text mr-4"
+          @click="validate"
+          >Submit</v-btn
+        >
+      </v-row>
+    </v-card-actions>
   </v-card>
 </template>
 
