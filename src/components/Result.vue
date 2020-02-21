@@ -60,7 +60,7 @@
           <v-list-item
             v-for="(item, i) in items"
             :key="i"
-            @click="renderResult(item)"
+            @click="generateResult(item)"
           >
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item>
@@ -72,17 +72,17 @@
     <v-card-text>
       <div v-show="!this.configuration.selectedImage && !this.loading">
         <v-row class="fill-height" align-content="center" justify="center">
-          <v-col class="subtitle-1 text-center" cols="12"
-            >Please select an image.</v-col
-          >
+          <v-col class="subtitle-1 text-center" cols="12">
+            Please select an image.
+          </v-col>
         </v-row>
       </div>
       <!-- Progress bar -->
       <div v-show="this.loading">
         <v-row class="fill-height" align-content="center" justify="center">
-          <v-col class="subtitle-1 text-center" cols="12"
-            >Generating the result</v-col
-          >
+          <v-col class="subtitle-1 text-center" cols="12">
+            Generating the result
+          </v-col>
           <v-col cols="6">
             <v-progress-linear
               indeterminate
@@ -110,9 +110,6 @@
           >
             <!-- TODO: Only render a single result that is updated based on the user's needs -->
             <div ref="result" v-show="this.displayResult" id="voronoiResult" />
-            <canvas v-show="this.displayCentroids" id="centroidCanvas" />
-            <canvas v-show="this.displayOriginalImage" id="canvas" />
-            <canvas v-show="this.displayGreyScaleImage" id="greyscaleCanvas" />
           </v-row>
         </fullscreen>
       </div>
@@ -130,10 +127,13 @@ require("tracking/build/data/face-min");
 import {
   uploadImage,
   greyScaleImage,
+  toImageDataUrl,
   computeCentroidsFromGreyScale,
   colorCentroidsByCoordinates
 } from "@/scripts/imageHandler";
 import { renderColoredVoronoi } from "@/scripts/voronoiUsingD3";
+
+import * as d3 from "d3";
 import Fullscreen from "vue-fullscreen/src/component.vue";
 
 export default {
@@ -149,13 +149,11 @@ export default {
         { title: "Result" },
         { title: "Centroids" }
       ],
-      // TODO: Remove this after we use a single div for rendering everything
-      displayOriginalImage: false,
       displayResult: false,
-      displayCentroids: false,
-      displayGreyScaleImage: false,
-      displayEdges: true,
-      fullscreen: false
+      originalImageData: [],
+      centroids: [],
+      fullscreen: false,
+      displayEdges: true
     };
   },
   props: {
@@ -178,18 +176,20 @@ export default {
      * the previous image if the user clicks on the "reset" button and
      * renders the new image when form details are submitted.
      */
-    // TODO: Make this async., but there are currently issues with generateResult
-    // TODO: because we render all "results" inside this method.
-    configuration: function() {
+    configuration: async function() {
       // Don't continue if there is no actual image
       if (!this.configuration.selectedImage) {
         // Clear the previous image
         document.getElementById("voronoiResult").innerHTML = "";
       } else {
         this.loading = true;
-        // TODO: Call method that checks what type of image (e.g., centroid, original, or voronoi) needs to be rendered.
-        this.generateResult();
-        this.generateEdges();
+        const result = await uploadImage(this.configuration.selectedImage);
+        this.originalImageData = {
+          data: [...result.data],
+          width: result.width,
+          height: result.height
+        };
+        this.generateResult({ title: "Result" });
         this.loading = false;
         this.displayResult = true;
       }
@@ -219,152 +219,95 @@ export default {
       this.fullscreen = fullscreen;
     },
     /**
-     * Hides and displays the result based on the @choice picked by the user.
-     *
-     * TODO: This method should not be needed anymore after changing the way we render images.
+     * Sets the voronoiResult div to the given image data
      */
-    renderResult(choice) {
-      // Pre-emptively hide all results
-      this.displayOriginalImage = false;
-      this.displayResult = false;
-      this.displayCentroids = false;
-      this.displayGreyScaleImage = false;
+    setImage(imageData) {
+      d3.select("#voronoiResult")
+        .attr("width", imageData.width)
+        .attr("height", imageData.height)
+        .append("svg")
+        .attr("width", imageData.width)
+        .attr("height", imageData.height)
+        .append("image")
+        .attr("href", toImageDataUrl(imageData))
+        .attr("width", imageData.width)
+        .attr("height", imageData.height);
+    },
+    /**
+     * Renders an image depending on the choice
+     */
+    generateResult(choice) {
+      // Clear the previous image
+      document.getElementById("voronoiResult").innerHTML = "";
+      // TODO: Make the image fit to the div or vice versa.
 
+      let centroids = [];
+      let coloredCentroids = [];
+      let greyScaleImageData;
+      const imageDataCopy = {
+        ...this.originalImageData,
+        data: [...this.originalImageData.data]
+      };
       // Only display the result chosen by the user
       switch (choice.title) {
         case "Original image":
-          this.displayOriginalImage = true;
+          this.setImage(this.originalImageData);
           break;
         case "Result":
-          this.displayResult = true;
-          break;
-        case "Centroids":
-          this.displayCentroids = true;
-          break;
-        default:
-        // TODO: catch error
-      }
-    },
-
-    /**
-     * Renders the original, greyscaled, centroid, and Vornoi diagram.
-     */
-    generateResult() {
-      // TODO: Make the image fit to the div or vice versa.
-
-      // Store all canvas elements that can be present on the page
-      const canvas = ["canvas", "greyscaleCanvas", "centroidCanvas"];
-      let centroids = [];
-
-      // Clear all present canvas elements
-      canvas.map(d => {
-        const canvasElement = document.getElementById(d);
-        const context = canvasElement.getContext("2d");
-        context.clearRect(0, 0, d.width, d.height);
-      });
-
-      // Transfer the image to greyscale and compute the centroids
-      uploadImage(this.configuration.selectedImage).then(imageData => {
-        const originalImageData = {
-          width: imageData.width,
-          height: imageData.height,
-          data: [...imageData.data]
-        };
-        const greyScaleImageData = greyScaleImage(imageData);
-        centroids = [
-          ...computeCentroidsFromGreyScale(
-            greyScaleImageData,
-            0.8,
-            false,
-            20,
-            10
-          ),
-          ...computeCentroidsFromGreyScale(
-            greyScaleImageData,
-            0.5,
-            true,
-            20,
-            10
-          )
-        ];
-        const coloredCentroids = colorCentroidsByCoordinates(
-          originalImageData,
-          centroids
-        );
-        renderColoredVoronoi(
-          coloredCentroids,
-          imageData.width,
-          imageData.height,
-          4
-        );
-      });
-
-      // Rescale the images to fit the page
-      canvas.map(d => {
-        const canvasElement = document.getElementById(d);
-        canvasElement.width = window.innerWidth;
-        canvasElement.height = window.innerHeight;
-      });
-    },
-
-    generateEdges() {
-      const canvas = ["canvas", "findEdges"];
-      // Clear all present canvas elements
-      canvas.map(d => {
-        const canvasElement = document.getElementById(d);
-        const context = canvasElement.getContext("2d");
-        context.clearRect(0, 0, d.width, d.height);
-      });
-
-      // Transfer the image to greyscale and compute the centroids
-      uploadImage(this.configuration.selectedImage).then(imageData => {
-        const originalImageData = {
-          width: imageData.width,
-          height: imageData.height,
-          data: [...imageData.data]
-        };
-        window.fastThreshold = 5;
-
-        var doFindFeatures = function() {
-          window.tracking.Fast.THRESHOLD = window.fastThreshold;
-
-          var gray = window.tracking.Image.grayscale(
-            imageData.data,
-            imageData.width,
-            imageData.height
-          );
-          var corners = window.tracking.Fast.findCorners(
-            gray,
-            imageData.width,
-            imageData.height
-          );
-          let centroids = [{ x: 0, y: 0 }];
-          for (let i = 0; i < corners.length; i += 2) {
-            centroids.push({
-              x: corners[i],
-              y: corners[i + 1]
-            });
-          }
-          const coloredCentroids = colorCentroidsByCoordinates(
-            originalImageData,
+          // TODO: Check all choices passed through the configuration here
+          greyScaleImageData = greyScaleImage(imageDataCopy);
+          centroids = [
+            ...computeCentroidsFromGreyScale(
+              greyScaleImageData,
+              0.8,
+              false,
+              20,
+              10
+            ),
+            ...computeCentroidsFromGreyScale(
+              greyScaleImageData,
+              0.5,
+              true,
+              20,
+              10
+            )
+          ];
+          coloredCentroids = colorCentroidsByCoordinates(
+            this.originalImageData,
             centroids
           );
           renderColoredVoronoi(
             coloredCentroids,
-            imageData.width,
-            imageData.height
+            this.originalImageData.width,
+            this.originalImageData.height,
+            4
           );
-        };
-
-        doFindFeatures();
-      });
-
-      // Rescale the images to fit the page
-      canvas.map(d => {
-        const canvasElement = document.getElementById(d);
-        canvasElement.width = window.innerWidth;
-        canvasElement.height = window.innerHeight;
-      });
+          // TODO: Set the result through setImage
+          // this.setImage(greyScaleImageData);
+          break;
+        case "Centroids":
+          greyScaleImageData = greyScaleImage(imageDataCopy);
+          centroids = [
+            ...computeCentroidsFromGreyScale(
+              greyScaleImageData,
+              0.8,
+              false,
+              20,
+              10
+            ),
+            ...computeCentroidsFromGreyScale(
+              greyScaleImageData,
+              0.5,
+              true,
+              20,
+              10
+            )
+          ];
+          this.setImage(greyScaleImageData);
+          break;
+        default:
+        // TODO: catch error
+      }
     }
   }
 };
@@ -379,5 +322,9 @@ export default {
     justify-content: center;
     align-items: center;
   }
+}
+.voronoiResult {
+  width: 300px;
+  height: 300px;
 }
 </style>
