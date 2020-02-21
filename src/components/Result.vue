@@ -4,17 +4,39 @@
     <v-card-title class="blue-grey darken-3 white--text">
       <span class="title">Result</span>
       <v-spacer />
-      <v-menu bottom left>
-        <template v-slot:activator="{ on }" v-slot:disabled="selectedImage">
-          <v-btn dark v-on="on" icon :disabled="!selectedImage">
-            <v-icon>mdi-dots-vertical</v-icon>
-          </v-btn>
-          <v-btn dark @click="toggle" icon :disabled="!selectedImage">
+      <!-- TODO: Refactor to for loop -->
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn dark @click="toggle" v-on="on" icon :disabled="loading">
             <v-icon>mdi-fullscreen</v-icon>
           </v-btn>
-          <v-btn dark @click="saveImage" icon :disabled="!selectedImage">
+        </template>
+        <span>View the result in fullscreen</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn dark @click="saveImage" v-on="on" icon :disabled="loading">
             <v-icon>mdi-content-save-outline</v-icon>
           </v-btn>
+        </template>
+        <span>Save the image</span>
+      </v-tooltip>
+
+      <v-menu bottom left origin="center center" transition="scale-transition">
+        <template v-slot:activator="{ on: menu }" v-slot:disabled="{ loading }">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on: tooltip }">
+              <v-btn
+                dark
+                v-on="{ ...tooltip, ...menu }"
+                icon
+                :disabled="loading"
+              >
+                <v-icon>mdi-dots-vertical</v-icon>
+              </v-btn>
+            </template>
+            <span> Display other options </span>
+          </v-tooltip>
         </template>
         <v-list>
           <v-list-item>
@@ -36,7 +58,7 @@
 
     <!-- Card content -->
     <v-card-text>
-      <div v-show="!this.selectedImage && !this.loading">
+      <div v-show="!this.configuration.selectedImage && !this.loading">
         <v-row class="fill-height" align-content="center" justify="center">
           <v-col class="subtitle-1 text-center" cols="12"
             >Please select an image.</v-col
@@ -69,7 +91,11 @@
           background="#eee"
         >
           <!-- The image represneting the result -->
-          <v-row v-show="this.selectedImage" align="start" justify="center">
+          <v-row
+            v-show="this.configuration.selectedImage"
+            align="start"
+            justify="center"
+          >
             <!-- TODO: Only render a single result that is updated based on the user's needs -->
             <div ref="result" v-show="this.displayResult" id="voronoiResult" />
             <canvas v-show="this.displayCentroids" id="centroidCanvas" />
@@ -95,14 +121,14 @@ import {
   computeCentroidsFromGreyScale,
   colorCentroidsByCoordinates
 } from "@/scripts/imageHandler";
-
 import { renderColoredVoronoi } from "@/scripts/voronoiUsingD3";
-
 import Fullscreen from "vue-fullscreen/src/component.vue";
 
 export default {
   name: "Result",
-
+  components: {
+    Fullscreen
+  },
   data() {
     return {
       loading: false,
@@ -120,7 +146,6 @@ export default {
       fullscreen: false
     };
   },
-
   props: {
     // The configuration that is set by the user
     configuration: {
@@ -135,25 +160,6 @@ export default {
       }
     }
   },
-
-  components: {
-    Fullscreen
-  },
-
-  computed: {
-    // Set the parameters from the configurations
-    // Cannot use the configuration property directly in the code because of template slots not liking this
-    selectedImage() {
-      return this.configuration.selectedImage;
-    },
-    selectedMethod() {
-      return this.configuration.selectedMethod;
-    },
-    selectedThreshold() {
-      return this.configuration.selectedThreshold;
-    }
-  },
-
   watch: {
     /**
      * Watcher on the configuration provided by the user that removes
@@ -164,7 +170,7 @@ export default {
     // TODO: because we render all "results" inside this method.
     configuration: function() {
       // Don't continue if there is no actual image
-      if (!this.selectedImage) {
+      if (!this.configuration.selectedImage) {
         // Clear the previous image
         document.getElementById("voronoiResult").innerHTML = "";
       } else {
@@ -177,7 +183,6 @@ export default {
       }
     }
   },
-
   methods: {
     /**
      * Opens a prompt with which an image can be saved.
@@ -247,7 +252,7 @@ export default {
       });
 
       // Transfer the image to greyscale and compute the centroids
-      uploadImage(this.selectedImage).then(imageData => {
+      uploadImage(this.configuration.selectedImage).then(imageData => {
         const originalImageData = {
           width: imageData.width,
           height: imageData.height,
@@ -300,7 +305,7 @@ export default {
       });
 
       // Transfer the image to greyscale and compute the centroids
-      uploadImage(this.selectedImage).then(imageData => {
+      uploadImage(this.configuration.selectedImage).then(imageData => {
         const originalImageData = {
           width: imageData.width,
           height: imageData.height,
