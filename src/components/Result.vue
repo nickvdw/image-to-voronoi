@@ -165,7 +165,11 @@ export default {
         return {
           selectedImage: null,
           selectedMethod: null,
-          selectedThreshold: null
+          selectedThreshold: null,
+          selectedAlgorithm: null,
+          // These are false by default in the UI
+          displayEdges: false,
+          displayCentroids: false
         };
       }
     }
@@ -177,11 +181,8 @@ export default {
      * renders the new image when form details are submitted.
      */
     configuration: async function() {
-      // Don't continue if there is no actual image
-      if (!this.configuration.selectedImage) {
-        // Clear the previous image
-        document.getElementById("voronoiResult").innerHTML = "";
-      } else {
+      // Only continue if there is an actual image
+      if (this.configuration.selectedImage) {
         this.loading = true;
         const result = await uploadImage(this.configuration.selectedImage);
         this.originalImageData = {
@@ -190,8 +191,11 @@ export default {
           height: result.height
         };
         this.generateResult({ title: "Result" });
-        this.loading = false;
         this.displayResult = true;
+        this.loading = false;
+      } else {
+        // Clear the previous image
+        document.getElementById("voronoiResult").innerHTML = "";
       }
     }
   },
@@ -308,6 +312,7 @@ export default {
         default:
         // TODO: catch error
       }
+      return;
     }
   }
 };

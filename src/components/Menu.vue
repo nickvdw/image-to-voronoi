@@ -12,18 +12,28 @@
         <!-- Image upload field -->
         <v-file-input
           v-model="selectedImage"
-          class="mt-4"
           color="blue-grey darken-3"
-          label="Image input"
+          label="Input image"
           accept="image/*"
           prepend-icon="mdi-camera"
           :show-size="1000"
           required
           :rules="imageRules"
         />
+        <!-- Algorithms to use -->
+        <v-select
+          color="blue-grey darken-3"
+          item-color="blue-grey darken-4"
+          :items="algorithms"
+          v-model="selectedAlgorithm"
+          label="Algorithm"
+          required
+          :rules="algorithmRules"
+        />
         <!-- Field to select method for centroid generation -->
         <v-select
           color="blue-grey darken-3"
+          item-color="blue-grey darken-4"
           :items="methods"
           v-model="selectedMethod"
           label="Method for centroid generation"
@@ -33,12 +43,20 @@
         <!-- Threshold for number of centroids -->
         <v-text-field
           color="blue-grey darken-3"
-          v-if="selectedMethod === 'Edge detection'"
           label="Number of centroids"
-          class="mb-2"
           v-model="selectedThreshold"
           :rules="thresholdRules"
           type="number"
+        />
+        <v-checkbox
+          color="blue-grey darken-3"
+          v-model="displayEdges"
+          label="Display edges"
+        />
+        <v-checkbox
+          color="blue-grey darken-3"
+          v-model="displayCentroids"
+          label="Display centroids"
         />
       </v-form>
     </v-card-text>
@@ -46,13 +64,17 @@
     <!-- Reset and submit button group -->
     <v-card-actions>
       <v-row align="center" justify="space-around">
-        <v-btn color="error" class="mr-4" @click="reset">Reset</v-btn>
+        <v-btn color="error" @click="reset">Reset</v-btn>
         <v-btn
           :disabled="!valid"
-          class="blue-grey darken-3 white--text mr-4"
+          class="blue-grey darken-3 white--text"
           @click="validate"
-          >Submit</v-btn
         >
+          Submit
+        </v-btn>
+        <v-btn class="blue-grey darken-3 white--text" @click="testValidate">
+          Test
+        </v-btn>
       </v-row>
     </v-card-actions>
   </v-card>
@@ -72,13 +94,21 @@ export default {
     methodRules: [v => !!v || "A method is required"],
     selectedMethod: "",
 
+    // Available methods for the algorithms and associated rules
+    algorithms: ["Naive", "Delaunay triangulation"],
+    algorithmRules: [v => !!v || "An algorithm is required"],
+    selectedAlgorithm: "",
+
     // Selected threshold and associated rules
-    selectedThreshold: 10,
+    selectedThreshold: 100,
     thresholdRules: [
       v =>
-        (!!v && v <= 1000 && v >= 10) ||
-        "A threshold of at least 10 and at most 1000 is required"
+        (!!v && v <= 5000 && v >= 1) ||
+        "A threshold of at least 1 and at most 5000 is required"
     ],
+
+    displayEdges: false,
+    displayCentroids: false,
 
     // Whether or not the form is valid
     valid: false
@@ -95,10 +125,24 @@ export default {
       if (this.$refs.form.validate()) {
         this.$emit("submit", {
           selectedImage: this.selectedImage,
+          selectedAlgorithm: this.selectedAlgorithm,
           selectedMethod: this.selectedMethod,
-          selectedThreshold: this.selectedThreshold
+          selectedThreshold: this.selectedThreshold,
+          displayEdges: this.displayEdges,
+          displayCentroids: this.displayCentroids
         });
       }
+    },
+
+    testValidate() {
+      this.$emit("submit", {
+        selectedImage: this.selectedImage,
+        selectedAlgorithm: this.selectedAlgorithm,
+        selectedMethod: this.selectedMethod,
+        selectedThreshold: this.selectedThreshold,
+        displayEdges: this.displayEdges,
+        displayCentroids: this.displayCentroids
+      });
     },
 
     /**
