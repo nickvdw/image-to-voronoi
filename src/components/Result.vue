@@ -106,7 +106,7 @@
         @change="fullscreenChange"
         background="#eee"
       >
-        <!-- The image represneting the result -->
+        <!-- The image representing the result -->
         <div align="start" justify="center" ref="result" id="voronoiResult" />
       </fullscreen>
       <div>
@@ -118,7 +118,6 @@
 
 <script>
 require("tracking");
-require("tracking/build/data/face-min");
 
 import {
   uploadImage,
@@ -128,6 +127,7 @@ import {
   colorCentroidsByCoordinates
 } from "@/scripts/imageHandler";
 import { renderColoredVoronoi } from "@/scripts/voronoiUsingD3";
+import { findFeatures } from "@/scripts/featureDetection";
 
 import * as d3 from "d3";
 import Fullscreen from "vue-fullscreen/src/component.vue";
@@ -239,7 +239,6 @@ export default {
       // Clear the previous image
       document.getElementById("voronoiResult").innerHTML = "";
       // TODO: Make the image fit to the div or vice versa.
-
       let centroids = [];
       let coloredCentroids = [];
       let greyScaleImageData;
@@ -254,60 +253,88 @@ export default {
           this.setImage(this.originalImageData);
           break;
         case "Result":
-          // TODO: Check all choices passed through the configuration here
-          greyScaleImageData = greyScaleImage(imageDataCopy);
-          centroids = [
-            ...computeCentroidsFromGreyScale(
-              greyScaleImageData,
-              0.8,
-              false,
-              20,
-              10
-            ),
-            ...computeCentroidsFromGreyScale(
-              greyScaleImageData,
-              0.5,
-              true,
-              20,
-              10
-            )
-          ];
-          coloredCentroids = colorCentroidsByCoordinates(
-            this.originalImageData,
-            centroids
-          );
-          //
-          renderColoredVoronoi(
-            coloredCentroids,
-            this.originalImageData.width,
-            this.originalImageData.height,
-            document.getElementById("resultContainer").offsetWidth,
-            // We subtract 5 pixels from the height so that the card still has a round border
-            document.getElementById("resultContainer").offsetHeight - 10,
-            4
-          );
+          if (this.configuration.selectedMethod == "Edge detection") {
+            findFeatures(this.originalImageData);
+          } else {
+            // TODO: Check all choices passed through the configuration here
+            greyScaleImageData = greyScaleImage(imageDataCopy);
+            centroids = [
+              ...computeCentroidsFromGreyScale(
+                greyScaleImageData,
+                0.8,
+                false,
+                20,
+                10
+              ),
+              ...computeCentroidsFromGreyScale(
+                greyScaleImageData,
+                0.5,
+                true,
+                20,
+                10
+              )
+            ];
+            coloredCentroids = colorCentroidsByCoordinates(
+              this.originalImageData,
+              centroids
+            );
+            //
+            renderColoredVoronoi(
+              coloredCentroids,
+              this.originalImageData.width,
+              this.originalImageData.height,
+              document.getElementById("resultContainer").offsetWidth,
+              // We subtract 5 pixels from the height so that the card still has a round border
+              document.getElementById("resultContainer").offsetHeight - 10,
+              4
+            );
+          }
           // TODO: Set the result through setImage
           // this.setImage(greyScaleImageData);
           break;
         case "Centroids":
-          greyScaleImageData = greyScaleImage(imageDataCopy);
-          centroids = [
-            ...computeCentroidsFromGreyScale(
-              greyScaleImageData,
-              0.8,
-              false,
-              20,
-              10
-            ),
-            ...computeCentroidsFromGreyScale(
-              greyScaleImageData,
-              0.5,
-              true,
-              20,
-              10
-            )
-          ];
-          this.setImage(greyScaleImageData);
+          if (this.configuration.selectedMethod == "Edge detection") {
+            window.fastThreshold = 15;
+
+            window.tracking.Fast.THRESHOLD = window.fastThreshold;
+            const gray = window.tracking.Image.sobel(
+              this.originalImageData.data,
+              this.originalImageData.width,
+              this.originalImageData.height
+            );
+            const corners = window.tracking.Fast.findCorners(
+              gray,
+              this.originalImageData.width,
+              this.originalImageData.height
+            );
+            let centroids = [{ x: 0, y: 0 }];
+            for (let i = 0; i < corners.length; i += 2) {
+              centroids.push({
+                x: corners[i],
+                y: corners[i + 1]
+              });
+            }
+            this.setImage(centroids);
+          } else {
+            greyScaleImageData = greyScaleImage(imageDataCopy);
+            centroids = [
+              ...computeCentroidsFromGreyScale(
+                greyScaleImageData,
+                0.8,
+                false,
+                20,
+                10
+              ),
+              ...computeCentroidsFromGreyScale(
+                greyScaleImageData,
+                0.5,
+                true,
+                20,
+                10
+              )
+            ];
+            this.setImage(greyScaleImageData);
+          }
           break;
         default:
         // TODO: catch error
