@@ -107,13 +107,7 @@
         background="#eee"
       >
         <!-- The image represneting the result -->
-        <v-responsive
-          align="start"
-          justify="center"
-          ref="result"
-          v-show="this.displayResult"
-          id="voronoiResult"
-        />
+        <div align="start" justify="center" ref="result" id="voronoiResult" />
       </fullscreen>
       <div>
         <canvas v-show="this.configuration.displayEdges" id="findEdges" />
@@ -228,9 +222,15 @@ export default {
      */
     setImage(imageData) {
       d3.select("#voronoiResult")
+        .attr("width", imageData.width)
+        .attr("height", imageData.height)
         .append("svg")
+        .attr("width", imageData.width)
+        .attr("height", imageData.height)
         .append("image")
-        .attr("href", toImageDataUrl(imageData));
+        .attr("href", toImageDataUrl(imageData))
+        .attr("width", imageData.width)
+        .attr("height", imageData.height);
     },
     /**
      * Renders an image depending on the choice
@@ -327,20 +327,5 @@ export default {
     justify-content: center;
     align-items: center;
   }
-}
-
-.svg-container {
-  display: inline-block;
-  position: relative;
-  width: 100%;
-  padding-bottom: 100%; /* aspect ratio */
-  vertical-align: top;
-  overflow: hidden;
-}
-.svg-content-responsive {
-  display: inline-block;
-  position: absolute;
-  top: 10px;
-  left: 0;
 }
 </style>
