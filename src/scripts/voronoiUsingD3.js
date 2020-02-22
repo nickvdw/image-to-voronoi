@@ -142,7 +142,7 @@ export const renderColoredVoronoi = (
     .attr("viewBox", `0 0 ${width} ${height}`)
     .attr("width", windowWidth)
     .attr("height", windowHeight)
-    .style("background-color", "#37474F");
+    .style("background-color", "#fff");
   console.log(k);
   console.log(document.getElementById("resultContainer").offsetHeight);
   // Generate the delaunay triangulation of our data

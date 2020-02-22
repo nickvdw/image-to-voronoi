@@ -73,11 +73,7 @@
     </v-card-title>
 
     <!-- Card content -->
-    <v-card-text
-      id="resultContainer"
-      class="pa-0 ma-0"
-      style="height: 100%; background-color: #37474F"
-    >
+    <v-card-text id="resultContainer" class="pa-0 ma-0" style="height: 100%">
       <div v-show="!this.configuration.selectedImage && !this.loading">
         <v-row class="fill-height" align-content="center" justify="center">
           <v-col class="subtitle-1 text-center" cols="12">
@@ -88,7 +84,7 @@
       <!-- Progress bar -->
       <div v-show="this.loading">
         <v-row class="fill-height" align-content="center" justify="center">
-          <v-col class="subtitle-1 white--text text-center" cols="12">
+          <v-col class="subtitle-1 text-center" cols="12">
             Generating the result
           </v-col>
           <v-col cols="6">
