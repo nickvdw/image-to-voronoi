@@ -131,11 +131,11 @@ export const renderColoredVoronoi = (
   width,
   height,
   windowWidth,
-  windowHeight,
-  k
+  windowHeight
 ) => {
   console.log(windowHeight, height);
   console.log(windowWidth, width);
+  console.log(centroids);
   const svg = d3
     .select("#voronoiResult")
     .append("svg")
@@ -143,8 +143,6 @@ export const renderColoredVoronoi = (
     .attr("width", windowWidth)
     .attr("height", windowHeight)
     .style("background-color", "#fff");
-  console.log(k);
-  console.log(document.getElementById("resultContainer").offsetHeight);
   // Generate the delaunay triangulation of our data
   // takes data, x accessor and y accessor as arguments
   const delaunay = d3Delaunay.Delaunay.from(

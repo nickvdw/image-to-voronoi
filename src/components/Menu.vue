@@ -43,7 +43,8 @@
         <!-- Threshold for number of centroids -->
         <v-text-field
           color="blue-grey darken-3"
-          label="Number of centroids"
+          label="Threshold"
+          v-show="this.selectedMethod === 'Corner detection'"
           v-model="selectedThreshold"
           :rules="thresholdRules"
           type="number"
@@ -87,9 +88,9 @@ export default {
     imageRules: [v => (!!v && v !== []) || "An image is required"],
 
     // Available methods for the centroid generation and associated rules
-    methods: ["Edge detection", "Random"],
+    methods: ["Corner detection", "Based on greyscale intensities"],
     methodRules: [v => !!v || "A method is required"],
-    selectedMethod: "Edge detection",
+    selectedMethod: "Corner detection",
 
     // Available methods for the algorithms and associated rules
     algorithms: ["Naive", "Delaunay triangulation"],
@@ -97,11 +98,11 @@ export default {
     selectedAlgorithm: "Delaunay triangulation",
 
     // Selected threshold and associated rules
-    selectedThreshold: 100,
+    selectedThreshold: 25,
     thresholdRules: [
       v =>
-        (!!v && v <= 5000 && v >= 1) ||
-        "A threshold of at least 1 and at most 5000 is required"
+        (!!v && v <= 100 && v >= 0) ||
+        "A threshold of at least 0 and at most 100 is required"
     ],
 
     displayEdges: false,
