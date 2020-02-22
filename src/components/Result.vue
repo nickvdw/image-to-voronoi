@@ -1,5 +1,9 @@
 <template>
-  <v-card elevation="12">
+  <v-card
+    class="fullHeight"
+    style="display: flex; flex-direction: column;"
+    elevation="12"
+  >
     <!-- Card title -->
     <v-card-title class="blue-grey darken-3 white--text">
       <span class="title">Result</span>
@@ -69,7 +73,11 @@
     </v-card-title>
 
     <!-- Card content -->
-    <v-card-text>
+    <v-card-text
+      id="resultContainer"
+      class="pa-0 ma-0"
+      style="height: 100%; background-color: #37474F"
+    >
       <div v-show="!this.configuration.selectedImage && !this.loading">
         <v-row class="fill-height" align-content="center" justify="center">
           <v-col class="subtitle-1 text-center" cols="12">
@@ -80,7 +88,7 @@
       <!-- Progress bar -->
       <div v-show="this.loading">
         <v-row class="fill-height" align-content="center" justify="center">
-          <v-col class="subtitle-1 text-center" cols="12">
+          <v-col class="subtitle-1 white--text text-center" cols="12">
             Generating the result
           </v-col>
           <v-col cols="6">
@@ -94,27 +102,25 @@
         </v-row>
       </div>
       <!-- Image result  -->
-      <div v-show="!this.loading">
-        <fullscreen
-          class="wrapper"
-          :fullscreen.sync="fullscreen"
-          ref="fullscreen"
-          @change="fullscreenChange"
-          background="#eee"
-        >
-          <!-- The image represneting the result -->
-          <v-row
-            v-show="this.configuration.selectedImage"
-            align="start"
-            justify="center"
-          >
-            <!-- TODO: Only render a single result that is updated based on the user's needs -->
-            <div ref="result" v-show="this.displayResult" id="voronoiResult" />
-          </v-row>
-        </fullscreen>
-      </div>
+      <fullscreen
+        class="wrapper"
+        v-show="!this.loading"
+        :fullscreen.sync="fullscreen"
+        ref="fullscreen"
+        @change="fullscreenChange"
+        background="#eee"
+      >
+        <!-- The image represneting the result -->
+        <v-responsive
+          align="start"
+          justify="center"
+          ref="result"
+          v-show="this.displayResult"
+          id="voronoiResult"
+        />
+      </fullscreen>
       <div>
-        <canvas v-show="this.displayEdges" id="findEdges" />
+        <canvas v-show="this.configuration.displayEdges" id="findEdges" />
       </div>
     </v-card-text>
   </v-card>
@@ -152,8 +158,7 @@ export default {
       displayResult: false,
       originalImageData: [],
       centroids: [],
-      fullscreen: false,
-      displayEdges: true
+      fullscreen: false
     };
   },
   props: {
@@ -227,20 +232,14 @@ export default {
      */
     setImage(imageData) {
       d3.select("#voronoiResult")
-        .attr("width", imageData.width)
-        .attr("height", imageData.height)
         .append("svg")
-        .attr("width", imageData.width)
-        .attr("height", imageData.height)
         .append("image")
-        .attr("href", toImageDataUrl(imageData))
-        .attr("width", imageData.width)
-        .attr("height", imageData.height);
+        .attr("href", toImageDataUrl(imageData));
     },
     /**
      * Renders an image depending on the choice
      */
-    generateResult(choice) {
+    async generateResult(choice) {
       // Clear the previous image
       document.getElementById("voronoiResult").innerHTML = "";
       // TODO: Make the image fit to the div or vice versa.
@@ -252,6 +251,7 @@ export default {
         ...this.originalImageData,
         data: [...this.originalImageData.data]
       };
+
       // Only display the result chosen by the user
       switch (choice.title) {
         case "Original image":
@@ -280,10 +280,14 @@ export default {
             this.originalImageData,
             centroids
           );
+          //
           renderColoredVoronoi(
             coloredCentroids,
             this.originalImageData.width,
             this.originalImageData.height,
+            document.getElementById("resultContainer").offsetWidth,
+            // We subtract 5 pixels from the height so that the card still has a round border
+            document.getElementById("resultContainer").offsetHeight - 10,
             4
           );
           // TODO: Set the result through setImage
@@ -328,8 +332,19 @@ export default {
     align-items: center;
   }
 }
-.voronoiResult {
-  width: 300px;
-  height: 300px;
+
+.svg-container {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  padding-bottom: 100%; /* aspect ratio */
+  vertical-align: top;
+  overflow: hidden;
+}
+.svg-content-responsive {
+  display: inline-block;
+  position: absolute;
+  top: 10px;
+  left: 0;
 }
 </style>

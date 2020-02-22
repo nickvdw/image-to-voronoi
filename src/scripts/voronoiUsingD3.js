@@ -126,14 +126,25 @@ export const renderVoronoiUsingD3 = (centroids, width, height, k) => {
   );
 };
 
-export const renderColoredVoronoi = (centroids, width, height, k) => {
+export const renderColoredVoronoi = (
+  centroids,
+  width,
+  height,
+  windowWidth,
+  windowHeight,
+  k
+) => {
+  console.log(windowHeight, height);
+  console.log(windowWidth, width);
   const svg = d3
     .select("#voronoiResult")
     .append("svg")
-    .attr("width", width)
-    .attr("height", height)
-    .style("background-color", "#1a1a1a");
+    .attr("viewBox", `0 0 ${width} ${height}`)
+    .attr("width", windowWidth)
+    .attr("height", windowHeight)
+    .style("background-color", "#37474F");
   console.log(k);
+  console.log(document.getElementById("resultContainer").offsetHeight);
   // Generate the delaunay triangulation of our data
   // takes data, x accessor and y accessor as arguments
   const delaunay = d3Delaunay.Delaunay.from(
@@ -169,6 +180,12 @@ export const renderColoredVoronoi = (centroids, width, height, k) => {
   //   .attr("cy", d => d.y)
   //   .attr("r", 1.5)
   //   .style("fill", "white");
+
+  // Get the current dimensions
+  // const dimensions = [
+  //   d3.select("svg").attr("width"),
+  //   d3.select("svg").attr("height")
+  // ].map(Number);
 
   return svg.node();
 };

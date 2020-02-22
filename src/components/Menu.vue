@@ -72,9 +72,6 @@
         >
           Submit
         </v-btn>
-        <v-btn class="blue-grey darken-3 white--text" @click="testValidate">
-          Test
-        </v-btn>
       </v-row>
     </v-card-actions>
   </v-card>
@@ -92,12 +89,12 @@ export default {
     // Available methods for the centroid generation and associated rules
     methods: ["Edge detection", "Random"],
     methodRules: [v => !!v || "A method is required"],
-    selectedMethod: "",
+    selectedMethod: "Edge detection",
 
     // Available methods for the algorithms and associated rules
     algorithms: ["Naive", "Delaunay triangulation"],
     algorithmRules: [v => !!v || "An algorithm is required"],
-    selectedAlgorithm: "",
+    selectedAlgorithm: "Delaunay triangulation",
 
     // Selected threshold and associated rules
     selectedThreshold: 100,
@@ -132,17 +129,6 @@ export default {
           displayCentroids: this.displayCentroids
         });
       }
-    },
-
-    testValidate() {
-      this.$emit("submit", {
-        selectedImage: this.selectedImage,
-        selectedAlgorithm: this.selectedAlgorithm,
-        selectedMethod: this.selectedMethod,
-        selectedThreshold: this.selectedThreshold,
-        displayEdges: this.displayEdges,
-        displayCentroids: this.displayCentroids
-      });
     },
 
     /**
