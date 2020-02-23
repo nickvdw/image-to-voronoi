@@ -52,8 +52,6 @@ export const resultFromDelaunayGreyscaling = (
   const voronoi = delaunay.voronoi([0, 0, imageData.width, imageData.height]);
 
   // Construct the result
-  // TODO: Handle the cases for @displayEdges and @displayCentroids
-  console.log(displayEdges, displayCentroids);
   svg
     .selectAll("path")
     // Construct a data object from each cell of our voronoi diagram
@@ -65,4 +63,27 @@ export const resultFromDelaunayGreyscaling = (
         `rgb(${centroids[i].color[0]},${centroids[i].color[1]},${centroids[i].color[2]})`
       )
     );
+
+  // Add the edges if they need to be added
+  // TODO: Add parameters for colours and opacities in the UI
+  if (displayEdges) {
+    svg
+      .selectAll("path")
+      .style("opacity", 0.6)
+      .style("stroke", "white")
+      .style("stroke-opacity", 0.2);
+  }
+
+  // Add the centroids if they need to be added
+  // TODO: Add parameters for sizes and colours in the UI
+  if (displayCentroids) {
+    centroids.forEach(centroid => {
+      svg
+        .append("circle")
+        .attr("cx", centroid.x)
+        .attr("cy", centroid.y)
+        .attr("r", 1)
+        .attr("fill", "red");
+    });
+  }
 };
