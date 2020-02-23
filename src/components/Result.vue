@@ -74,29 +74,36 @@
 
     <!-- Card content -->
     <v-card-text id="resultContainer" class="pa-0 ma-0" style="height: 100%">
-      <div v-show="!this.configuration.selectedImage && !this.loading">
-        <v-row class="fill-height" align-content="center" justify="center">
-          <v-col class="subtitle-1 text-center" cols="12">
-            Please select an image.
-          </v-col>
-        </v-row>
-      </div>
+      <v-row
+        v-show="!this.configuration.selectedImage && !this.loading"
+        class="fill-height"
+        align-content="center"
+        justify="center"
+      >
+        <v-col class="subtitle-1 text-center" cols="12">
+          Please select an image.
+        </v-col>
+      </v-row>
       <!-- Progress bar -->
-      <div v-show="this.loading">
-        <v-row class="fill-height" align-content="center" justify="center">
-          <v-col class="subtitle-1 text-center" cols="12">
-            Generating the result
-          </v-col>
-          <v-col cols="6">
-            <v-progress-linear
-              indeterminate
-              rounded
-              color="blue-grey darken-3"
-              height="12"
-            />
-          </v-col>
-        </v-row>
-      </div>
+      <v-row
+        style="height: 100%"
+        v-show="this.loading"
+        class="fill-height"
+        align-content="center"
+        justify="center"
+      >
+        <v-col class="subtitle-1 text-center" cols="12">
+          Generating the result
+        </v-col>
+        <v-col cols="6">
+          <v-progress-linear
+            indeterminate
+            rounded
+            color="blue-grey darken-3"
+            height="12"
+          />
+        </v-col>
+      </v-row>
       <!-- Image result  -->
       <fullscreen
         class="wrapper"
