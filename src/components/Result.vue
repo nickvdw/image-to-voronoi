@@ -13,20 +13,6 @@
         <template v-slot:activator="{ on }">
           <v-btn
             dark
-            @click="toggle"
-            v-on="on"
-            icon
-            :disabled="!configuration.selectedImage"
-          >
-            <v-icon>mdi-fullscreen</v-icon>
-          </v-btn>
-        </template>
-        <span>View the result in fullscreen</span>
-      </v-tooltip>
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            dark
             @click="saveImage"
             v-on="on"
             icon
@@ -37,8 +23,22 @@
         </template>
         <span>Save the image</span>
       </v-tooltip>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            dark
+            @click="toggle"
+            v-on="on"
+            icon
+            :disabled="!configuration.selectedImage"
+          >
+            <v-icon>mdi-fullscreen</v-icon>
+          </v-btn>
+        </template>
+        <span>View the result in fullscreen</span>
+      </v-tooltip>
 
-      <v-menu bottom left origin="center center" transition="scale-transition">
+      <!-- <v-menu bottom left origin="center center" transition="scale-transition">
         <template v-slot:activator="{ on: menu }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on: tooltip }">
@@ -69,7 +69,7 @@
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item>
         </v-list>
-      </v-menu>
+      </v-menu> -->
     </v-card-title>
 
     <!-- Card content -->
@@ -126,6 +126,8 @@
 <script>
 require("tracking");
 
+/* eslint-disable no-unused-vars */
+
 import { uploadImage, toImageDataUrl } from "@/scripts/imageHandler";
 // import { renderColoredVoronoi } from "@/scripts/voronoiUsingD3";
 import { resultFromDelaunayCorners } from "@/scripts/delaunayBasedRendering/centroidsFromCorners";
@@ -148,7 +150,6 @@ export default {
         { title: "Result" },
         { title: "Centroids" }
       ],
-      displayResult: false,
       originalImageData: [],
       centroids: [],
       fullscreen: false
@@ -189,7 +190,6 @@ export default {
           height: result.height
         };
         this.generateResult({ title: "Result" });
-        this.displayResult = true;
         this.loading = false;
       } else {
         // Clear the previous image
@@ -238,7 +238,7 @@ export default {
     /**
      * Renders an image depending on the choice
      */
-    async generateResult(choice) {
+    generateResult(choice) {
       // Clear the previous image
       document.getElementById("voronoiResult").innerHTML = "";
 
@@ -293,7 +293,6 @@ export default {
         default:
         // TODO: catch error
       }
-      return;
     }
   }
 };
