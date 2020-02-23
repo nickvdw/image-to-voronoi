@@ -76,6 +76,11 @@
               v-model="displayCentroids"
               label="Display centroids"
             />
+            <v-checkbox
+              color="blue-grey darken-3"
+              v-model="displayColour"
+              label="Display coloured cells"
+            />
           </v-col>
         </v-row>
       </v-form>
@@ -158,6 +163,7 @@ export default {
 
     displayEdges: false,
     displayCentroids: false,
+    displayColour: false,
 
     // Whether or not the form is valid
     valid: false,
@@ -224,6 +230,7 @@ export default {
           selectedThreshold: this.selectedThreshold,
           displayEdges: this.displayEdges,
           displayCentroids: this.displayCentroids,
+          displayColour: this.displayColour,
           croppedImageData: this.imageData,
           coordinateMargins: this.coordinateMargins
         });

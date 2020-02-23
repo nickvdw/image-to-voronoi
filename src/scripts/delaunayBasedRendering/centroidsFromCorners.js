@@ -11,6 +11,7 @@ export const resultFromDelaunayCorners = (
   threshold,
   displayEdges,
   displayCentroids,
+  displayColour,
   croppedImageData,
   coordinateMargins
 ) => {
@@ -84,6 +85,7 @@ export const resultFromDelaunayCorners = (
   );
 
   // Compute the Voronoi diagram from the triangulation
+  /* eslint no-unused-vars: "off" */
   const voronoi = delaunay.voronoi([
     0,
     0,
@@ -93,18 +95,28 @@ export const resultFromDelaunayCorners = (
 
   // Construct the result
   // TODO: Handle the cases for @displayEdges and @displayCentroids
-  console.log(displayEdges, displayCentroids);
-  svg
-    .selectAll("path")
-    // Construct a data object from each cell of our voronoi diagram
-    .data(centroids.map((d, i) => voronoi.renderCell(i)))
-    .join("path")
-    .attr("d", d => d)
-    .style("fill", (d, i) =>
-      d3.color(
-        `rgb(${centroids[i].color[0]},${centroids[i].color[1]},${centroids[i].color[2]})`
-      )
-    );
+  console.log(displayEdges, displayCentroids, displayColour);
+  if (displayColour) {
+    svg
+      .selectAll("path")
+      // Construct a data object from each cell of our voronoi diagram
+      .data(centroids.map((d, i) => voronoi.renderCell(i)))
+      .join("path")
+      .attr("d", d => d)
+      .style("fill", (d, i) =>
+        d3.color(
+          `rgb(${centroids[i].color[0]},${centroids[i].color[1]},${centroids[i].color[2]})`
+        )
+      );
+  } else {
+    svg
+      .selectAll("path")
+      // Construct a data object from each cell of our voronoi diagram
+      .data(centroids.map((d, i) => voronoi.renderCell(i)))
+      .join("path")
+      .attr("d", d => d)
+      .style("fill", (d, i) => d3.color(`rgb(255, 255, 255)`));
+  }
 
   // Add the edges if they need to be added
   // TODO: Add parameters for colours and opacities in the UI

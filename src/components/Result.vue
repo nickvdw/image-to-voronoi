@@ -170,6 +170,7 @@ export default {
           // These are false by default in the UI
           displayEdges: false,
           displayCentroids: false,
+          displayColour: false,
           croppedImageData: null,
           coordinateMargins: null
         };
@@ -260,6 +261,7 @@ export default {
                 parseInt(this.configuration.selectedThreshold),
                 this.configuration.displayEdges,
                 this.configuration.displayCentroids,
+                this.configuration.displayColour,
                 this.configuration.croppedImageData,
                 this.configuration.coordinateMargins
               );
