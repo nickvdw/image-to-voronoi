@@ -89,7 +89,7 @@
           >Select the important region</v-card-title
         >
         <v-card-text>
-          <cropper class="cropper" ref="cropper" :src="image"></cropper>
+          <cropper class="cropper" ref="cropper" :src="croppedImage"></cropper>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -126,11 +126,10 @@ export default {
 
   data: () => ({
     // Cropped image
-    image: null,
-
-    // Object representing the start (top-left) and end (bottom-right) points of
-    // the cropped image
-    croppedCoordinates: null,
+    croppedImage: null,
+    // Image data of the cropped image
+    imageData: null,
+    coordinateMargins: null,
 
     // Initial image and associated rules
     selectedImage: null,
@@ -172,19 +171,21 @@ export default {
   methods: {
     submitCrop() {
       // Obtain the coordinates of the cropped image selection
-      const { coordinates } = this.$refs.cropper.getResult();
-      // Set the coordinates as a cropped coordinates object with a
-      // start and end point
-      this.croppedCoordinates = {
-        start: { x: coordinates.left, y: coordinates.top },
-        end: {
-          x: coordinates.left + coordinates.width,
-          y: coordinates.top + coordinates.height
-        }
+      const { coordinates, canvas } = this.$refs.cropper.getResult();
+
+      const ctx = canvas.getContext("2d");
+      this.imageData = ctx.getImageData(
+        0,
+        0,
+        coordinates.width,
+        coordinates.height
+      );
+
+      this.coordinateMargins = {
+        width: coordinates.left,
+        height: coordinates.top
       };
 
-      // Cropped image
-      // this.image = canvas.toDataURL();
       this.dialog = false;
     },
     uploadImage() {
@@ -195,7 +196,7 @@ export default {
         const reader = new FileReader();
         // Define a callback function to run, when FileReader finishes its job
         reader.onload = e => {
-          this.image = e.target.result;
+          this.croppedImage = e.target.result;
         };
         // Start the reader job - read file as a data url (base64 format)
         reader.readAsDataURL(input.files[0]);
@@ -223,7 +224,8 @@ export default {
           selectedThreshold: this.selectedThreshold,
           displayEdges: this.displayEdges,
           displayCentroids: this.displayCentroids,
-          croppedCoordinates: this.croppedCoordinates
+          croppedImageData: this.imageData,
+          coordinateMargins: this.coordinateMargins
         });
       }
     },

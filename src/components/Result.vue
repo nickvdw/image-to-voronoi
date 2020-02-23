@@ -170,7 +170,8 @@ export default {
           // These are false by default in the UI
           displayEdges: false,
           displayCentroids: false,
-          croppedCoordinates: null
+          croppedImageData: null,
+          coordinateMargins: null
         };
       }
     }
@@ -259,7 +260,8 @@ export default {
                 parseInt(this.configuration.selectedThreshold),
                 this.configuration.displayEdges,
                 this.configuration.displayCentroids,
-                this.croppedCoordinates
+                this.configuration.croppedImageData,
+                this.configuration.coordinateMargins
               );
             } else if (
               this.configuration.selectedMethod ===

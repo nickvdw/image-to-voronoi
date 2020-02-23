@@ -7,14 +7,21 @@ import * as d3Delaunay from "d3-delaunay";
 import { colorCentroidsByCoordinates } from "@/scripts/imageHandler";
 
 export const resultFromDelaunayCorners = (
-  imageData,
+  originalImageData,
   threshold,
   displayEdges,
-  displayCentroids
+  displayCentroids,
+  croppedImageData,
+  coordinateMargins
 ) => {
   // Set the threshold for the number of corners to detect
   window.fastThreshold = threshold;
   window.tracking.Fast.THRESHOLD = window.fastThreshold;
+
+  let imageData = originalImageData;
+  if (croppedImageData && coordinateMargins) {
+    imageData = croppedImageData;
+  }
 
   // Grayscale the image
   const gray = window.tracking.Image.grayscale(
@@ -32,7 +39,7 @@ export const resultFromDelaunayCorners = (
   );
 
   // Store the centroids based on the corners
-  let centroids = [{ x: 0, y: 0 }];
+  let centroids = [];
   for (let i = 0; i < corners.length; i += 2) {
     centroids.push({
       x: corners[i],
@@ -41,13 +48,27 @@ export const resultFromDelaunayCorners = (
   }
 
   // Obtain colours for the centroids
-  const coloredCentroids = colorCentroidsByCoordinates(imageData, centroids);
+  let coloredCentroids = colorCentroidsByCoordinates(imageData, centroids);
+
+  // Add margin to the centroids if we use the cropped image
+  if (croppedImageData && coordinateMargins) {
+    coloredCentroids = coloredCentroids.map(centroid => {
+      return {
+        x: centroid.x + coordinateMargins.width,
+        y: centroid.y + coordinateMargins.height,
+        color: centroid.color
+      };
+    });
+  }
 
   // Set the initial configuration of the svg
   const svg = d3
     .select("#voronoiResult")
     .append("svg")
-    .attr("viewBox", `0 0 ${imageData.width} ${imageData.height}`)
+    .attr(
+      "viewBox",
+      `0 0 ${originalImageData.width} ${originalImageData.height}`
+    )
     .attr("width", document.getElementById("resultContainer").offsetWidth)
     .attr("height", document.getElementById("resultContainer").offsetHeight)
     .style("background-color", "black");
@@ -60,7 +81,12 @@ export const resultFromDelaunayCorners = (
   );
 
   // Compute the Voronoi diagram from the triangulation
-  const voronoi = delaunay.voronoi([0, 0, imageData.width, imageData.height]);
+  const voronoi = delaunay.voronoi([
+    0,
+    0,
+    originalImageData.width,
+    originalImageData.height
+  ]);
 
   // Construct the result
   // TODO: Handle the cases for @displayEdges and @displayCentroids
