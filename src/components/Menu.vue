@@ -10,62 +10,98 @@
       <!-- Form -->
       <v-form ref="form" v-model="valid">
         <!-- Image upload field -->
-        <v-file-input
-          v-model="selectedImage"
-          color="blue-grey darken-3"
-          label="Input image"
-          accept="image/*"
-          prepend-icon="mdi-camera"
-          :show-size="1000"
-          required
-          :rules="imageRules"
-        />
-        <!-- Algorithms to use -->
-        <v-select
-          color="blue-grey darken-3"
-          item-color="blue-grey darken-4"
-          :items="algorithms"
-          v-model="selectedAlgorithm"
-          label="Algorithm"
-          required
-          :rules="algorithmRules"
-        />
-        <!-- Field to select method for centroid generation -->
-        <v-select
-          color="blue-grey darken-3"
-          item-color="blue-grey darken-4"
-          :items="
-            selectedAlgorithm === 'Delaunay triangulation'
-              ? delaunayMethods
-              : naiveMethods
-          "
-          v-model="selectedMethod"
-          label="Method for centroid generation"
-          required
-          :rules="methodRules"
-        />
-        <!-- Threshold for number of centroids -->
-        <v-text-field
-          color="blue-grey darken-3"
-          label="Threshold"
-          v-show="this.selectedMethod === 'Corner detection'"
-          v-model="selectedThreshold"
-          :rules="thresholdRules"
-          type="number"
-        />
-        <v-checkbox
-          color="blue-grey darken-3"
-          v-model="displayEdges"
-          label="Display edges"
-        />
-        <v-checkbox
-          color="blue-grey darken-3"
-          v-model="displayCentroids"
-          label="Display centroids"
-        />
+        <v-row>
+          <v-col align="center" justify="center">
+            <v-file-input
+              v-model="selectedImage"
+              color="blue-grey darken-3"
+              label="Input image"
+              accept="image/*"
+              prepend-icon="mdi-camera"
+              :show-size="1000"
+              required
+              @change="uploadImage"
+              :rules="imageRules"
+            />
+            <v-btn
+              :disabled="!selectedImage"
+              small
+              block
+              color="blue-grey darken-3"
+              class="white--text"
+              @click="cropImage"
+            >
+              Select important region
+            </v-btn>
+            <!-- Algorithms to use -->
+            <v-select
+              color="blue-grey darken-3"
+              item-color="blue-grey darken-4"
+              :items="algorithms"
+              v-model="selectedAlgorithm"
+              label="Algorithm"
+              required
+              :rules="algorithmRules"
+            />
+            <!-- Field to select method for centroid generation -->
+            <v-select
+              color="blue-grey darken-3"
+              item-color="blue-grey darken-4"
+              :items="
+                selectedAlgorithm === 'Delaunay triangulation'
+                  ? delaunayMethods
+                  : naiveMethods
+              "
+              v-model="selectedMethod"
+              label="Method for centroid generation"
+              required
+              :rules="methodRules"
+            />
+            <!-- Threshold for number of centroids -->
+            <v-text-field
+              color="blue-grey darken-3"
+              label="Threshold"
+              v-show="this.selectedMethod === 'Corner detection'"
+              v-model="selectedThreshold"
+              :rules="thresholdRules"
+              type="number"
+            />
+            <v-checkbox
+              color="blue-grey darken-3"
+              v-model="displayEdges"
+              label="Display edges"
+            />
+            <v-checkbox
+              color="blue-grey darken-3"
+              v-model="displayCentroids"
+              label="Display centroids"
+            />
+          </v-col>
+        </v-row>
       </v-form>
     </v-card-text>
     <v-divider />
+
+    <!-- Dialog stuff -->
+    <v-dialog v-model="dialog" transition="dialog-bottom-transition">
+      <v-card>
+        <v-card-title class="headline"
+          >Select the important region</v-card-title
+        >
+        <v-card-text>
+          <cropper class="cropper" ref="cropper" :src="croppedImage"></cropper>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red darken-1" text @click="dialog = false">
+            Cancel
+          </v-btn>
+          <v-btn color="green darken-1" text @click="submitCrop">
+            Submit
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <!-- Reset and submit button group -->
     <v-card-actions>
       <v-row align="center" justify="space-around">
@@ -83,10 +119,18 @@
 </template>
 
 <script>
+import { Cropper } from "vue-advanced-cropper";
+
 export default {
   name: "Menu",
 
   data: () => ({
+    // Cropped image
+    croppedImage: null,
+    // Image data of the cropped image
+    imageData: null,
+    coordinateMargins: null,
+
     // Initial image and associated rules
     selectedImage: null,
     imageRules: [v => (!!v && v !== []) || "An image is required"],
@@ -116,10 +160,55 @@ export default {
     displayCentroids: false,
 
     // Whether or not the form is valid
-    valid: false
+    valid: false,
+    dialog: false
   }),
 
+  components: {
+    Cropper
+  },
+
   methods: {
+    submitCrop() {
+      // Obtain the coordinates of the cropped image selection
+      const { coordinates, canvas } = this.$refs.cropper.getResult();
+
+      const ctx = canvas.getContext("2d");
+      this.imageData = ctx.getImageData(
+        0,
+        0,
+        coordinates.width,
+        coordinates.height
+      );
+
+      this.coordinateMargins = {
+        width: coordinates.left,
+        height: coordinates.top
+      };
+
+      this.dialog = false;
+    },
+    uploadImage() {
+      var input = event.target;
+
+      if (input.files) {
+        // create a new FileReader to read this image and convert to base64 format
+        const reader = new FileReader();
+        // Define a callback function to run, when FileReader finishes its job
+        reader.onload = e => {
+          this.croppedImage = e.target.result;
+        };
+        // Start the reader job - read file as a data url (base64 format)
+        reader.readAsDataURL(input.files[0]);
+      }
+    },
+
+    change({ coordinates }) {
+      this.croppedCoordinates = coordinates;
+    },
+    cropImage() {
+      this.dialog = true;
+    },
     /**
      * Validates whether or not the form is valid (i.e., all REQUIRED
      * parameters have been filled in).
@@ -134,7 +223,9 @@ export default {
           selectedMethod: this.selectedMethod,
           selectedThreshold: this.selectedThreshold,
           displayEdges: this.displayEdges,
-          displayCentroids: this.displayCentroids
+          displayCentroids: this.displayCentroids,
+          croppedImageData: this.imageData,
+          coordinateMargins: this.coordinateMargins
         });
       }
     },
@@ -155,3 +246,9 @@ export default {
   }
 };
 </script>
+
+<style>
+.cropper {
+  background: #ddd;
+}
+</style>
