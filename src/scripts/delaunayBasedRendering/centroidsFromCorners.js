@@ -47,12 +47,9 @@ export const resultFromDelaunayCorners = (
     });
   }
 
-  // Obtain colours for the centroids
-  let coloredCentroids = colorCentroidsByCoordinates(imageData, centroids);
-
   // Add margin to the centroids if we use the cropped image
   if (croppedImageData && coordinateMargins) {
-    coloredCentroids = coloredCentroids.map(centroid => {
+    centroids = centroids.map(centroid => {
       return {
         x: centroid.x + coordinateMargins.width,
         y: centroid.y + coordinateMargins.height,
@@ -60,6 +57,12 @@ export const resultFromDelaunayCorners = (
       };
     });
   }
+
+  // Obtain colours for the centroids
+  let coloredCentroids = colorCentroidsByCoordinates(
+    originalImageData,
+    centroids
+  );
 
   // Set the initial configuration of the svg
   const svg = d3
