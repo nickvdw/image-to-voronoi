@@ -126,14 +126,23 @@ export const renderVoronoiUsingD3 = (centroids, width, height, k) => {
   );
 };
 
-export const renderColoredVoronoi = (centroids, width, height, k) => {
+export const renderColoredVoronoi = (
+  centroids,
+  width,
+  height,
+  windowWidth,
+  windowHeight
+) => {
+  console.log(windowHeight, height);
+  console.log(windowWidth, width);
+  console.log(centroids);
   const svg = d3
     .select("#voronoiResult")
     .append("svg")
-    .attr("width", width)
-    .attr("height", height)
-    .style("background-color", "#1a1a1a");
-  console.log(k);
+    .attr("viewBox", `0 0 ${width} ${height}`)
+    .attr("width", windowWidth)
+    .attr("height", windowHeight)
+    .style("background-color", "#fff");
   // Generate the delaunay triangulation of our data
   // takes data, x accessor and y accessor as arguments
   const delaunay = d3Delaunay.Delaunay.from(
@@ -155,20 +164,26 @@ export const renderColoredVoronoi = (centroids, width, height, k) => {
       d3.color(
         `rgb(${centroids[i].color[0]},${centroids[i].color[1]},${centroids[i].color[2]})`
       )
-    )
-    .style("opacity", 0.8)
-    .style("stroke", "white")
-    .style("stroke-opacity", 0.2);
+    );
+  // .style("opacity", 0.8)
+  // .style("stroke", "white")
+  // .style("stroke-opacity", 0.2);
 
   // append all of our points so that we can see how they line up with the voronoi
-  svg
-    .selectAll("circle")
-    .data(centroids)
-    .join("circle")
-    .attr("cx", d => d.x)
-    .attr("cy", d => d.y)
-    .attr("r", 1.5)
-    .style("fill", "white");
+  // svg
+  //   .selectAll("circle")
+  //   .data(centroids)
+  //   .join("circle")
+  //   .attr("cx", d => d.x)
+  //   .attr("cy", d => d.y)
+  //   .attr("r", 1.5)
+  //   .style("fill", "white");
+
+  // Get the current dimensions
+  // const dimensions = [
+  //   d3.select("svg").attr("width"),
+  //   d3.select("svg").attr("height")
+  // ].map(Number);
 
   return svg.node();
 };

@@ -1,13 +1,13 @@
 <template>
-  <v-container fluid>
-    <v-row>
+  <v-container class="fullHeight" fluid>
+    <v-row class="fullHeight">
       <!-- Left column -->
       <v-col cols="4">
         <Menu @submit="submittedForm" />
       </v-col>
       <!-- Right column -->
-      <v-col cols="8">
-        <Result :image="this.image" />
+      <v-col cols="8" class="fullHeight">
+        <Result :configuration="this.processedObject" />
       </v-col>
     </v-row>
   </v-container>
@@ -20,8 +20,8 @@ import Result from "@/components/Result.vue";
 export default {
   data() {
     return {
-      // There is no image present initially
-      image: null
+      // There is no object (image, etc) present initially
+      processedObject: {}
     };
   },
 
@@ -32,11 +32,23 @@ export default {
 
   methods: {
     /**
-     * Set the image if there is one. Otherwise, set the image to null.
+     * Pass the @object if there is one. Otherwise, pass an empty object.
      */
     submittedForm(object) {
-      object === "reset" ? (this.image = null) : (this.image = object.image);
+      // We also set an empty object when we want to explicitly reset the canvas
+      // TODO: Check if we have all object attributes, then don't have to do check in the child component anymore
+      if (object !== "reset" && object) {
+        this.processedObject = object;
+      } else {
+        this.processedObject = {};
+      }
     }
   }
 };
 </script>
+
+<style>
+.fullHeight {
+  height: 100%;
+}
+</style>
