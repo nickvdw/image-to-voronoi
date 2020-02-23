@@ -105,17 +105,18 @@
         </v-col>
       </v-row>
       <!-- Image result  -->
-      <fullscreen
-        class="wrapper"
-        v-show="!this.loading"
-        :fullscreen.sync="fullscreen"
-        ref="fullscreen"
-        @change="fullscreenChange"
-        background="#eee"
-      >
-        <!-- The image representing the result -->
-        <div align="start" justify="center" ref="result" id="voronoiResult" />
-      </fullscreen>
+      <div v-show="!this.loading && this.configuration.selectedImage">
+        <fullscreen
+          class="wrapper"
+          :fullscreen.sync="fullscreen"
+          ref="fullscreen"
+          @change="fullscreenChange"
+          background="#eee"
+        >
+          <!-- The image representing the result -->
+          <div align="start" justify="center" ref="result" id="voronoiResult" />
+        </fullscreen>
+      </div>
       <div>
         <canvas v-show="this.configuration.displayEdges" id="findEdges" />
       </div>
@@ -168,7 +169,8 @@ export default {
           selectedAlgorithm: null,
           // These are false by default in the UI
           displayEdges: false,
-          displayCentroids: false
+          displayCentroids: false,
+          croppedCoordinates: null
         };
       }
     }
@@ -256,7 +258,8 @@ export default {
                 this.originalImageData,
                 parseInt(this.configuration.selectedThreshold),
                 this.configuration.displayEdges,
-                this.configuration.displayCentroids
+                this.configuration.displayCentroids,
+                this.croppedCoordinates
               );
             } else if (
               this.configuration.selectedMethod ===

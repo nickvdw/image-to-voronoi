@@ -25,9 +25,10 @@
             />
             <v-btn
               :disabled="!selectedImage"
-              text
               small
+              block
               color="blue-grey darken-3"
+              class="white--text"
               @click="cropImage"
             >
               Select important region
@@ -82,29 +83,20 @@
     <v-divider />
 
     <!-- Dialog stuff -->
-    <v-dialog v-model="dialog" max-width="400">
+    <v-dialog v-model="dialog" transition="dialog-bottom-transition">
       <v-card>
         <v-card-title class="headline"
           >Select the important region</v-card-title
         >
-
         <v-card-text>
-          <cropper
-            classname="cropper"
-            :src="image"
-            :stencil-props="{
-              aspectRatio: 10 / 12
-            }"
-            @change="change"
-          ></cropper>
+          <cropper class="cropper" ref="cropper" :src="image"></cropper>
         </v-card-text>
-
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="red darken-1" text @click="dialog = false">
             Cancel
           </v-btn>
-          <v-btn color="green darken-1" text @click="dialog = false">
+          <v-btn color="green darken-1" text @click="submitCrop">
             Submit
           </v-btn>
         </v-card-actions>
@@ -133,7 +125,12 @@ export default {
   name: "Menu",
 
   data: () => ({
+    // Cropped image
     image: null,
+
+    // Object representing the start (top-left) and end (bottom-right) points of
+    // the cropped image
+    croppedCoordinates: null,
 
     // Initial image and associated rules
     selectedImage: null,
@@ -173,27 +170,40 @@ export default {
   },
 
   methods: {
-    uploadImage() {
-      console.log(this.selectedImage);
-      // Reference to the DOM input element
-
-      var input = event.target;
-      // Ensure that you have a file before attempting to read it
-      // create a new FileReader to read this image and convert to base64 format
-      var reader = new FileReader();
-      // Define a callback function to run, when FileReader finishes its job
-      reader.onload = e => {
-        // Note: arrow function used here, so that "this.imageData" refers to the imageData of Vue component
-        // Read image as base64 and set to imageData
-        this.image = e.target.result;
+    submitCrop() {
+      // Obtain the coordinates of the cropped image selection
+      const { coordinates } = this.$refs.cropper.getResult();
+      // Set the coordinates as a cropped coordinates object with a
+      // start and end point
+      this.croppedCoordinates = {
+        start: { x: coordinates.left, y: coordinates.top },
+        end: {
+          x: coordinates.left + coordinates.width,
+          y: coordinates.top + coordinates.height
+        }
       };
-      // Start the reader job - read file as a data url (base64 format)
-      reader.readAsDataURL(input.files[0]);
+
+      // Cropped image
+      // this.image = canvas.toDataURL();
+      this.dialog = false;
+    },
+    uploadImage() {
+      var input = event.target;
+
+      if (input.files) {
+        // create a new FileReader to read this image and convert to base64 format
+        const reader = new FileReader();
+        // Define a callback function to run, when FileReader finishes its job
+        reader.onload = e => {
+          this.image = e.target.result;
+        };
+        // Start the reader job - read file as a data url (base64 format)
+        reader.readAsDataURL(input.files[0]);
+      }
     },
 
-    change({ coordinates, canvas }) {
-      console.log(this.selectedImage);
-      console.log(coordinates, canvas);
+    change({ coordinates }) {
+      this.croppedCoordinates = coordinates;
     },
     cropImage() {
       this.dialog = true;
@@ -212,7 +222,8 @@ export default {
           selectedMethod: this.selectedMethod,
           selectedThreshold: this.selectedThreshold,
           displayEdges: this.displayEdges,
-          displayCentroids: this.displayCentroids
+          displayCentroids: this.displayCentroids,
+          croppedCoordinates: this.croppedCoordinates
         });
       }
     },
@@ -233,3 +244,9 @@ export default {
   }
 };
 </script>
+
+<style>
+.cropper {
+  background: #ddd;
+}
+</style>
