@@ -34,7 +34,11 @@
         <v-select
           color="blue-grey darken-3"
           item-color="blue-grey darken-4"
-          :items="methods"
+          :items="
+            selectedAlgorithm === 'Delaunay triangulation'
+              ? delaunayMethods
+              : naiveMethods
+          "
           v-model="selectedMethod"
           label="Method for centroid generation"
           required
@@ -88,13 +92,16 @@ export default {
     imageRules: [v => (!!v && v !== []) || "An image is required"],
 
     // Available methods for the centroid generation and associated rules
-    methods: ["Corner detection", "Based on greyscale intensities"],
+    delaunayMethods: ["Corner detection", "Based on greyscale intensities"],
+    naiveMethods: ["Based on greyscale intensities"],
     methodRules: [v => !!v || "A method is required"],
-    selectedMethod: "Corner detection",
+    // TODO: Remove initialisation
+    selectedMethod: "",
 
     // Available methods for the algorithms and associated rules
     algorithms: ["Naive", "Delaunay triangulation"],
     algorithmRules: [v => !!v || "An algorithm is required"],
+    // TODO: Remove initialisation
     selectedAlgorithm: "Delaunay triangulation",
 
     // Selected threshold and associated rules
