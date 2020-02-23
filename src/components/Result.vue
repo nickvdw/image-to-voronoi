@@ -123,6 +123,7 @@ import { uploadImage, toImageDataUrl } from "@/scripts/imageHandler";
 // import { renderColoredVoronoi } from "@/scripts/voronoiUsingD3";
 import { resultFromDelaunayCorners } from "@/scripts/delaunayBasedRendering/centroidsFromCorners";
 import { resultFromDelaunayGreyscaling } from "@/scripts/delaunayBasedRendering/centroidsFromGreyscaling";
+import { resultFromNaiveGreyscaling } from "@/scripts/naiveRendering/centroidsFromGreyscaling";
 
 import * as d3 from "d3";
 import Fullscreen from "vue-fullscreen/src/component.vue";
@@ -268,7 +269,12 @@ export default {
               this.configuration.selectedMethod ===
               "Based on greyscale intensities"
             ) {
-              console.log("Add naive implementation");
+              resultFromNaiveGreyscaling(
+                this.originalImageData,
+                // parseInt(this.configuration.selectedThreshold),
+                this.configuration.displayEdges,
+                this.configuration.displayCentroids
+              );
             } else {
               console.log("This method does not exist");
             }
