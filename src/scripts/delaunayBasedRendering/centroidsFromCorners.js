@@ -52,14 +52,18 @@ export const resultFromDelaunayCorners = (
 
   // TODO: Add something for dragging centroids
 
+  // TODO: Add a "selector" tool that can be used to select a rectangle and remove all centroinds in that rectangle
+
   svg.on("click", () => {
-    console.log(d3.event);
+    // console.log(d3.mouse(this));
+    console.log(d3.mouse(d3.event.target)[0]);
+    // TODO: https://stackoverflow.com/questions/58659311/responsive-d3-svg-coordinates-of-tooltips-shown-on-mouseover-are-off
     // TODO: d3.event.layerX is not accurate. Neither is d3.event.offsetX.
     // TODO: This is because we can have black borders around the image, so it uses the whole thing other than just the image itself
     // TODO: Preferably, we'd use d3.mouse(this), but that does not work for some reason.
     coloredCentroids.push(
       colorCentroidsByCoordinates(imageData, [
-        { x: d3.event.layerX, y: d3.event.layerY }
+        { x: d3.mouse(d3.event.target)[0], y: d3.mouse(d3.event.target)[1] }
       ])[0]
     );
     update();

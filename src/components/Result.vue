@@ -117,9 +117,6 @@
           <div align="start" justify="center" ref="result" id="voronoiResult" />
         </fullscreen>
       </div>
-      <div>
-        <canvas v-show="this.configuration.displayEdges" id="findEdges" />
-      </div>
     </v-card-text>
   </v-card>
 </template>
