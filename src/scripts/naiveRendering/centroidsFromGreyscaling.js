@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import {
   greyScaleImage,
   computeCentroidsFromGreyScale,
-  colorCentroidsByCoordinates
+  colourCentroidsByCoordinates
 } from "@/scripts/imageHandler";
 
 export const resultFromNaiveGreyscaling = (
@@ -31,7 +31,7 @@ export const resultFromNaiveGreyscaling = (
   ];
 
   // Obtain colours for the centroids
-  const coloredCentroids = colorCentroidsByCoordinates(imageData, centroids);
+  const colouredCentroids = colourCentroidsByCoordinates(imageData, centroids);
 
   // Construct the result
   // TODO: Handle the cases for @displayEdges and @displayCentroids
@@ -63,17 +63,17 @@ export const resultFromNaiveGreyscaling = (
   if (generateRandomColours) {
     // Generate a random colour for each centroid
     // Assign colour i to centroid i
-    Array(coloredCentroids.length)
+    Array(colouredCentroids.length)
       .fill()
       .map(() => colourMap.push(generateRandomColour()));
   } else {
     // Assign colour i to centroid i
-    Array(coloredCentroids.length)
+    Array(colouredCentroids.length)
       .fill()
       .map((_, i) =>
         colourMap.push(
           d3.color(
-            `rgb(${coloredCentroids[i].color[0]},${coloredCentroids[i].color[1]},${coloredCentroids[i].color[2]})`
+            `rgb(${colouredCentroids[i].colour[0]},${colouredCentroids[i].colour[1]},${colouredCentroids[i].colour[2]})`
           )
         )
       );
@@ -92,7 +92,7 @@ export const resultFromNaiveGreyscaling = (
           // Compute the nearest centroid for each pixel
           // nearestCentroid is a dictionary in the form of {point: [x_coor, y_coor], nearest_centroid: number}
           const nearestCentroid = computeNearestCentroid(
-            coloredCentroids,
+            colouredCentroids,
             x,
             y,
             k

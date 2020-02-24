@@ -126,7 +126,7 @@ export const renderVoronoiUsingD3 = (centroids, width, height, k) => {
   );
 };
 
-export const renderColoredVoronoi = (
+export const renderColouredVoronoi = (
   centroids,
   width,
   height,
@@ -162,7 +162,7 @@ export const renderColoredVoronoi = (
     .attr("d", d => d)
     .style("fill", (d, i) =>
       d3.color(
-        `rgb(${centroids[i].color[0]},${centroids[i].color[1]},${centroids[i].color[2]})`
+        `rgb(${centroids[i].colour[0]},${centroids[i].colour[1]},${centroids[i].colour[2]})`
       )
     );
   // .style("opacity", 0.8)

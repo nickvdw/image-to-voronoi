@@ -117,9 +117,6 @@
           <div align="start" justify="center" ref="result" id="voronoiResult" />
         </fullscreen>
       </div>
-      <div>
-        <canvas v-show="this.configuration.displayEdges" id="findEdges" />
-      </div>
     </v-card-text>
   </v-card>
 </template>
@@ -130,7 +127,7 @@ require("tracking");
 /* eslint-disable no-unused-vars */
 
 import { uploadImage, toImageDataUrl } from "@/scripts/imageHandler";
-// import { renderColoredVoronoi } from "@/scripts/voronoiUsingD3";
+// import { renderColouredVoronoi } from "@/scripts/voronoiUsingD3";
 import { resultFromDelaunayCorners } from "@/scripts/delaunayBasedRendering/centroidsFromCorners";
 import { resultFromDelaunayGreyscaling } from "@/scripts/delaunayBasedRendering/centroidsFromGreyscaling";
 import { resultFromNaiveGreyscaling } from "@/scripts/naiveRendering/centroidsFromGreyscaling";
@@ -170,6 +167,7 @@ export default {
           // These are false by default in the UI
           displayEdges: false,
           displayCentroids: false,
+          displayColour: false,
           croppedImageData: null,
           coordinateMargins: null
         };
@@ -260,6 +258,7 @@ export default {
                 parseInt(this.configuration.selectedThreshold),
                 this.configuration.displayEdges,
                 this.configuration.displayCentroids,
+                this.configuration.displayColour,
                 this.configuration.croppedImageData,
                 this.configuration.coordinateMargins
               );
