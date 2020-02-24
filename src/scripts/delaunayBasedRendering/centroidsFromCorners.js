@@ -58,15 +58,15 @@ export const resultFromDelaunayCorners = (
   svg.on("click", () => {
     // TODO: Using the d3.mouse(d3.event.target) coordinates to obtain the colour does not work and
     // TODO: results in a black cell. This way, we get the colour of some point close to our point...
-    const color = colorCentroidsByCoordinates(originalImageData, [
+    const colour = colourCentroidsByCoordinates(originalImageData, [
       { x: d3.event.layerX, y: d3.event.layerY }
-    ])[0].color;
+    ])[0].colour;
 
     // Add the new centroid to the list of centroids with a colour
-    coloredCentroids.push({
+    colouredCentroids.push({
       x: d3.mouse(d3.event.target)[0],
       y: d3.mouse(d3.event.target)[1],
-      color: color
+      colour: colour
     });
 
     // Update the result
@@ -99,58 +99,14 @@ export const resultFromDelaunayCorners = (
     centroids
   );
 
-  // Set the initial configuration of the svg
-  const svg = d3
-    .select("#voronoiResult")
-    .append("svg")
-    .attr(
-      "viewBox",
-      `0 0 ${originalImageData.width} ${originalImageData.height}`
-    )
-    .attr("width", document.getElementById("resultContainer").offsetWidth)
-    .attr("height", document.getElementById("resultContainer").offsetHeight)
-    .style("background-color", "black");
-
-  // Compute the delaunay triangulation from the centroids
-  const delaunay = d3Delaunay.Delaunay.from(
-    colouredCentroids,
-    d => d.x,
-    d => d.y
-  );
-
-  // Compute the Voronoi diagram from the triangulation
-  /* eslint no-unused-vars: "off" */
-  const voronoi = delaunay.voronoi([
-    0,
-    0,
-    originalImageData.width,
-    originalImageData.height
-  ]);
-
-  // Construct the result
-  // TODO: Handle the cases for @displayEdges and @displayCentroids
-  console.log(displayEdges, displayCentroids, displayColour);
-  if (displayColour) {
-    svg
-      .selectAll("path")
-      // Construct a data object from each cell of our voronoi diagram
-      .data(centroids.map((d, i) => voronoi.renderCell(i)))
-      .join("path")
-      .attr("d", d => d)
-      .style("fill", (d, i) =>
-        d3.color(
-          `rgb(${centroids[i].colour[0]},${centroids[i].colour[1]},${centroids[i].colour[2]})`
-        )
-      );
-  } else {
-    svg
-      .selectAll("path")
-      // Construct a data object from each cell of our voronoi diagram
-      .data(centroids.map((d, i) => voronoi.renderCell(i)))
-      .join("path")
-      .attr("d", d => d)
-      .style("fill", (d, i) => d3.color(`rgb(255, 255, 255)`));
-  }
+  // Redraw the canvas every time the 'update' method is called
+  const update = () => {
+    // Compute the delaunay triangulation from the centroids
+    const delaunay = d3Delaunay.Delaunay.from(
+      colouredCentroids,
+      d => d.x,
+      d => d.y
+    );
 
     // Compute the Voronoi diagram from the triangulation
     const voronoi = delaunay.voronoi([
@@ -161,17 +117,27 @@ export const resultFromDelaunayCorners = (
     ]);
 
     // Construct the result
-    svg
-      .selectAll("path")
-      // Construct a data object from each cell of our voronoi diagram
-      .data(coloredCentroids.map((d, i) => voronoi.renderCell(i)))
-      .join("path")
-      .attr("d", d => d)
-      .style("fill", (d, i) =>
-        d3.color(
-          `rgb(${coloredCentroids[i].color[0]},${coloredCentroids[i].color[1]},${coloredCentroids[i].color[2]})`
-        )
-      );
+    if (displayColour) {
+      svg
+        .selectAll("path")
+        // Construct a data object from each cell of our voronoi diagram
+        .data(centroids.map((d, i) => voronoi.renderCell(i)))
+        .join("path")
+        .attr("d", d => d)
+        .style("fill", (d, i) =>
+          d3.color(
+            `rgb(${centroids[i].colour[0]},${centroids[i].colour[1]},${centroids[i].colour[2]})`
+          )
+        );
+    } else {
+      svg
+        .selectAll("path")
+        // Construct a data object from each cell of our voronoi diagram
+        .data(centroids.map((d, i) => voronoi.renderCell(i)))
+        .join("path")
+        .attr("d", d => d)
+        .style("fill", d3.color(`rgb(255, 255, 255)`));
+    }
 
     // Add the edges if they need to be added
     // TODO: Add parameters for colours and opacities in the UI
@@ -185,7 +151,7 @@ export const resultFromDelaunayCorners = (
     // Add the centroids if they need to be added
     // TODO: Add parameters for sizes and colours in the UI
     if (displayCentroids) {
-      coloredCentroids.forEach(centroid => {
+      colouredCentroids.forEach(centroid => {
         svg
           .append("circle")
           .attr("cx", centroid.x)
@@ -199,8 +165,8 @@ export const resultFromDelaunayCorners = (
   // svg.on("click", () => {
   //   console.log(d3.mouse("svg"));
   //   console.log(d3.event);
-  //   coloredCentroids.push(
-  //     colorCentroidsByCoordinates(imageData, [
+  //   colouredCentroids.push(
+  //     colourCentroidsByCoordinates(imageData, [
   //       { x: d3.event.layerX, y: d3.event.layerY }
   //     ])[0]
   //   );
