@@ -39,6 +39,40 @@ export const resultFromDelaunayCorners = (
     imageData.height
   );
 
+  // Set the initial configuration of the svg
+  const svg = d3
+    .select("#voronoiResult")
+    .append("svg")
+    .attr(
+      "viewBox",
+      `0 0 ${originalImageData.width} ${originalImageData.height}`
+    )
+    .attr("width", document.getElementById("resultContainer").offsetWidth)
+    .attr("height", document.getElementById("resultContainer").offsetHeight)
+    .style("background-color", "black");
+
+  // TODO: Add something for dragging centroids
+
+  // TODO: Add a "selector" tool that can be used to select a rectangle and remove all centroinds in that rectangle
+
+  svg.on("click", () => {
+    // TODO: Using the d3.mouse(d3.event.target) coordinates to obtain the colour does not work and
+    // TODO: results in a black cell. This way, we get the colour of some point close to our point...
+    const color = colorCentroidsByCoordinates(originalImageData, [
+      { x: d3.event.layerX, y: d3.event.layerY }
+    ])[0].color;
+
+    // Add the new centroid to the list of centroids with a colour
+    coloredCentroids.push({
+      x: d3.mouse(d3.event.target)[0],
+      y: d3.mouse(d3.event.target)[1],
+      color: color
+    });
+
+    // Update the result
+    update();
+  });
+
   // Store the centroids based on the corners
   let centroids = [];
   for (let i = 0; i < corners.length; i += 2) {
@@ -118,25 +152,60 @@ export const resultFromDelaunayCorners = (
       .style("fill", (d, i) => d3.color(`rgb(255, 255, 255)`));
   }
 
-  // Add the edges if they need to be added
-  // TODO: Add parameters for colours and opacities in the UI
-  if (displayEdges) {
+    // Compute the Voronoi diagram from the triangulation
+    const voronoi = delaunay.voronoi([
+      0,
+      0,
+      originalImageData.width,
+      originalImageData.height
+    ]);
+
+    // Construct the result
     svg
       .selectAll("path")
-      .style("stroke", "black")
-      .style("stroke-opacity", 1.0);
-  }
+      // Construct a data object from each cell of our voronoi diagram
+      .data(coloredCentroids.map((d, i) => voronoi.renderCell(i)))
+      .join("path")
+      .attr("d", d => d)
+      .style("fill", (d, i) =>
+        d3.color(
+          `rgb(${coloredCentroids[i].color[0]},${coloredCentroids[i].color[1]},${coloredCentroids[i].color[2]})`
+        )
+      );
 
-  // Add the centroids if they need to be added
-  // TODO: Add parameters for sizes and colours in the UI
-  if (displayCentroids) {
-    centroids.forEach(centroid => {
+    // Add the edges if they need to be added
+    // TODO: Add parameters for colours and opacities in the UI
+    if (displayEdges) {
       svg
-        .append("circle")
-        .attr("cx", centroid.x)
-        .attr("cy", centroid.y)
-        .attr("r", 1)
-        .attr("fill", "red");
-    });
-  }
+        .selectAll("path")
+        .style("stroke", "black")
+        .style("stroke-opacity", 1.0);
+    }
+
+    // Add the centroids if they need to be added
+    // TODO: Add parameters for sizes and colours in the UI
+    if (displayCentroids) {
+      coloredCentroids.forEach(centroid => {
+        svg
+          .append("circle")
+          .attr("cx", centroid.x)
+          .attr("cy", centroid.y)
+          .attr("r", 1)
+          .attr("fill", "red");
+      });
+    }
+  };
+
+  // svg.on("click", () => {
+  //   console.log(d3.mouse("svg"));
+  //   console.log(d3.event);
+  //   coloredCentroids.push(
+  //     colorCentroidsByCoordinates(imageData, [
+  //       { x: d3.event.layerX, y: d3.event.layerY }
+  //     ])[0]
+  //   );
+  //   update();
+  // });
+
+  update();
 };
