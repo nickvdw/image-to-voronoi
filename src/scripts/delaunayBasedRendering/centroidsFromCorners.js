@@ -88,7 +88,7 @@ export const resultFromDelaunayCorners = (
   // TODO: Selected pixels dont correspond with real pixels because of the resizing
   // TODO: Cannot use a cropper and SVG element. Cropper needs to be with image.
 
-  const img = document.getElementById("voronoiResult");
+  const img = document.getElementById("resultContainer");
   const factorW = originalImageData.width / img.offsetWidth;
   const factorH = originalImageData.height / img.offsetHeight;
 
@@ -101,18 +101,10 @@ export const resultFromDelaunayCorners = (
   if (toBeCroppedImageCoordinates) {
     for (let i = centroids.length - 1; i >= 0; i--) {
       if (
-        centroids[i].x >=
-          toBeCroppedImageCoordinates.start.x +
-            toBeCroppedImageCoordinates.start.x * factorW &&
-        centroids[i].x <=
-          toBeCroppedImageCoordinates.end.x +
-            toBeCroppedImageCoordinates.end.x * factorW &&
-        centroids[i].y >=
-          toBeCroppedImageCoordinates.start.y +
-            toBeCroppedImageCoordinates.start.y * factorH &&
-        centroids[i].y <=
-          toBeCroppedImageCoordinates.end.y +
-            toBeCroppedImageCoordinates.end.y * factorH
+        centroids[i].x >= toBeCroppedImageCoordinates.start.x * factorW &&
+        centroids[i].x <= toBeCroppedImageCoordinates.end.x * factorW &&
+        centroids[i].y >= toBeCroppedImageCoordinates.start.y * factorH &&
+        centroids[i].y <= toBeCroppedImageCoordinates.end.y * factorH
       ) {
         centroids.splice(i, 1);
       }
