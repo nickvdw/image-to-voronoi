@@ -88,29 +88,34 @@ export const resultFromDelaunayCorners = (
   // TODO: Selected pixels dont correspond with real pixels because of the resizing
   // TODO: Cannot use a cropper and SVG element. Cropper needs to be with image.
 
-  const img = document.getElementById("resultContainer");
-  const factorW = originalImageData.width / img.offsetWidth;
-  const factorH = originalImageData.height / img.offsetHeight;
-
-  // This one doesn't give the correct sizes
-  const pf = document.getElementById("cropper");
-
-  console.log(pf);
-
-  debugger;
   if (toBeCroppedImageCoordinates) {
+    const img = document.getElementsByClassName(
+      "vue-advanced-cropper__image"
+    )[0];
+    const factorW = originalImageData.width / img.offsetWidth;
+    // const factorH = originalImageData.height / img.offsetHeight;
+
+    const xStart = toBeCroppedImageCoordinates.start.x * factorW;
+    const xEnd = toBeCroppedImageCoordinates.end.x * factorW;
+    const yStart = toBeCroppedImageCoordinates.start.y;
+    const yEnd = toBeCroppedImageCoordinates.end.y * factorW;
+
+    let removedCentroids = [];
+    // This one doesn't give the correct sizes
     for (let i = centroids.length - 1; i >= 0; i--) {
       if (
-        centroids[i].x >= toBeCroppedImageCoordinates.start.x * factorW &&
-        centroids[i].x <= toBeCroppedImageCoordinates.end.x * factorW &&
-        centroids[i].y >= toBeCroppedImageCoordinates.start.y * factorH &&
-        centroids[i].y <= toBeCroppedImageCoordinates.end.y * factorH
+        centroids[i].x >= xStart &&
+        centroids[i].x <= xEnd &&
+        centroids[i].y >= yStart &&
+        centroids[i].y <= yEnd
       ) {
+        removedCentroids.push(centroids[i]);
         centroids.splice(i, 1);
       }
     }
+
+    debugger;
   }
-  debugger;
 
   // Add margin to the centroids if we use the cropped image
   if (croppedImageData && coordinateMargins) {

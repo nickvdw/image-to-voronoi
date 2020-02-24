@@ -223,7 +223,7 @@ export default {
         start: { x: coordinates.left, y: coordinates.top },
         end: {
           x: coordinates.left + coordinates.width,
-          y: coordinates.left + coordinates.height
+          y: coordinates.top + coordinates.height
         }
       };
 
