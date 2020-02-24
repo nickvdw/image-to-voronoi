@@ -4,7 +4,7 @@ import * as d3Delaunay from "d3-delaunay";
 import {
   greyScaleImage,
   computeCentroidsFromGreyScale,
-  colorCentroidsByCoordinates
+  colourCentroidsByCoordinates
 } from "@/scripts/imageHandler";
 
 export const resultFromDelaunayGreyscaling = (
@@ -30,7 +30,7 @@ export const resultFromDelaunayGreyscaling = (
   ];
 
   // Obtain colours for the centroids
-  const coloredCentroids = colorCentroidsByCoordinates(imageData, centroids);
+  const colouredCentroids = colourCentroidsByCoordinates(imageData, centroids);
 
   // Set the initial configuration of the svg
   const svg = d3
@@ -43,7 +43,7 @@ export const resultFromDelaunayGreyscaling = (
 
   // Compute the delaunay triangulation from the centroids
   const delaunay = d3Delaunay.Delaunay.from(
-    coloredCentroids,
+    colouredCentroids,
     d => d.x,
     d => d.y
   );
@@ -60,7 +60,7 @@ export const resultFromDelaunayGreyscaling = (
     .attr("d", d => d)
     .style("fill", (d, i) =>
       d3.color(
-        `rgb(${centroids[i].color[0]},${centroids[i].color[1]},${centroids[i].color[2]})`
+        `rgb(${centroids[i].colour[0]},${centroids[i].colour[1]},${centroids[i].colour[2]})`
       )
     );
 

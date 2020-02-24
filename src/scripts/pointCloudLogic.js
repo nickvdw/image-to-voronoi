@@ -6,7 +6,7 @@ const pickRandomIndexFromArray = array => {
 
 /**
  * Randomly picks centroids and removes them from the array
- * @param {Array of centroid objects {x, y, color}} centroids
+ * @param {Array of centroid objects {x, y, colour}} centroids
  * @param {Int} count - Amount of centroids to delete
  */
 export const randomDelete = (centroids, count) => {
@@ -23,7 +23,7 @@ export const randomDelete = (centroids, count) => {
 
 /**
  * Removes centroids according to a distance parameter, This essentially tries to sparsen cluster like centroids
- * @param {Array of centroid objects {x, y, color}} centroids
+ * @param {Array of centroid objects {x, y, colour}} centroids
  * @param {Int, Float} distance - Threshold, centroids that have a distance smaller than 'distance' will be removed
  */
 export const densityDelete = (centroids, distance, randomSelect) => {

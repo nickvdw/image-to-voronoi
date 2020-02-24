@@ -4,7 +4,7 @@ require("tracking");
 import * as d3 from "d3";
 import * as d3Delaunay from "d3-delaunay";
 
-import { colorCentroidsByCoordinates } from "@/scripts/imageHandler";
+import { colourCentroidsByCoordinates } from "@/scripts/imageHandler";
 
 export const resultFromDelaunayCorners = (
   originalImageData,
@@ -54,13 +54,13 @@ export const resultFromDelaunayCorners = (
       return {
         x: centroid.x + coordinateMargins.width,
         y: centroid.y + coordinateMargins.height,
-        color: centroid.color
+        colour: centroid.colour
       };
     });
   }
 
   // Obtain colours for the centroids
-  let coloredCentroids = colorCentroidsByCoordinates(
+  let colouredCentroids = colourCentroidsByCoordinates(
     originalImageData,
     centroids
   );
@@ -79,7 +79,7 @@ export const resultFromDelaunayCorners = (
 
   // Compute the delaunay triangulation from the centroids
   const delaunay = d3Delaunay.Delaunay.from(
-    coloredCentroids,
+    colouredCentroids,
     d => d.x,
     d => d.y
   );
@@ -105,7 +105,7 @@ export const resultFromDelaunayCorners = (
       .attr("d", d => d)
       .style("fill", (d, i) =>
         d3.color(
-          `rgb(${centroids[i].color[0]},${centroids[i].color[1]},${centroids[i].color[2]})`
+          `rgb(${centroids[i].colour[0]},${centroids[i].colour[1]},${centroids[i].colour[2]})`
         )
       );
   } else {
