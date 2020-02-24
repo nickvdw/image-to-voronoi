@@ -13,7 +13,8 @@ export const resultFromDelaunayCorners = (
   displayCentroids,
   displayColour,
   croppedImageData,
-  coordinateMargins
+  coordinateMargins,
+  toBeCroppedImageCoordinates
 ) => {
   // Set the threshold for the number of corners to detect
   window.fastThreshold = threshold;
@@ -39,8 +40,10 @@ export const resultFromDelaunayCorners = (
     imageData.height
   );
 
+  let svg;
+
   // Set the initial configuration of the svg
-  const svg = d3
+  svg = d3
     .select("#voronoiResult")
     .append("svg")
     .attr(
@@ -81,6 +84,41 @@ export const resultFromDelaunayCorners = (
       y: corners[i + 1]
     });
   }
+
+  // TODO: Selected pixels dont correspond with real pixels because of the resizing
+  // TODO: Cannot use a cropper and SVG element. Cropper needs to be with image.
+
+  const img = document.getElementById("voronoiResult");
+  const factorW = originalImageData.width / img.offsetWidth;
+  const factorH = originalImageData.height / img.offsetHeight;
+
+  // This one doesn't give the correct sizes
+  const pf = document.getElementById("cropper");
+
+  console.log(pf);
+
+  debugger;
+  if (toBeCroppedImageCoordinates) {
+    for (let i = centroids.length - 1; i >= 0; i--) {
+      if (
+        centroids[i].x >=
+          toBeCroppedImageCoordinates.start.x +
+            toBeCroppedImageCoordinates.start.x * factorW &&
+        centroids[i].x <=
+          toBeCroppedImageCoordinates.end.x +
+            toBeCroppedImageCoordinates.end.x * factorW &&
+        centroids[i].y >=
+          toBeCroppedImageCoordinates.start.y +
+            toBeCroppedImageCoordinates.start.y * factorH &&
+        centroids[i].y <=
+          toBeCroppedImageCoordinates.end.y +
+            toBeCroppedImageCoordinates.end.y * factorH
+      ) {
+        centroids.splice(i, 1);
+      }
+    }
+  }
+  debugger;
 
   // Add margin to the centroids if we use the cropped image
   if (croppedImageData && coordinateMargins) {

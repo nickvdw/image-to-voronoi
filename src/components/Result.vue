@@ -13,6 +13,20 @@
         <template v-slot:activator="{ on }">
           <v-btn
             dark
+            @click="editImage"
+            v-on="on"
+            icon
+            :disabled="!configuration.selectedImage"
+          >
+            <v-icon>mdi-image-edit-outline</v-icon>
+          </v-btn>
+        </template>
+        <span>Remove centroids</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            dark
             @click="saveImage"
             v-on="on"
             icon
@@ -37,39 +51,6 @@
         </template>
         <span>View the result in fullscreen</span>
       </v-tooltip>
-
-      <!-- <v-menu bottom left origin="center center" transition="scale-transition">
-        <template v-slot:activator="{ on: menu }">
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on: tooltip }">
-              <v-btn
-                dark
-                v-on="{ ...tooltip, ...menu }"
-                icon
-                :disabled="!configuration.selectedImage"
-              >
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
-            </template>
-            <span> Display other options </span>
-          </v-tooltip>
-        </template>
-        <v-list>
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>What would you like to see?</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-divider />
-          <v-list-item
-            v-for="(item, i) in items"
-            :key="i"
-            @click="generateResult(item)"
-          >
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu> -->
     </v-card-title>
 
     <!-- Card content -->
@@ -118,6 +99,31 @@
         </fullscreen>
       </div>
     </v-card-text>
+    <!-- Dialog stuff -->
+    <v-dialog v-model="dialog" fullscreen transition="dialog-bottom-transition">
+      <v-card>
+        <v-card-title class="headline"
+          >Select the region where you want to remove centroids</v-card-title
+        >
+        <v-card-text>
+          <cropper
+            class="cropper"
+            id="cropper"
+            ref="cropper"
+            :src="croppedImage"
+          ></cropper>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red darken-1" text @click="dialog = false">
+            Cancel
+          </v-btn>
+          <v-btn color="green darken-1" text @click="submitCrop">
+            Submit
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -132,6 +138,7 @@ import { resultFromDelaunayCorners } from "@/scripts/delaunayBasedRendering/cent
 import { resultFromDelaunayGreyscaling } from "@/scripts/delaunayBasedRendering/centroidsFromGreyscaling";
 import { resultFromNaiveGreyscaling } from "@/scripts/naiveRendering/centroidsFromGreyscaling";
 
+import { Cropper } from "vue-advanced-cropper";
 import * as d3 from "d3";
 import Fullscreen from "vue-fullscreen/src/component.vue";
 
@@ -150,7 +157,10 @@ export default {
       ],
       originalImageData: [],
       centroids: [],
-      fullscreen: false
+      fullscreen: false,
+      dialog: false,
+      croppedImage: null,
+      toBeCroppedImageCoordinates: null
     };
   },
   props: {
@@ -199,6 +209,30 @@ export default {
     }
   },
   methods: {
+    async editImage() {
+      this.croppedImage = await this.$html2canvas(this.$refs.result, {
+        type: "dataURL"
+      });
+      this.dialog = true;
+    },
+    submitCrop() {
+      // Obtain the coordinates of the cropped image selection
+      const { coordinates } = this.$refs.cropper.getResult();
+
+      this.toBeCroppedImageCoordinates = {
+        start: { x: coordinates.left, y: coordinates.top },
+        end: {
+          x: coordinates.left + coordinates.width,
+          y: coordinates.left + coordinates.height
+        }
+      };
+
+      this.generateResult({ title: "Result" });
+
+      this.toBeCroppedImageCoordinates = null;
+
+      this.dialog = false;
+    },
     /**
      * Opens a prompt with which an image can be saved.
      */
@@ -260,7 +294,8 @@ export default {
                 this.configuration.displayCentroids,
                 this.configuration.displayColour,
                 this.configuration.croppedImageData,
-                this.configuration.coordinateMargins
+                this.configuration.coordinateMargins,
+                this.toBeCroppedImageCoordinates
               );
             } else if (
               this.configuration.selectedMethod ===
@@ -297,6 +332,8 @@ export default {
         default:
         // TODO: catch error
       }
+      this.croppedImage = null;
+      this.croppedImageCoordinates = null;
     }
   }
 };

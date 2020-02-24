@@ -29,7 +29,7 @@
               block
               color="blue-grey darken-3"
               class="white--text"
-              @click="cropImage"
+              @click="this.dialog = true"
             >
               Select important region
             </v-btn>
@@ -207,13 +207,6 @@ export default {
         // Start the reader job - read file as a data url (base64 format)
         reader.readAsDataURL(input.files[0]);
       }
-    },
-
-    change({ coordinates }) {
-      this.croppedCoordinates = coordinates;
-    },
-    cropImage() {
-      this.dialog = true;
     },
     /**
      * Validates whether or not the form is valid (i.e., all REQUIRED
