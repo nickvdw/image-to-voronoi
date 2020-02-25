@@ -109,12 +109,14 @@
           <v-card flat>
             <v-expansion-panels flat accordion>
               <v-expansion-panel>
-                <v-expansion-panel-header> Edges </v-expansion-panel-header>
+                <v-expansion-panel-header>
+                  Edge options
+                </v-expansion-panel-header>
                 <v-expansion-panel-content>
                   <v-checkbox
                     color="blue-grey darken-3"
                     v-model="displayEdges"
-                    label="Display edges"
+                    label="Display the edges"
                   />
                   <v-color-picker
                     v-model="selectedEdgeColour"
@@ -134,13 +136,13 @@
               </v-expansion-panel>
               <v-expansion-panel>
                 <v-expansion-panel-header>
-                  Centroids
+                  Centroid options
                 </v-expansion-panel-header>
                 <v-expansion-panel-content>
                   <v-checkbox
                     color="blue-grey darken-3"
                     v-model="displayCentroids"
-                    label="Display centroids"
+                    label="Display the centroids"
                   />
                   <v-color-picker
                     v-model="selectedCentroidColour"
@@ -159,12 +161,14 @@
                 </v-expansion-panel-content>
               </v-expansion-panel>
               <v-expansion-panel>
-                <v-expansion-panel-header> Cells </v-expansion-panel-header>
+                <v-expansion-panel-header>
+                  Cell options
+                </v-expansion-panel-header>
                 <v-expansion-panel-content>
                   <v-checkbox
                     color="blue-grey darken-3"
                     v-model="displayColour"
-                    label="Display coloured cells"
+                    label="Colour the cells"
                   />
                   <v-color-picker
                     v-model="selectedCellColour"
@@ -258,7 +262,7 @@ export default {
     selectedAlgorithm: "Delaunay triangulation",
 
     // Selected threshold and associated rules
-    selectedThreshold: 25,
+    selectedThreshold: 5,
     thresholdRules: [
       v =>
         (!!v && v <= 100 && v >= 0) ||
@@ -287,7 +291,7 @@ export default {
 
     displayEdges: false,
     displayCentroids: false,
-    displayColour: false,
+    displayColour: true,
 
     selectedNumberOfNeighbours: 1,
     numberOfNeighboursRules: [
