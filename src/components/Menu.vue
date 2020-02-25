@@ -6,18 +6,19 @@
       <v-spacer />
     </v-card-title>
     <!-- Card content -->
-    <v-card-text>
-      <!-- Form -->
-      <v-form ref="form" v-model="valid">
-        <!-- Image upload field -->
-        <v-tabs v-model="currentTab" grow color="blue-grey darken-3">
-          <v-tab v-for="tabItem in tabItems" :key="tabItem">
-            {{ tabItem }}
-          </v-tab>
-        </v-tabs>
-        <v-tabs-items v-model="currentTab">
-          <v-tab-item>
-            <v-card flat>
+    <!-- Form -->
+    <v-form ref="form" v-model="valid">
+      <!-- Image upload field -->
+      <v-tabs v-model="currentTab" grow color="blue-grey darken-3">
+        <v-tab v-for="tabItem in tabItems" :key="tabItem">
+          {{ tabItem }}
+        </v-tab>
+      </v-tabs>
+      <!-- TODO: Discuss "vertical" option, which is interesting -->
+      <v-tabs-items v-model="currentTab">
+        <v-tab-item>
+          <v-card flat>
+            <v-card-text class="pt-2">
               <v-file-input
                 v-model="selectedImage"
                 color="blue-grey darken-3"
@@ -30,31 +31,47 @@
                 :rules="imageRules"
               />
               <v-btn
-                :disabled="!selectedImage"
                 small
+                outlined
                 block
                 color="blue-grey darken-3"
                 class="white--text"
+              >
+                Take a picture with your webcam
+              </v-btn>
+              <v-btn
+                :disabled="!selectedImage"
+                small
+                outlined
+                block
+                color="blue-grey darken-3"
+                class="white--text mt-4"
                 @click="cropImage"
               >
-                Select important region
+                Select an important region
               </v-btn>
-            </v-card>
-          </v-tab-item>
-          <v-tab-item>
-            <v-card flat>
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item>
+          <v-card flat>
+            <v-card-text class="pt-0">
               <!-- Algorithms to use -->
               <v-select
+                class="mt-4"
                 color="blue-grey darken-3"
                 item-color="blue-grey darken-4"
                 :items="algorithms"
                 v-model="selectedAlgorithm"
                 label="Algorithm"
                 required
+                :menu-props="{ bottom: true, offsetY: true }"
+                hint="This algorithms will be used to generate the result."
                 :rules="algorithmRules"
               />
               <!-- Field to select method for centroid generation -->
               <v-select
+                :menu-props="{ bottom: true, offsetY: true }"
                 color="blue-grey darken-3"
                 item-color="blue-grey darken-4"
                 :items="
@@ -66,6 +83,7 @@
                 label="Method for centroid generation"
                 required
                 :rules="methodRules"
+                hint="This method will be used for picking the centroids."
               />
               <!-- Threshold for number of centroids -->
               <v-text-field
@@ -75,31 +93,92 @@
                 v-model="selectedThreshold"
                 :rules="thresholdRules"
                 type="number"
+                hint="A lower threshold results in more centroids."
               />
-            </v-card>
-          </v-tab-item>
-          <v-tab-item>
-            <v-card flat>
-              <v-checkbox
+              <v-text-field
                 color="blue-grey darken-3"
-                v-model="displayEdges"
-                label="Display edges"
+                label="Number of nearest neighbours"
+                v-model="selectedNumberOfNeighbours"
+                :rules="numberOfNeighboursRules"
+                type="number"
               />
-              <v-checkbox
-                color="blue-grey darken-3"
-                v-model="displayCentroids"
-                label="Display centroids"
-              />
-              <v-checkbox
-                color="blue-grey darken-3"
-                v-model="displayColour"
-                label="Display coloured cells"
-              />
-            </v-card>
-          </v-tab-item>
-        </v-tabs-items>
-      </v-form>
-    </v-card-text>
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item>
+          <v-card flat>
+            <v-expansion-panels flat accordion>
+              <v-expansion-panel>
+                <v-expansion-panel-header> Edges </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <v-checkbox
+                    color="blue-grey darken-3"
+                    v-model="displayEdges"
+                    label="Display edges"
+                  />
+                  <v-color-picker
+                    v-model="selectedEdgeColour"
+                    hide-inputs
+                    flat
+                  />
+                  <v-text-field
+                    color="blue-grey darken-3"
+                    label="Edge thickness"
+                    class="ml-4 mr-4"
+                    v-model="selectedEdgeThickness"
+                    :rules="edgeThicknessRules"
+                    type="number"
+                    hint="The thickness of the edges in pixels"
+                  />
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+              <v-expansion-panel>
+                <v-expansion-panel-header>
+                  Centroids
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <v-checkbox
+                    color="blue-grey darken-3"
+                    v-model="displayCentroids"
+                    label="Display centroids"
+                  />
+                  <v-color-picker
+                    v-model="selectedCentroidColour"
+                    hide-inputs
+                    flat
+                  />
+                  <v-text-field
+                    color="blue-grey darken-3"
+                    label="Centroid size"
+                    class="ml-4 mr-4"
+                    v-model="selectedCentroidSize"
+                    :rules="centroidSizeRules"
+                    type="number"
+                    hint="The size of the centroid in pixels"
+                  />
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+              <v-expansion-panel>
+                <v-expansion-panel-header> Cells </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <v-checkbox
+                    color="blue-grey darken-3"
+                    v-model="displayColour"
+                    label="Display coloured cells"
+                  />
+                  <v-color-picker
+                    v-model="selectedCellColour"
+                    hide-inputs
+                    flat
+                  />
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+            </v-expansion-panels>
+          </v-card>
+        </v-tab-item>
+      </v-tabs-items>
+    </v-form>
+
     <v-divider />
     <!-- Reset and submit button group -->
     <v-card-actions>
@@ -156,8 +235,18 @@ export default {
     imageRules: [v => (!!v && v !== []) || "An image is required"],
 
     // Available methods for the centroid generation and associated rules
-    delaunayMethods: ["Corner detection", "Based on greyscale intensities"],
-    naiveMethods: ["Based on greyscale intensities"],
+    delaunayMethods: [
+      "Corner detection",
+      "Edge detection",
+      "Based on greyscale intensities",
+      "Random"
+    ],
+    naiveMethods: [
+      "Corner detection",
+      "Edge detection",
+      "Based on greyscale intensities",
+      "Random"
+    ],
     methodRules: [v => !!v || "A method is required"],
     // TODO: Remove initialisation
     selectedMethod: "",
@@ -176,9 +265,36 @@ export default {
         "A threshold of at least 0 and at most 100 is required"
     ],
 
+    // Selected thickness and colour for edges with associated rules
+    selectedEdgeThickness: 1,
+    edgeThicknessRules: [
+      v =>
+        (!!v && v <= 20 && v >= 1) ||
+        "A thickness of at least 1 and at most 20 is required"
+    ],
+    selectedEdgeColour: null,
+
+    // Selected size and colour for centroids with associated rules
+    selectedCentroidSize: 1,
+    centroidSizeRules: [
+      v =>
+        (!!v && v <= 20 && v >= 1) ||
+        "A thickness of at least 1 and at most 20 is required"
+    ],
+    selectedCentroidColour: null,
+
+    selectedCellColour: null,
+
     displayEdges: false,
     displayCentroids: false,
     displayColour: false,
+
+    selectedNumberOfNeighbours: 1,
+    numberOfNeighboursRules: [
+      v =>
+        (!!v && v <= 30 && v >= 1) ||
+        "The number of nearest neighbours should be between 1 and 30"
+    ],
 
     // Whether or not the form is valid
     valid: false,
@@ -251,7 +367,13 @@ export default {
           displayCentroids: this.displayCentroids,
           displayColour: this.displayColour,
           croppedImageData: this.imageData,
-          coordinateMargins: this.coordinateMargins
+          coordinateMargins: this.coordinateMargins,
+          selectedNumberOfNeighbours: this.selectedNumberOfNeighbours,
+          selectedEdgeThickness: this.selectedEdgeThickness,
+          selectedEdgeColour: this.selectedEdgeColour,
+          selectedCentroidSize: this.selectedCentroidSize,
+          selectedCentroidColour: this.selectedCentroidColour,
+          selectedCellColour: this.selectedCellColour
         });
       }
     },
@@ -268,6 +390,9 @@ export default {
       this.$emit("submit", "reset");
       // We have to set the default threshold again because it is removed after the reset
       this.selectedThreshold = 10;
+      this.selectedNumberOfNeighbours = 1;
+      this.selectedEdgeThickness = 1;
+      this.selectedCentroidSize = 1;
       this.currentTab = "Image";
     }
   }
@@ -277,5 +402,10 @@ export default {
 <style>
 .cropper {
   background: #ddd;
+}
+
+/* This removes the animation but also the weird popup */
+.v-window__container {
+  height: 100% !important;
 }
 </style>
