@@ -10,82 +10,110 @@
       <!-- Form -->
       <v-form ref="form" v-model="valid">
         <!-- Image upload field -->
-        <v-row>
-          <v-col align="center" justify="center">
-            <v-file-input
-              v-model="selectedImage"
-              color="blue-grey darken-3"
-              label="Input image"
-              accept="image/*"
-              prepend-icon="mdi-camera"
-              :show-size="1000"
-              required
-              @change="uploadImage"
-              :rules="imageRules"
-            />
-            <v-btn
-              :disabled="!selectedImage"
-              small
-              block
-              color="blue-grey darken-3"
-              class="white--text"
-              @click="cropImage"
-            >
-              Select important region
-            </v-btn>
-            <!-- Algorithms to use -->
-            <v-select
-              color="blue-grey darken-3"
-              item-color="blue-grey darken-4"
-              :items="algorithms"
-              v-model="selectedAlgorithm"
-              label="Algorithm"
-              required
-              :rules="algorithmRules"
-            />
-            <!-- Field to select method for centroid generation -->
-            <v-select
-              color="blue-grey darken-3"
-              item-color="blue-grey darken-4"
-              :items="
-                selectedAlgorithm === 'Delaunay triangulation'
-                  ? delaunayMethods
-                  : naiveMethods
-              "
-              v-model="selectedMethod"
-              label="Method for centroid generation"
-              required
-              :rules="methodRules"
-            />
-            <!-- Threshold for number of centroids -->
-            <v-text-field
-              color="blue-grey darken-3"
-              label="Threshold"
-              v-show="this.selectedMethod === 'Corner detection'"
-              v-model="selectedThreshold"
-              :rules="thresholdRules"
-              type="number"
-            />
-            <v-checkbox
-              color="blue-grey darken-3"
-              v-model="displayEdges"
-              label="Display edges"
-            />
-            <v-checkbox
-              color="blue-grey darken-3"
-              v-model="displayCentroids"
-              label="Display centroids"
-            />
-            <v-checkbox
-              color="blue-grey darken-3"
-              v-model="displayColour"
-              label="Display coloured cells"
-            />
-          </v-col>
-        </v-row>
+        <v-tabs v-model="currentTab" grow color="blue-grey darken-3">
+          <v-tab v-for="tabItem in tabItems" :key="tabItem">
+            {{ tabItem }}
+          </v-tab>
+        </v-tabs>
+        <v-tabs-items v-model="currentTab">
+          <v-tab-item>
+            <v-card flat>
+              <v-file-input
+                v-model="selectedImage"
+                color="blue-grey darken-3"
+                label="Input image"
+                accept="image/*"
+                prepend-icon="mdi-camera"
+                :show-size="1000"
+                required
+                @change="uploadImage"
+                :rules="imageRules"
+              />
+              <v-btn
+                :disabled="!selectedImage"
+                small
+                block
+                color="blue-grey darken-3"
+                class="white--text"
+                @click="cropImage"
+              >
+                Select important region
+              </v-btn>
+            </v-card>
+          </v-tab-item>
+          <v-tab-item>
+            <v-card flat>
+              <!-- Algorithms to use -->
+              <v-select
+                color="blue-grey darken-3"
+                item-color="blue-grey darken-4"
+                :items="algorithms"
+                v-model="selectedAlgorithm"
+                label="Algorithm"
+                required
+                :rules="algorithmRules"
+              />
+              <!-- Field to select method for centroid generation -->
+              <v-select
+                color="blue-grey darken-3"
+                item-color="blue-grey darken-4"
+                :items="
+                  selectedAlgorithm === 'Delaunay triangulation'
+                    ? delaunayMethods
+                    : naiveMethods
+                "
+                v-model="selectedMethod"
+                label="Method for centroid generation"
+                required
+                :rules="methodRules"
+              />
+              <!-- Threshold for number of centroids -->
+              <v-text-field
+                color="blue-grey darken-3"
+                label="Threshold"
+                v-show="this.selectedMethod === 'Corner detection'"
+                v-model="selectedThreshold"
+                :rules="thresholdRules"
+                type="number"
+              />
+            </v-card>
+          </v-tab-item>
+          <v-tab-item>
+            <v-card flat>
+              <v-checkbox
+                color="blue-grey darken-3"
+                v-model="displayEdges"
+                label="Display edges"
+              />
+              <v-checkbox
+                color="blue-grey darken-3"
+                v-model="displayCentroids"
+                label="Display centroids"
+              />
+              <v-checkbox
+                color="blue-grey darken-3"
+                v-model="displayColour"
+                label="Display coloured cells"
+              />
+            </v-card>
+          </v-tab-item>
+        </v-tabs-items>
       </v-form>
     </v-card-text>
     <v-divider />
+    <!-- Reset and submit button group -->
+    <v-card-actions>
+      <v-row align="center" justify="space-around">
+        <v-btn color="error" @click="reset">Reset</v-btn>
+        <v-btn
+          :disabled="!valid"
+          class="blue-grey darken-3 white--text"
+          @click="validate"
+        >
+          Submit
+        </v-btn>
+      </v-row>
+    </v-card-actions>
 
     <!-- Dialog stuff -->
     <v-dialog v-model="dialog" transition="dialog-bottom-transition">
@@ -107,19 +135,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <!-- Reset and submit button group -->
-    <v-card-actions>
-      <v-row align="center" justify="space-around">
-        <v-btn color="error" @click="reset">Reset</v-btn>
-        <v-btn
-          :disabled="!valid"
-          class="blue-grey darken-3 white--text"
-          @click="validate"
-        >
-          Submit
-        </v-btn>
-      </v-row>
-    </v-card-actions>
   </v-card>
 </template>
 
@@ -167,7 +182,11 @@ export default {
 
     // Whether or not the form is valid
     valid: false,
-    dialog: false
+    dialog: false,
+
+    // All tabs
+    tabItems: ["Image", "Methods", "Display"],
+    currentTab: "Image"
   }),
 
   components: {
@@ -249,6 +268,7 @@ export default {
       this.$emit("submit", "reset");
       // We have to set the default threshold again because it is removed after the reset
       this.selectedThreshold = 10;
+      this.currentTab = "Image";
     }
   }
 };
