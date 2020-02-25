@@ -96,6 +96,12 @@
         >
           <!-- The image representing the result -->
           <div align="start" justify="center" ref="result" id="voronoiResult" />
+          <div
+            align="start"
+            justify="center"
+            ref="fullResult"
+            id="voronoiFullResult"
+          />
         </fullscreen>
       </div>
     </v-card-text>
@@ -205,12 +211,13 @@ export default {
       } else {
         // Clear the previous image
         document.getElementById("voronoiResult").innerHTML = "";
+        document.getElementById("voronoiFullResult").innerHTML = "";
       }
     }
   },
   methods: {
     async editImage() {
-      this.croppedImage = await this.$html2canvas(this.$refs.result, {
+      this.croppedImage = await this.$html2canvas(this.$refs.fullResult, {
         type: "dataURL"
       });
       this.dialog = true;
@@ -238,7 +245,7 @@ export default {
      */
     async saveImage() {
       // Convert the image from a div to a canvas element
-      const result = await this.$html2canvas(this.$refs.result, {
+      const result = await this.$html2canvas(this.$refs.fullResult, {
         type: "dataURL"
       });
       const link = document.createElement("a");
@@ -276,6 +283,7 @@ export default {
     generateResult(choice) {
       // Clear the previous image
       document.getElementById("voronoiResult").innerHTML = "";
+      document.getElementById("voronoiFullResult").innerHTML = "";
 
       // Only display the result chosen by the user
       switch (choice.title) {
