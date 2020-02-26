@@ -134,6 +134,8 @@
                     </template>
                     <v-card>
                       <v-card-text class="pa-0">
+                        <!-- v-model should be changed to :value but this
+                        does not work with the fext field and div above -->
                         <v-color-picker
                           v-model="selectedEdgeColour"
                           flat
@@ -340,7 +342,7 @@ export default {
         (!!v && v <= 20 && v >= 1) ||
         "A thickness of at least 1 and at most 20 is required"
     ],
-    selectedEdgeColour: "#000000",
+    selectedEdgeColour: "#000000FF",
     edgeColourMask: "!#XXXXXXXX",
     edgeColourMenu: false,
 
@@ -351,11 +353,11 @@ export default {
         (!!v && v <= 20 && v >= 1) ||
         "A thickness of at least 1 and at most 20 is required"
     ],
-    selectedCentroidColour: "#000000",
+    selectedCentroidColour: "#000000FF",
     centroidColourMenu: false,
     centroidColourMask: "!#XXXXXXXX",
 
-    selectedCellColour: "#000000",
+    selectedCellColour: "#000000FF",
     cellColourMenu: false,
     cellColourMask: "!#XXXXXXXX",
 
