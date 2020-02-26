@@ -3,7 +3,6 @@ require("tracking");
 
 import * as d3 from "d3";
 import * as d3Delaunay from "d3-delaunay";
-
 import { colourCentroidsByCoordinates } from "@/scripts/imageHandler";
 
 export const resultFromDelaunayCorners = (
@@ -62,6 +61,8 @@ export const resultFromDelaunayCorners = (
       y: corners[i + 1]
     });
   }
+  // centroids = randomDelete(centroids, 19000);
+  // centroids = densityDelete(centroids, 6, true);
 
   // TODO: Selected pixels dont correspond with real pixels because of the resizing
   // TODO: Cannot use a cropper and SVG element. Cropper needs to be with image.
@@ -191,7 +192,6 @@ export const resultFromDelaunayCorners = (
 
     svg.on("click", () => {
       // TODO: Using the d3.mouse(d3.event.target) coordinates to obtain the colour does not work and
-      // TODO: results in a black cell. This way, we get the colour of some point close to our point...
 
       // Add the new centroid to the list of centroids
       // x, y needs to be floored for the getColour method
