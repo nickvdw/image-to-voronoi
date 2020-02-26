@@ -95,15 +95,14 @@
           background="#eee"
         >
           <!-- The image representing the result -->
+          <div align="start" justify="center" ref="result" id="voronoiResult" />
           <div
             align="start"
             justify="center"
             ref="fullResult"
-            :fullscreen.sync="fullscreen"
             id="voronoiFullResult"
-            class="result"
+            v-bind:class="resultClasses"
           />
-          <div align="start" justify="center" ref="result" id="voronoiResult" />
         </fullscreen>
       </div>
     </v-card-text>
@@ -218,12 +217,26 @@ export default {
       }
     }
   },
+  computed: {
+    resultClasses() {
+      if (this.fullscreen || this.dialog) {
+        return {
+          showResult: true
+        };
+      } else {
+        return {
+          hideResult: true
+        };
+      }
+    }
+  },
   methods: {
     async editImage() {
+      this.dialog = true;
+
       this.croppedImage = await this.$html2canvas(this.$refs.fullResult, {
         type: "dataURL"
       });
-      this.dialog = true;
     },
     submitCrop() {
       // Obtain the coordinates of the cropped image selection
@@ -360,11 +373,12 @@ export default {
     align-items: center;
   }
 }
-.result {
+.showResult {
   display: inline-flex;
   overflow: auto;
-  &.fullscreen {
-    display: none;
-  }
+}
+.hideResult {
+  display: none;
+  overflow: auto;
 }
 </style>

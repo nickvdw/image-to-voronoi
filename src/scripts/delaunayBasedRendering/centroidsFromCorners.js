@@ -55,24 +55,6 @@ export const resultFromDelaunayCorners = (
 
   // TODO: Add a "selector" tool that can be used to select a rectangle and remove all centroids in that rectangle
 
-  fullSvg.on("click", () => {
-    // TODO: Using the d3.mouse(d3.event.target) coordinates to obtain the colour does not work and
-    // TODO: results in a black cell. This way, we get the colour of some point close to our point...
-    const colour = colourCentroidsByCoordinates(originalImageData, [
-      { x: d3.event.layerX, y: d3.event.layerY }
-    ])[0].colour;
-
-    // Add the new centroid to the list of centroids with a colour
-    colouredCentroids.push({
-      x: d3.mouse(d3.event.target)[0],
-      y: d3.mouse(d3.event.target)[1],
-      colour: colour
-    });
-
-    // Update the result
-    update();
-  });
-
   // Store the centroids based on the corners
   let centroids = [];
   for (let i = 0; i < corners.length; i += 2) {
@@ -86,16 +68,10 @@ export const resultFromDelaunayCorners = (
   // TODO: Cannot use a cropper and SVG element. Cropper needs to be with image.
 
   if (toBeCroppedImageCoordinates) {
-    const img = document.getElementsByClassName(
-      "vue-advanced-cropper__image"
-    )[0];
-    const factorW = originalImageData.width / img.offsetWidth;
-    // const factorH = originalImageData.height / img.offsetHeight;
-
-    const xStart = toBeCroppedImageCoordinates.start.x * factorW;
-    const xEnd = toBeCroppedImageCoordinates.end.x * factorW;
+    const xStart = toBeCroppedImageCoordinates.start.x;
+    const xEnd = toBeCroppedImageCoordinates.end.x;
     const yStart = toBeCroppedImageCoordinates.start.y;
-    const yEnd = toBeCroppedImageCoordinates.end.y * factorW;
+    const yEnd = toBeCroppedImageCoordinates.end.y;
 
     let removedCentroids = [];
     // This one doesn't give the correct sizes
@@ -131,6 +107,12 @@ export const resultFromDelaunayCorners = (
 
   // Redraw the canvas every time the 'update' method is called
   const update = () => {
+    // Recolour centroids
+    colouredCentroids = colourCentroidsByCoordinates(
+      originalImageData,
+      centroids
+    );
+
     // Compute the delaunay triangulation from the centroids
     const delaunay = d3Delaunay.Delaunay.from(
       colouredCentroids,
@@ -151,14 +133,15 @@ export const resultFromDelaunayCorners = (
       fullSvg
         .selectAll("path")
         // Construct a data object from each cell of our voronoi diagram
-        .data(centroids.map((d, i) => voronoi.renderCell(i)))
+        .data(colouredCentroids.map((d, i) => voronoi.renderCell(i)))
         .join("path")
         .attr("d", d => d)
-        .style("fill", (d, i) =>
-          d3.color(
-            `rgb(${centroids[i].colour[0]},${centroids[i].colour[1]},${centroids[i].colour[2]})`
-          )
-        );
+        .style("fill", (d, i) => {
+          // console.log(colouredCentroids[i]);
+          return d3.color(
+            `rgb(${colouredCentroids[i].colour[0]},${colouredCentroids[i].colour[1]},${colouredCentroids[i].colour[2]})`
+          );
+        });
     } else {
       fullSvg
         .selectAll("path")
@@ -192,11 +175,12 @@ export const resultFromDelaunayCorners = (
     }
 
     // Clone the image to the viewbox voronoiResult
-    const clone = d3
-      .select("#fullResultSVG")
-      .node()
-      .cloneNode(true);
-    d3.select("#voronoiResult")
+    const clone = fullSvg.node().cloneNode(true);
+    // Clear old image
+    document.getElementById("voronoiResult").innerHTML = "";
+
+    const svg = d3
+      .select("#voronoiResult")
       .append("svg")
       .html(clone.outerHTML)
       .attr(
@@ -205,6 +189,31 @@ export const resultFromDelaunayCorners = (
       )
       .attr("width", document.getElementById("resultContainer").offsetWidth)
       .attr("height", document.getElementById("resultContainer").offsetHeight);
+
+    svg.on("click", () => {
+      // TODO: Using the d3.mouse(d3.event.target) coordinates to obtain the colour does not work and
+      // TODO: results in a black cell. This way, we get the colour of some point close to our point...
+      const colour = colourCentroidsByCoordinates(originalImageData, [
+        { x: d3.event.layerX, y: d3.event.layerY }
+      ])[0].colour;
+      console.log(colour);
+      console.log(
+        colourCentroidsByCoordinates(originalImageData, [
+          { x: d3.event.layerX, y: d3.event.layerY }
+        ])
+      );
+      console.log(d3.mouse(d3.event.target)[0], d3.mouse(d3.event.target)[1]);
+      console.log(d3.event.layerX, d3.event.layerY);
+      // Add the new centroid to the list of centroids
+      // x, y needs to be floored for the getColour method
+      centroids.push({
+        x: Math.floor(d3.mouse(d3.event.target)[0]),
+        y: Math.floor(d3.mouse(d3.event.target)[1])
+      });
+
+      // Update the result
+      update();
+    });
   };
 
   update();
