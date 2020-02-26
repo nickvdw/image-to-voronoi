@@ -119,8 +119,8 @@
                     label="Display the edges"
                   />
                   <v-color-picker
-                    v-model="selectedEdgeColour"
                     hide-inputs
+                    :value="selectedEdgeColour"
                     flat
                   />
                   <v-text-field
@@ -145,7 +145,7 @@
                     label="Display the centroids"
                   />
                   <v-color-picker
-                    v-model="selectedCentroidColour"
+                    :value="selectedCentroidColour"
                     hide-inputs
                     flat
                   />
@@ -171,7 +171,7 @@
                     label="Colour the cells"
                   />
                   <v-color-picker
-                    v-model="selectedCellColour"
+                    :value="selectedCellColour"
                     hide-inputs
                     flat
                   />
