@@ -6,7 +6,7 @@
   >
     <!-- Card title -->
     <v-card-title class="blue-grey darken-3 white--text">
-      <span class="title">Result</span>
+      <span class="title">Image result</span>
       <v-spacer />
       <!-- TODO: Refactor to for loop -->
       <v-tooltip bottom>
@@ -164,12 +164,17 @@ export default {
           selectedMethod: null,
           selectedThreshold: null,
           selectedAlgorithm: null,
-          // These are false by default in the UI
           displayEdges: false,
           displayCentroids: false,
           displayColour: false,
           croppedImageData: null,
-          coordinateMargins: null
+          coordinateMargins: null,
+          selectedNumberOfNeighbours: 1,
+          selectedEdgeThickness: 1,
+          selectedEdgeColour: null,
+          selectedCentroidSize: 1,
+          selectedCentroidColour: null,
+          selectedCellColour: null
         };
       }
     }

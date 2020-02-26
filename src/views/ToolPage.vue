@@ -2,11 +2,11 @@
   <v-container class="fullHeight" fluid>
     <v-row class="fullHeight">
       <!-- Left column -->
-      <v-col cols="4">
+      <v-col cols="3">
         <Menu @submit="submittedForm" />
       </v-col>
       <!-- Right column -->
-      <v-col cols="8" class="fullHeight">
+      <v-col cols="9" class="fullHeight">
         <Result :configuration="this.processedObject" />
       </v-col>
     </v-row>
