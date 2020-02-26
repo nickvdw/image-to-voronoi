@@ -113,12 +113,14 @@
                 color="blue-grey darken-3"
                 v-model="displayEdges"
                 label="Display the edges"
+                hide-details
               />
               <v-text-field
                 v-if="displayEdges"
                 v-model="selectedEdgeColour"
                 v-mask="edgeColourMask"
                 hide-details
+                class="mt-4"
                 solo
               >
                 <template v-slot:append>
@@ -154,20 +156,21 @@
                 v-model="selectedEdgeThickness"
                 :rules="edgeThicknessRules"
                 type="number"
-                hint="The thickness of the edges in pixels"
+                hide-details
               />
 
               <v-checkbox
                 color="blue-grey darken-3"
                 v-model="displayCentroids"
                 label="Display the centroids"
+                hide-details
               />
               <v-text-field
                 v-if="displayCentroids"
                 v-model="selectedCentroidColour"
                 v-mask="centroidColourMask"
                 hide-details
-                class="ma-0 pa-0"
+                class="ma-0 pa-0 mt-4"
                 solo
               >
                 <template v-slot:append>
@@ -201,20 +204,21 @@
                 v-model="selectedCentroidSize"
                 :rules="centroidSizeRules"
                 type="number"
-                hint="The size of the centroid in pixels"
+                hide-details
               />
 
               <v-checkbox
                 color="blue-grey darken-3"
                 v-model="displayColour"
                 label="Colour the cells"
+                hide-details
               />
               <v-text-field
                 v-if="displayColour"
                 v-model="selectedCellColour"
                 v-mask="cellColourMask"
                 hide-details
-                class="ma-0 pa-0"
+                class="ma-0 pa-0 mt-4"
                 solo
               >
                 <template v-slot:append>
@@ -363,7 +367,7 @@ export default {
 
     displayEdges: false,
     displayCentroids: false,
-    displayColour: true,
+    displayColour: false,
 
     selectedNumberOfNeighbours: 1,
     numberOfNeighboursRules: [
