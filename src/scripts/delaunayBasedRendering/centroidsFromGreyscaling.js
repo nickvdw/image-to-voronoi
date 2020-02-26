@@ -29,6 +29,8 @@ export const resultFromDelaunayGreyscaling = (
     ...computeCentroidsFromGreyScale(greyScaleImageData, 0.5, true, 20, 10)
   ];
 
+  console.log(centroids);
+
   // Obtain colours for the centroids
   const colouredCentroids = colourCentroidsByCoordinates(imageData, centroids);
 

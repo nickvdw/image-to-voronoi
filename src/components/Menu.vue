@@ -93,6 +93,17 @@
                 type="number"
                 hint="A lower threshold results in more centroids."
               />
+              <!-- Minimum radius for poissoin disc sampling -->
+              <v-text-field
+                color="blue-grey darken-3"
+                label="Minimum distance for between points"
+                v-show="this.selectedMethod === 'Poisson disc sampling'"
+                v-model="selectedPoissonDistance"
+                :rules="poissonDistanceRules"
+                type="number"
+                hint="The minimum distance (in pixels) between points when using poisson disc sampling."
+              />
+              <!-- Number of nearest neighbours -->
               <v-text-field
                 color="blue-grey darken-3"
                 label="Number of nearest neighbours"
@@ -311,13 +322,13 @@ export default {
       "Corner detection",
       "Edge detection",
       "Based on greyscale intensities",
-      "Random"
+      "Poisson disc sampling"
     ],
     naiveMethods: [
       "Corner detection",
       "Edge detection",
       "Based on greyscale intensities",
-      "Random"
+      "Poisson disc sampling"
     ],
     methodRules: [v => !!v || "A method is required"],
     // TODO: Remove initialisation
@@ -372,6 +383,13 @@ export default {
       v =>
         (!!v && v <= 30 && v >= 1) ||
         "The number of nearest neighbours should be between 1 and 30"
+    ],
+
+    selectedPoissonDistance: 1,
+    poissonDistanceRules: [
+      v =>
+        (!!v && v <= 2000 && v >= 1) ||
+        "The distance should be between 1 and 2000 pixels."
     ],
 
     // Whether or not the form is valid
@@ -487,7 +505,8 @@ export default {
           selectedEdgeColour: this.selectedEdgeColour,
           selectedCentroidSize: this.selectedCentroidSize,
           selectedCentroidColour: this.selectedCentroidColour,
-          selectedCellColour: this.selectedCellColour
+          selectedCellColour: this.selectedCellColour,
+          selectedPoissonDistance: this.selectedPoissonDistance
         });
       }
     },

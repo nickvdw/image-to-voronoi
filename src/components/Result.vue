@@ -127,9 +127,9 @@ require("tracking");
 /* eslint-disable no-unused-vars */
 
 import { uploadImage, toImageDataUrl } from "@/scripts/imageHandler";
-// import { renderColouredVoronoi } from "@/scripts/voronoiUsingD3";
 import { resultFromDelaunayCorners } from "@/scripts/delaunayBasedRendering/centroidsFromCorners";
 import { resultFromDelaunayGreyscaling } from "@/scripts/delaunayBasedRendering/centroidsFromGreyscaling";
+import { resultFromDelaunayPoisson } from "@/scripts/delaunayBasedRendering/centroidsFromPoisson";
 import { resultFromNaiveGreyscaling } from "@/scripts/naiveRendering/centroidsFromGreyscaling";
 
 import * as d3 from "d3";
@@ -174,7 +174,8 @@ export default {
           selectedEdgeColour: null,
           selectedCentroidSize: 1,
           selectedCentroidColour: null,
-          selectedCellColour: null
+          selectedCellColour: null,
+          selectedPoissonDistance: 1
         };
       }
     }
@@ -273,9 +274,17 @@ export default {
             ) {
               resultFromDelaunayGreyscaling(
                 this.originalImageData,
-                // parseInt(this.configuration.selectedThreshold),
                 this.configuration.displayEdges,
                 this.configuration.displayCentroids
+              );
+            } else if (
+              this.configuration.selectedMethod === "Poisson disc sampling"
+            ) {
+              resultFromDelaunayPoisson(
+                this.originalImageData,
+                this.configuration.displayEdges,
+                this.configuration.displayCentroids,
+                this.configuration.selectedPoissonDistance
               );
             } else {
               console.log("This method does not exist");
