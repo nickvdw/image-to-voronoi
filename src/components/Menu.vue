@@ -107,77 +107,138 @@
         </v-tab-item>
         <v-tab-item>
           <v-card flat>
-            <v-expansion-panels flat accordion>
-              <v-expansion-panel>
-                <v-expansion-panel-header>
-                  Edge options
-                </v-expansion-panel-header>
-                <v-expansion-panel-content>
-                  <v-checkbox
-                    color="blue-grey darken-3"
-                    v-model="displayEdges"
-                    label="Display the edges"
-                  />
-                  <v-color-picker
-                    hide-inputs
-                    :value="selectedEdgeColour"
-                    flat
-                  />
-                  <v-text-field
-                    color="blue-grey darken-3"
-                    label="Edge thickness"
-                    class="ml-4 mr-4"
-                    v-model="selectedEdgeThickness"
-                    :rules="edgeThicknessRules"
-                    type="number"
-                    hint="The thickness of the edges in pixels"
-                  />
-                </v-expansion-panel-content>
-              </v-expansion-panel>
-              <v-expansion-panel>
-                <v-expansion-panel-header>
-                  Centroid options
-                </v-expansion-panel-header>
-                <v-expansion-panel-content>
-                  <v-checkbox
-                    color="blue-grey darken-3"
-                    v-model="displayCentroids"
-                    label="Display the centroids"
-                  />
-                  <v-color-picker
-                    :value="selectedCentroidColour"
-                    hide-inputs
-                    flat
-                  />
-                  <v-text-field
-                    color="blue-grey darken-3"
-                    label="Centroid size"
-                    class="ml-4 mr-4"
-                    v-model="selectedCentroidSize"
-                    :rules="centroidSizeRules"
-                    type="number"
-                    hint="The size of the centroid in pixels"
-                  />
-                </v-expansion-panel-content>
-              </v-expansion-panel>
-              <v-expansion-panel>
-                <v-expansion-panel-header>
-                  Cell options
-                </v-expansion-panel-header>
-                <v-expansion-panel-content>
-                  <v-checkbox
-                    color="blue-grey darken-3"
-                    v-model="displayColour"
-                    label="Colour the cells"
-                  />
-                  <v-color-picker
-                    :value="selectedCellColour"
-                    hide-inputs
-                    flat
-                  />
-                </v-expansion-panel-content>
-              </v-expansion-panel>
-            </v-expansion-panels>
+            <v-card-text class="pt-0">
+              <!-- TODO: Render these in a for loop -->
+              <v-checkbox
+                color="blue-grey darken-3"
+                v-model="displayEdges"
+                label="Display the edges"
+              />
+              <v-text-field
+                v-if="displayEdges"
+                v-model="selectedEdgeColour"
+                v-mask="edgeColourMask"
+                hide-details
+                solo
+              >
+                <template v-slot:append>
+                  <v-menu
+                    v-model="edgeColourMenu"
+                    top
+                    nudge-bottom="105"
+                    nudge-left="16"
+                    :close-on-content-click="false"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <div :style="swatchStyleEdgeColour" v-on="on" />
+                    </template>
+                    <v-card>
+                      <v-card-text class="pa-0">
+                        <v-color-picker
+                          v-model="selectedEdgeColour"
+                          flat
+                          hide-inputs
+                        />
+                      </v-card-text>
+                    </v-card>
+                  </v-menu>
+                </template>
+              </v-text-field>
+              <v-text-field
+                v-if="displayEdges"
+                color="blue-grey darken-3"
+                label="Edge thickness"
+                class="mt-4"
+                v-model="selectedEdgeThickness"
+                :rules="edgeThicknessRules"
+                type="number"
+                hint="The thickness of the edges in pixels"
+              />
+
+              <v-checkbox
+                color="blue-grey darken-3"
+                v-model="displayCentroids"
+                label="Display the centroids"
+              />
+              <v-text-field
+                v-if="displayCentroids"
+                v-model="selectedCentroidColour"
+                v-mask="centroidColourMask"
+                hide-details
+                class="ma-0 pa-0"
+                solo
+              >
+                <template v-slot:append>
+                  <v-menu
+                    v-model="centroidColourMenu"
+                    top
+                    nudge-bottom="105"
+                    nudge-left="16"
+                    :close-on-content-click="false"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <div :style="swatchStyleCentroidColour" v-on="on" />
+                    </template>
+                    <v-card>
+                      <v-card-text class="pa-0">
+                        <v-color-picker
+                          v-model="selectedCentroidColour"
+                          flat
+                          hide-inputs
+                        />
+                      </v-card-text>
+                    </v-card>
+                  </v-menu>
+                </template>
+              </v-text-field>
+              <v-text-field
+                v-if="displayCentroids"
+                color="blue-grey darken-3"
+                label="Centroid size"
+                class="mt-4"
+                v-model="selectedCentroidSize"
+                :rules="centroidSizeRules"
+                type="number"
+                hint="The size of the centroid in pixels"
+              />
+
+              <v-checkbox
+                color="blue-grey darken-3"
+                v-model="displayColour"
+                label="Colour the cells"
+              />
+              <v-text-field
+                v-if="displayColour"
+                v-model="selectedCellColour"
+                v-mask="cellColourMask"
+                hide-details
+                class="ma-0 pa-0"
+                solo
+              >
+                <template v-slot:append>
+                  <v-menu
+                    v-model="cellColourMenu"
+                    top
+                    nudge-bottom="105"
+                    nudge-left="16"
+                    :close-on-content-click="false"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <div :style="swatchStyleCellColour" v-on="on" />
+                    </template>
+                    <v-card>
+                      <v-card-text class="pa-0">
+                        <v-color-picker
+                          v-model="selectedCellColour"
+                          flat
+                          hide-inputs
+                        />
+                      </v-card-text>
+                    </v-card>
+                  </v-menu>
+                </template>
+              </v-text-field>
+            </v-card-text>
           </v-card>
         </v-tab-item>
       </v-tabs-items>
@@ -223,9 +284,12 @@
 
 <script>
 import { Cropper } from "vue-advanced-cropper";
+import { mask } from "vue-the-mask";
 
 export default {
   name: "Menu",
+
+  directives: { mask },
 
   data: () => ({
     // Cropped image
@@ -276,7 +340,9 @@ export default {
         (!!v && v <= 20 && v >= 1) ||
         "A thickness of at least 1 and at most 20 is required"
     ],
-    selectedEdgeColour: null,
+    selectedEdgeColour: "#000000",
+    edgeColourMask: "!#XXXXXXXX",
+    edgeColourMenu: false,
 
     // Selected size and colour for centroids with associated rules
     selectedCentroidSize: 1,
@@ -285,9 +351,13 @@ export default {
         (!!v && v <= 20 && v >= 1) ||
         "A thickness of at least 1 and at most 20 is required"
     ],
-    selectedCentroidColour: null,
+    selectedCentroidColour: "#000000",
+    centroidColourMenu: false,
+    centroidColourMask: "!#XXXXXXXX",
 
-    selectedCellColour: null,
+    selectedCellColour: "#000000",
+    cellColourMenu: false,
+    cellColourMask: "!#XXXXXXXX",
 
     displayEdges: false,
     displayCentroids: false,
@@ -311,6 +381,42 @@ export default {
 
   components: {
     Cropper
+  },
+
+  computed: {
+    swatchStyleEdgeColour() {
+      const { selectedEdgeColour, edgeColourMenu } = this;
+      return {
+        backgroundColor: selectedEdgeColour,
+        cursor: "pointer",
+        height: "30px",
+        width: "30px",
+        borderRadius: edgeColourMenu ? "50%" : "4px",
+        transition: "border-radius 200ms ease-in-out"
+      };
+    },
+    swatchStyleCellColour() {
+      const { selectedCellColour, cellColourMenu } = this;
+      return {
+        backgroundColor: selectedCellColour,
+        cursor: "pointer",
+        height: "30px",
+        width: "30px",
+        borderRadius: cellColourMenu ? "50%" : "4px",
+        transition: "border-radius 200ms ease-in-out"
+      };
+    },
+    swatchStyleCentroidColour() {
+      const { selectedCentroidColour, centroidColourMenu } = this;
+      return {
+        backgroundColor: selectedCentroidColour,
+        cursor: "pointer",
+        height: "30px",
+        width: "30px",
+        borderRadius: centroidColourMenu ? "50%" : "4px",
+        transition: "border-radius 200ms ease-in-out"
+      };
+    }
   },
 
   methods: {
