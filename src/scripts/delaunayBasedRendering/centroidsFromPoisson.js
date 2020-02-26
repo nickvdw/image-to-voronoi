@@ -9,8 +9,7 @@ export const resultFromDelaunayPoisson = (
   displayCentroids,
   poissonDistance
 ) => {
-  // Compute the centroid based on the greyscaled intensities
-
+  // Compute centroids basied on poisson disc sampling with a certain radius (distance)
   const centroids = [
     ...poissonDiscSampler(
       0,
