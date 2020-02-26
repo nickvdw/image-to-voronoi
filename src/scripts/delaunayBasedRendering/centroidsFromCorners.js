@@ -50,7 +50,6 @@ export const resultFromDelaunayCorners = (
     .attr("height", originalImageData.height)
     .attr("id", "fullResultSVG")
     .style("background-color", "black");
-  console.log(originalImageData.width, originalImageData.height);
   // TODO: Add something for dragging centroids
 
   // TODO: Add a "selector" tool that can be used to select a rectangle and remove all centroids in that rectangle
@@ -193,17 +192,7 @@ export const resultFromDelaunayCorners = (
     svg.on("click", () => {
       // TODO: Using the d3.mouse(d3.event.target) coordinates to obtain the colour does not work and
       // TODO: results in a black cell. This way, we get the colour of some point close to our point...
-      const colour = colourCentroidsByCoordinates(originalImageData, [
-        { x: d3.event.layerX, y: d3.event.layerY }
-      ])[0].colour;
-      console.log(colour);
-      console.log(
-        colourCentroidsByCoordinates(originalImageData, [
-          { x: d3.event.layerX, y: d3.event.layerY }
-        ])
-      );
-      console.log(d3.mouse(d3.event.target)[0], d3.mouse(d3.event.target)[1]);
-      console.log(d3.event.layerX, d3.event.layerY);
+
       // Add the new centroid to the list of centroids
       // x, y needs to be floored for the getColour method
       centroids.push({
