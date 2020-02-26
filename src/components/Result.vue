@@ -99,6 +99,7 @@
             align="start"
             justify="center"
             ref="fullResult"
+            :fullscreen.sync="fullscreen"
             id="voronoiFullResult"
             class="result"
           />
@@ -362,5 +363,8 @@ export default {
 .result {
   display: inline-flex;
   overflow: auto;
+  &.fullscreen {
+    display: none;
+  }
 }
 </style>

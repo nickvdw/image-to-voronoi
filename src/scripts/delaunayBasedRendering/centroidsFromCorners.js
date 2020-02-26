@@ -48,6 +48,7 @@ export const resultFromDelaunayCorners = (
     .append("svg")
     .attr("width", originalImageData.width)
     .attr("height", originalImageData.height)
+    .attr("id", "fullResultSVG")
     .style("background-color", "black");
   console.log(originalImageData.width, originalImageData.height);
   // TODO: Add something for dragging centroids
@@ -189,29 +190,22 @@ export const resultFromDelaunayCorners = (
           .attr("fill", "red");
       });
     }
-  };
 
-  // svg.on("click", () => {
-  //   console.log(d3.mouse("svg"));
-  //   console.log(d3.event);
-  //   colouredCentroids.push(
-  //     colourCentroidsByCoordinates(imageData, [
-  //       { x: d3.event.layerX, y: d3.event.layerY }
-  //     ])[0]
-  //   );
-  //   update();
-  // });
-  // const cloned = fullSvg.node();
-  // console.log(cloned.html);
-  // d3.select("#voronoiResult")
-  //   .append("svg")
-  //   .html(fullSvg.node().innerHTML)
-  //   .attr(
-  //     "viewBox",
-  //     `0 0 ${originalImageData.width} ${originalImageData.height}`
-  //   )
-  //   .attr("width", document.getElementById("resultContainer").offsetWidth)
-  //   .attr("height", document.getElementById("resultContainer").offsetHeight);
+    // Clone the image to the viewbox voronoiResult
+    const clone = d3
+      .select("#fullResultSVG")
+      .node()
+      .cloneNode(true);
+    d3.select("#voronoiResult")
+      .append("svg")
+      .html(clone.outerHTML)
+      .attr(
+        "viewBox",
+        `0 0 ${originalImageData.width} ${originalImageData.height}`
+      )
+      .attr("width", document.getElementById("resultContainer").offsetWidth)
+      .attr("height", document.getElementById("resultContainer").offsetHeight);
+  };
 
   update();
 };
