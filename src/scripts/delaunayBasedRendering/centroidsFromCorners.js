@@ -31,13 +31,71 @@ export const resultFromDelaunayCorners = (
     imageData.height
   );
 
-  // TODO: Experiment with Sobel
-  // Find the corners in the grayscaled image using FAST
-  const corners = window.tracking.Fast.findCorners(
-    gray,
-    imageData.width,
-    imageData.height
-  );
+  const detectionMethod = "Sobel";
+  let corners = null;
+  let edges = [];
+  let centroids = [];
+
+  if (detectionMethod == "Sobel") {
+    const edgePixels = window.tracking.Image.sobel(
+      gray,
+      imageData.width,
+      imageData.height
+    );
+    // Handle all the NaN and > 255 pixel values
+    let x = 0;
+    let max = 0;
+    for (let i = 0; i < edgePixels.length; i+=4) {
+      if (edgePixels[i] > max) {
+        max = edgePixels[i];
+      }
+      if (edgePixels[i] == isNaN) {
+        edgePixels[i] = 0;
+      }
+    }
+    while (x < edgePixels.length) {
+      edgePixels[x] = 255 * (edgePixels[x] / max);
+      x += 4;
+    }
+    x = 0;
+
+    // A while loop is faster than a for loop to iterate over all pixels
+    for (let i = 0; i < imageData.height; i++) {
+      for (let j = 0; j < imageData.width; j++) {
+        edges.push({
+          x: j,
+          y: i,
+          colour: Math.round(edgePixels[x])
+        });
+        x += 4;
+      }
+    }
+
+    for (let i = 0; i < edges.length; i++) {
+      if (edges[i].colour > 50) {
+        centroids.push({
+          x: edges[i].x,
+          y: edges[i].y
+        });
+      } 
+    }
+  } else {
+    // Find the corners in the grayscaled image using FAST
+    corners = window.tracking.Fast.findCorners(
+      gray,
+      imageData.width,
+      imageData.height
+    );
+
+    // Store the centroids based on the corners
+    for (let i = 0; i < corners.length; i += 2) {
+      centroids.push({
+        x: corners[i],
+        y: corners[i + 1]
+      });
+    }
+  }
+  console.log(centroids);
 
   // Set the initial configuration of the svg
   const svg = d3
@@ -73,14 +131,14 @@ export const resultFromDelaunayCorners = (
     update();
   });
 
-  // Store the centroids based on the corners
-  let centroids = [];
-  for (let i = 0; i < corners.length; i += 2) {
-    centroids.push({
-      x: corners[i],
-      y: corners[i + 1]
-    });
-  }
+  // // Store the centroids based on the corners
+  // let centroids = [];
+  // for (let i = 0; i < corners.length; i += 2) {
+  //   centroids.push({
+  //     x: corners[i],
+  //     y: corners[i + 1]
+  //   });
+  // }
 
   // Add margin to the centroids if we use the cropped image
   if (croppedImageData && coordinateMargins) {
