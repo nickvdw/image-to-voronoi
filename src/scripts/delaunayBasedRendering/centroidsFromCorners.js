@@ -49,7 +49,7 @@ export const resultFromDelaunayCorners = (
     .attr("width", originalImageData.width)
     .attr("height", originalImageData.height)
     .style("background-color", "black");
-
+  console.log(originalImageData.width, originalImageData.height);
   // TODO: Add something for dragging centroids
 
   // TODO: Add a "selector" tool that can be used to select a rectangle and remove all centroids in that rectangle
@@ -201,16 +201,17 @@ export const resultFromDelaunayCorners = (
   //   );
   //   update();
   // });
-  const cloned = fullSvg.node();
-  console.log(cloned);
-  d3.select("#voronoiResult")
-    .html(fullSvg.node())
-    .attr(
-      "viewBox",
-      `0 0 ${originalImageData.width} ${originalImageData.height}`
-    )
-    .attr("width", document.getElementById("resultContainer").offsetWidth)
-    .attr("height", document.getElementById("resultContainer").offsetHeight);
+  // const cloned = fullSvg.node();
+  // console.log(cloned.html);
+  // d3.select("#voronoiResult")
+  //   .append("svg")
+  //   .html(fullSvg.node().innerHTML)
+  //   .attr(
+  //     "viewBox",
+  //     `0 0 ${originalImageData.width} ${originalImageData.height}`
+  //   )
+  //   .attr("width", document.getElementById("resultContainer").offsetWidth)
+  //   .attr("height", document.getElementById("resultContainer").offsetHeight);
 
   update();
 };

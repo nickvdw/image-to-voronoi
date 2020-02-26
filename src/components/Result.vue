@@ -95,16 +95,18 @@
           background="#eee"
         >
           <!-- The image representing the result -->
-          <div align="start" justify="center" ref="result" id="voronoiResult" />
           <div
             align="start"
             justify="center"
             ref="fullResult"
             id="voronoiFullResult"
+            class="result"
           />
+          <div align="start" justify="center" ref="result" id="voronoiResult" />
         </fullscreen>
       </div>
     </v-card-text>
+
     <!-- Dialog stuff -->
     <v-dialog v-model="dialog" fullscreen transition="dialog-bottom-transition">
       <v-card>
@@ -356,5 +358,9 @@ export default {
     justify-content: center;
     align-items: center;
   }
+}
+.result {
+  display: inline-flex;
+  overflow: auto;
 }
 </style>
