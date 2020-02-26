@@ -150,6 +150,7 @@ require("tracking");
 
 import { uploadImage, toImageDataUrl } from "@/scripts/imageHandler";
 import { resultFromDelaunayCorners } from "@/scripts/delaunayBasedRendering/centroidsFromCorners";
+import { resultFromDelaunayEdges } from "@/scripts/delaunayBasedRendering/centroidsFromEdges";
 import { resultFromDelaunayGreyscaling } from "@/scripts/delaunayBasedRendering/centroidsFromGreyscaling";
 import { resultFromDelaunayPoisson } from "@/scripts/delaunayBasedRendering/centroidsFromPoisson";
 import { resultFromNaiveGreyscaling } from "@/scripts/naiveRendering/centroidsFromGreyscaling";
@@ -282,6 +283,16 @@ export default {
           ) {
             if (this.configuration.selectedMethod === "Corner detection") {
               resultFromDelaunayCorners(
+                this.originalImageData,
+                parseInt(this.configuration.selectedThreshold),
+                this.configuration.displayEdges,
+                this.configuration.displayCentroids,
+                this.configuration.displayColour,
+                this.configuration.croppedImageData,
+                this.configuration.coordinateMargins
+              );
+            } else if (this.configuration.selectedMethod === "Edge detection") {
+              resultFromDelaunayEdges(
                 this.originalImageData,
                 parseInt(this.configuration.selectedThreshold),
                 this.configuration.displayEdges,

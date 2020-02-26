@@ -15,7 +15,6 @@ export const resultFromDelaunayEdges = (
   croppedImageData,
   coordinateMargins
 ) => {
-  
   // Set the threshold for the number of corners to detect
   window.fastThreshold = threshold;
   window.tracking.Fast.THRESHOLD = window.fastThreshold;
@@ -75,9 +74,11 @@ export const resultFromDelaunayEdges = (
   }
 
   // Centroids are now being made under a certain threshold condition (value over ...)
+  // TODO: replace dummy threshold variable with the one from the method parameter
+  const dummyTreshold = 40;
   let centroids = [];
   for (let i = 0; i < edges.length; i++) {
-    if (edges[i].colour > 50) {
+    if (edges[i].colour > dummyTreshold) {
       centroids.push({
         x: edges[i].x,
         y: edges[i].y
