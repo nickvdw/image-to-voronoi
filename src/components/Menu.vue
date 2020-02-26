@@ -2,7 +2,7 @@
   <v-card elevation="12">
     <!-- Card title -->
     <v-card-title class="blue-grey darken-3 white--text">
-      <span class="title">Configuration</span>
+      <span class="title">Configuration parameters</span>
       <v-spacer />
     </v-card-title>
     <!-- Card content -->
@@ -253,7 +253,7 @@ export default {
     ],
     methodRules: [v => !!v || "A method is required"],
     // TODO: Remove initialisation
-    selectedMethod: "",
+    selectedMethod: "Corner detection",
 
     // Available methods for the algorithms and associated rules
     algorithms: ["Naive", "Delaunay triangulation"],

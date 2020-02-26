@@ -6,7 +6,7 @@
   >
     <!-- Card title -->
     <v-card-title class="blue-grey darken-3 white--text">
-      <span class="title">Result</span>
+      <span class="title">Image result</span>
       <v-spacer />
       <!-- TODO: Refactor to for loop -->
       <v-tooltip bottom>
