@@ -65,13 +65,11 @@
                 v-model="selectedAlgorithm"
                 label="Algorithm"
                 required
-                :menu-props="{ bottom: true, offsetY: true }"
                 hint="This algorithms will be used to generate the result."
                 :rules="algorithmRules"
               />
               <!-- Field to select method for centroid generation -->
               <v-select
-                :menu-props="{ bottom: true, offsetY: true }"
                 color="blue-grey darken-3"
                 item-color="blue-grey darken-4"
                 :items="
