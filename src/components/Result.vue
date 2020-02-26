@@ -6,7 +6,7 @@
   >
     <!-- Card title -->
     <v-card-title class="blue-grey darken-3 white--text">
-      <span class="title">Result</span>
+      <span class="title">Image result</span>
       <v-spacer />
       <!-- TODO: Refactor to for loop -->
       <v-tooltip bottom>
@@ -149,9 +149,9 @@ require("tracking");
 /* eslint-disable no-unused-vars */
 
 import { uploadImage, toImageDataUrl } from "@/scripts/imageHandler";
-// import { renderColouredVoronoi } from "@/scripts/voronoiUsingD3";
 import { resultFromDelaunayCorners } from "@/scripts/delaunayBasedRendering/centroidsFromCorners";
 import { resultFromDelaunayGreyscaling } from "@/scripts/delaunayBasedRendering/centroidsFromGreyscaling";
+import { resultFromDelaunayPoisson } from "@/scripts/delaunayBasedRendering/centroidsFromPoisson";
 import { resultFromNaiveGreyscaling } from "@/scripts/naiveRendering/centroidsFromGreyscaling";
 
 import * as d3 from "d3";
@@ -186,12 +186,18 @@ export default {
           selectedMethod: null,
           selectedThreshold: null,
           selectedAlgorithm: null,
-          // These are false by default in the UI
           displayEdges: false,
           displayCentroids: false,
           displayColour: false,
           croppedImageData: null,
-          coordinateMargins: null
+          coordinateMargins: null,
+          selectedNumberOfNeighbours: 1,
+          selectedEdgeThickness: 1,
+          selectedEdgeColour: null,
+          selectedCentroidSize: 1,
+          selectedCentroidColour: null,
+          selectedCellColour: null,
+          selectedPoissonDistance: 1
         };
       }
     }
@@ -290,9 +296,17 @@ export default {
             ) {
               resultFromDelaunayGreyscaling(
                 this.originalImageData,
-                // parseInt(this.configuration.selectedThreshold),
                 this.configuration.displayEdges,
                 this.configuration.displayCentroids
+              );
+            } else if (
+              this.configuration.selectedMethod === "Poisson disc sampling"
+            ) {
+              resultFromDelaunayPoisson(
+                this.originalImageData,
+                this.configuration.displayEdges,
+                this.configuration.displayCentroids,
+                this.configuration.selectedPoissonDistance
               );
             } else {
               console.log("This method does not exist");

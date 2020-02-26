@@ -2,15 +2,11 @@
   <v-container class="fullHeight" fluid>
     <v-row class="fullHeight">
       <!-- Left column -->
-      <v-col cols="4">
+      <v-col cols="3">
         <Menu @submit="submittedForm" />
       </v-col>
       <!-- Right column -->
-<<<<<<< HEAD
-      <v-col cols="8">
-=======
-      <v-col cols="8" class="fullHeight">
->>>>>>> b9ad939b48cbf871a6b7b57489b1f44cae1705b7
+      <v-col cols="9" class="fullHeight">
         <Result :configuration="this.processedObject" />
       </v-col>
     </v-row>
@@ -20,7 +16,6 @@
 <script>
 import Menu from "@/components/Menu.vue";
 import Result from "@/components/Result.vue";
-
 export default {
   data() {
     return {
@@ -28,12 +23,10 @@ export default {
       processedObject: {}
     };
   },
-
   components: {
     Menu,
     Result
   },
-
   methods: {
     /**
      * Pass the @object if there is one. Otherwise, pass an empty object.
