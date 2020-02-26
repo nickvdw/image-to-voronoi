@@ -37,29 +37,36 @@ export const resultFromDelaunayCorners = (
   let centroids = [];
 
   if (detectionMethod == "Sobel") {
+    // Grayscaling reduced the size of the pixel array to 1/4th, we need to reconstruct it
+    let grayImageData = [];
+    for (let i = 0; i < gray.length; i++) {
+      grayImageData.push(gray[i], gray[i], gray[i], 255);
+    }
+
+    // Run Sobel edge detection on the image
     const edgePixels = window.tracking.Image.sobel(
-      gray,
+      grayImageData,
       imageData.width,
       imageData.height
     );
-    // Handle all the NaN and > 255 pixel values
-    let x = 0;
+
+    // Normalise all the values, as some values are over 255
     let max = 0;
-    for (let i = 0; i < edgePixels.length; i+=4) {
+    for (let i = 0; i < edgePixels.length; i += 4) {
       if (edgePixels[i] > max) {
         max = edgePixels[i];
       }
-      if (edgePixels[i] == isNaN) {
-        edgePixels[i] = 0;
-      }
     }
+
+    // Set x to be our iterative and normalise all values
+    let x = 0;
     while (x < edgePixels.length) {
       edgePixels[x] = 255 * (edgePixels[x] / max);
       x += 4;
     }
-    x = 0;
 
-    // A while loop is faster than a for loop to iterate over all pixels
+    // Reset x and link each value to a coordinate
+    x = 0;
     for (let i = 0; i < imageData.height; i++) {
       for (let j = 0; j < imageData.width; j++) {
         edges.push({
@@ -70,14 +77,14 @@ export const resultFromDelaunayCorners = (
         x += 4;
       }
     }
-
+    // Centroids are now being made under a certain threshold condition (value over ...)
     for (let i = 0; i < edges.length; i++) {
       if (edges[i].colour > 50) {
         centroids.push({
           x: edges[i].x,
           y: edges[i].y
         });
-      } 
+      }
     }
   } else {
     // Find the corners in the grayscaled image using FAST
