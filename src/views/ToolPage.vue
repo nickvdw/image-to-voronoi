@@ -1,12 +1,16 @@
 <template>
-  <v-container fluid>
-    <v-row>
+  <v-container class="fullHeight" fluid>
+    <v-row class="fullHeight">
       <!-- Left column -->
       <v-col cols="4">
         <Menu @submit="submittedForm" />
       </v-col>
       <!-- Right column -->
+<<<<<<< HEAD
       <v-col cols="8">
+=======
+      <v-col cols="8" class="fullHeight">
+>>>>>>> b9ad939b48cbf871a6b7b57489b1f44cae1705b7
         <Result :configuration="this.processedObject" />
       </v-col>
     </v-row>
@@ -46,3 +50,9 @@ export default {
   }
 };
 </script>
+
+<style>
+.fullHeight {
+  height: 100%;
+}
+</style>
