@@ -16,7 +16,6 @@
 <script>
 import Menu from "@/components/Menu.vue";
 import Result from "@/components/Result.vue";
-
 export default {
   data() {
     return {
@@ -24,12 +23,10 @@ export default {
       processedObject: {}
     };
   },
-
   components: {
     Menu,
     Result
   },
-
   methods: {
     /**
      * Pass the @object if there is one. Otherwise, pass an empty object.
