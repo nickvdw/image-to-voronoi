@@ -106,7 +106,36 @@ export const resultFromDelaunayCorners = (
   );
 
   // Redraw the canvas every time the 'update' method is called
-  const update = () => {
+  const update = (
+    croppedImageData,
+    coordinateMargins,
+    toBeCroppedImageCoordinates
+  ) => {
+    if (croppedImageData && coordinateMargins) {
+      imageData = croppedImageData;
+    }
+
+    if (toBeCroppedImageCoordinates) {
+      const xStart = toBeCroppedImageCoordinates.start.x;
+      const xEnd = toBeCroppedImageCoordinates.end.x;
+      const yStart = toBeCroppedImageCoordinates.start.y;
+      const yEnd = toBeCroppedImageCoordinates.end.y;
+
+      let removedCentroids = [];
+      // This one doesn't give the correct sizes
+      for (let i = centroids.length - 1; i >= 0; i--) {
+        if (
+          centroids[i].x >= xStart &&
+          centroids[i].x <= xEnd &&
+          centroids[i].y >= yStart &&
+          centroids[i].y <= yEnd
+        ) {
+          removedCentroids.push(centroids[i]);
+          centroids.splice(i, 1);
+        }
+      }
+    }
+
     // Recolour centroids
     colouredCentroids = colourCentroidsByCoordinates(
       originalImageData,
@@ -205,5 +234,6 @@ export const resultFromDelaunayCorners = (
     });
   };
 
-  update();
+  update(croppedImageData, coordinateMargins, toBeCroppedImageCoordinates);
+  return update;
 };

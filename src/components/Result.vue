@@ -167,8 +167,10 @@ export default {
       centroids: [],
       fullscreen: false,
       dialog: false,
+      saving: false,
       croppedImage: null,
-      toBeCroppedImageCoordinates: null
+      toBeCroppedImageCoordinates: null,
+      update: null
     };
   },
   props: {
@@ -219,7 +221,7 @@ export default {
   },
   computed: {
     resultClasses() {
-      if (this.fullscreen || this.dialog) {
+      if (this.fullscreen || this.dialog || this.saving) {
         return {
           showResult: true
         };
@@ -261,9 +263,11 @@ export default {
      */
     async saveImage() {
       // Convert the image from a div to a canvas element
+      this.saving = true;
       const result = await this.$html2canvas(this.$refs.fullResult, {
         type: "dataURL"
       });
+      this.saving = false;
       const link = document.createElement("a");
       link.download = "filename.png";
       link.href = result;
@@ -352,6 +356,13 @@ export default {
           break;
         case "Centroids":
           // TODO: We probably have to handle centroid stuff in the files used for generation the result since we have direct access to the centroids there
+          break;
+        case "Update":
+          this.update(
+            this.configuration.croppedImageData,
+            this.configuration.coordinateMargins,
+            this.toBeCroppedImageCoordinates
+          );
           break;
         default:
         // TODO: catch error
