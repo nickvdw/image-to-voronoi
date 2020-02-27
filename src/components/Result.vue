@@ -136,17 +136,12 @@
           <div align="start" justify="center" ref="result" id="voronoiResult" />
         </fullscreen>
       </div>
-      <div>
-        <canvas v-show="this.displayEdges" id="findEdges" />
-      </div>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
 require("tracking");
-
-/* eslint-disable no-unused-vars */
 
 import { uploadImage, toImageDataUrl } from "@/scripts/imageHandler";
 import { resultFromDelaunayCorners } from "@/scripts/delaunayBasedRendering/centroidsFromCorners";
