@@ -136,9 +136,6 @@
           <div align="start" justify="center" ref="result" id="voronoiResult" />
         </fullscreen>
       </div>
-      <div>
-        <canvas v-show="this.displayEdges" id="findEdges" />
-      </div>
     </v-card-text>
   </v-card>
 </template>
@@ -151,6 +148,7 @@ require("tracking");
 import { uploadImage, toImageDataUrl } from "@/scripts/imageHandler";
 import { resultFromDelaunayCorners } from "@/scripts/delaunayBasedRendering/centroidsFromCorners";
 import { resultFromDelaunayEdges } from "@/scripts/delaunayBasedRendering/centroidsFromEdges";
+import { resultFromDelaunayCanny } from "@/scripts/delaunayBasedRendering/centroidsFromCanny";
 import { resultFromDelaunayGreyscaling } from "@/scripts/delaunayBasedRendering/centroidsFromGreyscaling";
 import { resultFromDelaunayPoisson } from "@/scripts/delaunayBasedRendering/centroidsFromPoisson";
 import { resultFromNaiveGreyscaling } from "@/scripts/naiveRendering/centroidsFromGreyscaling";
@@ -291,7 +289,9 @@ export default {
                 this.configuration.croppedImageData,
                 this.configuration.coordinateMargins
               );
-            } else if (this.configuration.selectedMethod === "Edge detection") {
+            } else if (
+              this.configuration.selectedMethod === "FAST edge detection"
+            ) {
               resultFromDelaunayEdges(
                 this.originalImageData,
                 parseInt(this.configuration.selectedThreshold),
@@ -318,6 +318,18 @@ export default {
                 this.configuration.displayEdges,
                 this.configuration.displayCentroids,
                 this.configuration.selectedPoissonDistance
+              );
+            } else if (
+              this.configuration.selectedMethod === "Canny edge detection"
+            ) {
+              resultFromDelaunayCanny(
+                this.originalImageData,
+                parseInt(this.configuration.selectedThreshold),
+                this.configuration.displayEdges,
+                this.configuration.displayCentroids,
+                this.configuration.displayColour,
+                this.configuration.croppedImageData,
+                this.configuration.coordinateMargins
               );
             } else {
               console.log("This method does not exist");

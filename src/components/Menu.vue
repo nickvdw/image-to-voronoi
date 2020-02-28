@@ -319,8 +319,9 @@ export default {
 
     // Available methods for the centroid generation and associated rules
     delaunayMethods: [
+      "Canny edge detection",
+      "FAST edge detection",
       "Corner detection",
-      "Edge detection",
       "Based on greyscale intensities",
       "Poisson disc sampling"
     ],
