@@ -145,10 +145,13 @@ require("tracking");
 
 import { uploadImage, toImageDataUrl } from "@/scripts/imageHandler";
 import { resultFromDelaunayCorners } from "@/scripts/delaunayBasedRendering/centroidsFromCorners";
-import { resultFromDelaunayEdgesSobel } from "@/scripts/delaunayBasedRendering/centroidsFromEdgesSobel";
+// import { resultFromDelaunayEdgesSobel } from "@/scripts/delaunayBasedRendering/centroidsFromEdgesSobel";
+// import { resultFromDelaunayEdgesSobelThread } from "@/scripts/delaunayBasedRendering/centroidsFromEdgesSobelThread";
 import { resultFromDelaunayGreyscaling } from "@/scripts/delaunayBasedRendering/centroidsFromGreyscaling";
 import { resultFromDelaunayPoisson } from "@/scripts/delaunayBasedRendering/centroidsFromPoisson";
 import { resultFromNaiveGreyscaling } from "@/scripts/naiveRendering/centroidsFromGreyscaling";
+
+import myWorker from "@/my-worker";
 
 import * as d3 from "d3";
 import Fullscreen from "vue-fullscreen/src/component.vue";
@@ -288,15 +291,24 @@ export default {
                 this.configuration.coordinateMargins
               );
             } else if (this.configuration.selectedMethod === "Edge detection") {
-              resultFromDelaunayEdgesSobel(
-                this.originalImageData,
-                this.configuration.selectedSobelThreshold,
-                this.configuration.displayEdges,
-                this.configuration.displayCentroids,
-                this.configuration.displayColour,
-                this.configuration.croppedImageData,
-                this.configuration.coordinateMargins
-              );
+              // resultFromDelaunayEdgesSobel(
+              // this.originalImageData,
+              // this.configuration.selectedSobelThreshold,
+              // this.configuration.displayEdges,
+              // this.configuration.displayCentroids,
+              // this.configuration.displayColour,
+              // this.configuration.croppedImageData,
+              // this.configuration.coordinateMargins
+              // );
+              if (window.Worker) {
+                myWorker
+                  .send([this.configuration, this.originalImageData])
+                  .then(reply => {
+                    // Handle the reply
+                    console.log(reply);
+                  });
+                console.log("Message posted to worker");
+              }
             } else if (
               this.configuration.selectedMethod ===
               "Based on greyscale intensities"

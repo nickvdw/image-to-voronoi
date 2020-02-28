@@ -1,3 +1,6 @@
 module.exports = {
-  transpileDependencies: ["vuetify"]
+  transpileDependencies: ["vuetify"],
+  chainWebpack: config => {
+    config.output.globalObject("this");
+  }
 };
