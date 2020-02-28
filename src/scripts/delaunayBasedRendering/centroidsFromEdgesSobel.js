@@ -6,7 +6,7 @@ import * as d3Delaunay from "d3-delaunay";
 
 import { colourCentroidsByCoordinates } from "@/scripts/imageHandler";
 
-export const resultFromDelaunayEdges = (
+export const resultFromDelaunayEdgesSobel = (
   originalImageData,
   threshold,
   displayEdges,
@@ -74,11 +74,9 @@ export const resultFromDelaunayEdges = (
   }
 
   // Centroids are now being made under a certain threshold condition (value over ...)
-  // TODO: replace dummy threshold variable with the one from the method parameter
-  const dummyTreshold = 40;
   let centroids = [];
   for (let i = 0; i < edges.length; i++) {
-    if (edges[i].colour > dummyTreshold) {
+    if (edges[i].colour > threshold) {
       centroids.push({
         x: edges[i].x,
         y: edges[i].y

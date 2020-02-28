@@ -107,8 +107,18 @@
               <v-text-field
                 color="blue-grey darken-3"
                 label="Number of nearest neighbours"
+                v-show="this.selectedAlgorithm === 'Naive'"
                 v-model="selectedNumberOfNeighbours"
                 :rules="numberOfNeighboursRules"
+                type="number"
+              />
+              <!-- Threshold for sobel edges -->
+              <v-text-field
+                color="blue-grey darken-3"
+                label="Threshold"
+                v-show="this.selectedMethod === 'Edge detection'"
+                v-model="selectedSobelThreshold"
+                :rules="sobelThresholdRules"
                 type="number"
               />
             </v-card-text>
@@ -264,11 +274,7 @@
     <v-card-actions>
       <v-row align="center" justify="space-around">
         <v-btn color="error" @click="reset">Reset</v-btn>
-        <v-btn
-          :disabled="!valid"
-          class="blue-grey darken-3 white--text"
-          @click="validate"
-        >
+        <v-btn class="blue-grey darken-3 white--text" @click="validate">
           Submit
         </v-btn>
       </v-row>
@@ -392,6 +398,13 @@ export default {
         "The distance should be between 1 and 2000 pixels."
     ],
 
+    selectedSobelThreshold: 40,
+    sobelThresholdRules: [
+      v =>
+        (!!v && v >= 0 && v <= 255) ||
+        "The threshold should be between 0 and 255."
+    ],
+
     // Whether or not the form is valid
     valid: false,
     dialog: false,
@@ -506,7 +519,8 @@ export default {
           selectedCentroidSize: this.selectedCentroidSize,
           selectedCentroidColour: this.selectedCentroidColour,
           selectedCellColour: this.selectedCellColour,
-          selectedPoissonDistance: this.selectedPoissonDistance
+          selectedPoissonDistance: this.selectedPoissonDistance,
+          selectedSobelThreshold: this.selectedSobelThreshold
         });
       }
     },
