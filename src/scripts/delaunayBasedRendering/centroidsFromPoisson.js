@@ -7,7 +7,13 @@ export const resultFromDelaunayPoisson = (
   imageData,
   displayEdges,
   displayCentroids,
-  poissonDistance
+  displayColour,
+  poissonDistance,
+  selectedEdgeThickness,
+  selectedEdgeColour,
+  selectedCentroidSize,
+  selectedCentroidColour,
+  selectedCellColour
 ) => {
   // Compute centroids basied on poisson disc sampling with a certain radius (distance)
   const centroids = [
@@ -43,38 +49,43 @@ export const resultFromDelaunayPoisson = (
   const voronoi = delaunay.voronoi([0, 0, imageData.width, imageData.height]);
 
   // Construct the result
-  svg
-    .selectAll("path")
-    // Construct a data object from each cell of our voronoi diagram
-    .data(centroids.map((d, i) => voronoi.renderCell(i)))
-    .join("path")
-    .attr("d", d => d)
-    .style("fill", (d, i) =>
-      d3.color(
-        `rgb(${centroids[i].colour[0]},${centroids[i].colour[1]},${centroids[i].colour[2]})`
-      )
-    );
+  if (!displayColour) {
+    svg
+      .selectAll("path")
+      .data(centroids.map((d, i) => voronoi.renderCell(i)))
+      .join("path")
+      .attr("d", d => d)
+      .style("fill", (d, i) =>
+        d3.color(
+          `rgb(${centroids[i].colour[0]},${centroids[i].colour[1]},${centroids[i].colour[2]})`
+        )
+      );
+  } else {
+    svg
+      .selectAll("path")
+      .data(centroids.map((d, i) => voronoi.renderCell(i)))
+      .join("path")
+      .attr("d", d => d)
+      .style("fill", selectedCellColour);
+  }
 
-  // Add the edges if they need to be added
-  // TODO: Add parameters for colours and opacities in the UI
+  // Render the edges with a certain colour and thickness
   if (displayEdges) {
     svg
       .selectAll("path")
-      .style("opacity", 0.6)
-      .style("stroke", "white")
-      .style("stroke-opacity", 0.2);
+      .style("stroke", selectedEdgeColour)
+      .style("stroke-width", selectedEdgeThickness);
   }
 
-  // Add the centroids if they need to be added
-  // TODO: Add parameters for sizes and colours in the UI
+  // Render the centroids with a certain size and colour
   if (displayCentroids) {
-    centroids.forEach(centroid => {
+    colouredCentroids.forEach(centroid => {
       svg
         .append("circle")
         .attr("cx", centroid.x)
         .attr("cy", centroid.y)
-        .attr("r", 1)
-        .attr("fill", "red");
+        .attr("r", selectedCentroidSize)
+        .attr("fill", selectedCentroidColour);
     });
   }
 };

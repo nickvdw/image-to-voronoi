@@ -175,7 +175,6 @@
                 v-model="selectedEdgeThickness"
                 :rules="edgeThicknessRules"
                 type="number"
-                hide-details
               />
 
               <v-checkbox
@@ -223,7 +222,6 @@
                 v-model="selectedCentroidSize"
                 :rules="centroidSizeRules"
                 type="number"
-                hide-details
               />
 
               <v-checkbox
@@ -330,12 +328,7 @@ export default {
       "Based on greyscale intensities",
       "Poisson disc sampling"
     ],
-    naiveMethods: [
-      "Corner detection",
-      "Edge detection",
-      "Based on greyscale intensities",
-      "Poisson disc sampling"
-    ],
+    naiveMethods: ["Based on greyscale intensities"],
     methodRules: [v => !!v || "A method is required"],
     // TODO: Remove initialisation
     selectedMethod: "Corner detection",
@@ -347,7 +340,7 @@ export default {
     selectedAlgorithm: "Delaunay triangulation",
 
     // Selected threshold and associated rules
-    selectedThreshold: 5,
+    selectedThreshold: 40,
     thresholdRules: [
       v =>
         (!!v && v <= 100 && v >= 0) ||
@@ -376,7 +369,7 @@ export default {
     centroidColourMenu: false,
     centroidColourMask: "!#XXXXXXXX",
 
-    selectedCellColour: "#000000FF",
+    selectedCellColour: "#FFFFFFFF",
     cellColourMenu: false,
     cellColourMask: "!#XXXXXXXX",
 
@@ -391,7 +384,7 @@ export default {
         "The number of nearest neighbours should be between 1 and 30"
     ],
 
-    selectedPoissonDistance: 1,
+    selectedPoissonDistance: 20,
     poissonDistanceRules: [
       v =>
         (!!v && v <= 2000 && v >= 1) ||
