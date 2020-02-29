@@ -9,7 +9,6 @@ import {
 
 export const resultFromDelaunayGreyscaling = (
   imageData,
-  // threshold,
   displayEdges,
   displayCentroids,
   displayColour,
@@ -17,7 +16,10 @@ export const resultFromDelaunayGreyscaling = (
   selectedEdgeColour,
   selectedCentroidSize,
   selectedCentroidColour,
-  selectedCellColour
+  selectedCellColour,
+  selectedGreyscaleThreshold,
+  selectedGreyscaleX,
+  selectedGreyscaleY
 ) => {
   // I am still not sure why, but this is needed for the colours
   const imageDataCopy = {
@@ -31,8 +33,14 @@ export const resultFromDelaunayGreyscaling = (
   // Compute the centroid based on the greyscaled intensities
   // TODO: Create parameters in the UI for these options
   const centroids = [
-    ...computeCentroidsFromGreyScale(greyScaleImageData, 0.8, false, 20, 10),
-    ...computeCentroidsFromGreyScale(greyScaleImageData, 0.5, true, 20, 10)
+    ...computeCentroidsFromGreyScale(
+      greyScaleImageData,
+      selectedGreyscaleThreshold,
+      false,
+      selectedGreyscaleX,
+      selectedGreyscaleY
+    )
+    // ...computeCentroidsFromGreyScale(greyScaleImageData, 0.5, true, 20, 10)
   ];
 
   // Obtain colours for the centroids

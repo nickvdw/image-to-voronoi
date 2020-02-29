@@ -121,6 +121,36 @@
                 :rules="sobelThresholdRules"
                 type="number"
               />
+              <v-text-field
+                color="blue-grey darken-3"
+                label="Threshold"
+                v-show="
+                  this.selectedMethod === 'Based on greyscale intensities'
+                "
+                v-model="selectedGreyscaleThreshold"
+                :rules="greyscaleThresholdRules"
+                type="number"
+              />
+              <v-text-field
+                color="blue-grey darken-3"
+                label="Skip x-axis pixels"
+                v-show="
+                  this.selectedMethod === 'Based on greyscale intensities'
+                "
+                v-model="selectedGreyscaleX"
+                :rules="sobelThresholdRules"
+                type="number"
+              />
+              <v-text-field
+                color="blue-grey darken-3"
+                label="Skip y-axis pixels"
+                v-show="
+                  this.selectedMethod === 'Based on greyscale intensities'
+                "
+                v-model="selectedGreyscaleY"
+                :rules="sobelThresholdRules"
+                type="number"
+              />
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -398,6 +428,14 @@ export default {
         "The threshold should be between 0 and 255."
     ],
 
+    selectedGreyscaleThreshold: 0.5,
+    greyscaleThresholdRules: [
+      v =>
+        (!!v && v >= 0 && v <= 1) || "The threshold should be between 0 and 1."
+    ],
+    selectedGreyscaleX: 1,
+    selectedGreyscaleY: 1,
+
     // Whether or not the form is valid
     valid: false,
     dialog: false,
@@ -513,7 +551,10 @@ export default {
           selectedCentroidColour: this.selectedCentroidColour,
           selectedCellColour: this.selectedCellColour,
           selectedPoissonDistance: this.selectedPoissonDistance,
-          selectedSobelThreshold: this.selectedSobelThreshold
+          selectedSobelThreshold: this.selectedSobelThreshold,
+          selectedGreyscaleThreshold: this.selectedGreyscaleThreshold,
+          selectedGreyscaleX: this.selectedGreyscaleX,
+          selectedGreyscaleY: this.selectedGreyscaleY
         });
       }
     },

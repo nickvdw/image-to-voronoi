@@ -194,7 +194,10 @@ export default {
           selectedCentroidColour: null,
           selectedCellColour: null,
           selectedPoissonDistance: 1,
-          selectedSobelThreshold: 40
+          selectedSobelThreshold: 40,
+          selectedGreyscaleThreshold: null,
+          selectedGreyscaleX: null,
+          selectedGreyscaleY: null
         };
       }
     }
@@ -320,7 +323,10 @@ export default {
                 this.configuration.selectedEdgeColour,
                 this.configuration.selectedCentroidSize,
                 this.configuration.selectedCentroidColour,
-                this.configuration.selectedCellColour
+                this.configuration.selectedCellColour,
+                this.configuration.selectedGreyscaleThreshold,
+                this.configuration.selectedGreyscaleX,
+                this.configuration.selectedGreyscaleY
               );
             } else if (
               this.configuration.selectedMethod === "Poisson disc sampling"
@@ -355,7 +361,10 @@ export default {
                 this.configuration.selectedEdgeColour,
                 this.configuration.selectedCentroidSize,
                 this.configuration.selectedCentroidColour,
-                this.configuration.selectedCellColour
+                // this.configuration.selectedCellColour,
+                this.configuration.selectedGreyscaleThreshold,
+                this.configuration.selectedGreyscaleX,
+                this.configuration.selectedGreyscaleY
               );
             } else {
               console.log("This method does not exist");
