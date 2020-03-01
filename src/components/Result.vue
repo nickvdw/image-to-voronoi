@@ -13,6 +13,20 @@
         <template v-slot:activator="{ on }">
           <v-btn
             dark
+            @click="toggleOriginalImage"
+            v-on="on"
+            icon
+            :disabled="!configuration.selectedImage"
+          >
+            <v-icon>mdi-toggle-switch-off-outline</v-icon>
+          </v-btn>
+        </template>
+        <span>Toggle the original image</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            dark
             @click="saveImage"
             v-on="on"
             icon
@@ -81,7 +95,19 @@
           background="#eee"
         >
           <!-- The image representing the result -->
-          <div align="start" justify="center" ref="result" id="voronoiResult" />
+          <div
+            v-show="!showOriginalImage"
+            align="start"
+            justify="center"
+            ref="result"
+            id="voronoiResult"
+          />
+          <div
+            v-show="showOriginalImage"
+            align="start"
+            justify="center"
+            id="originalImage"
+          />
         </fullscreen>
       </div>
     </v-card-text>
@@ -117,7 +143,8 @@ export default {
       ],
       originalImageData: [],
       centroids: [],
-      fullscreen: false
+      fullscreen: false,
+      showOriginalImage: false
     };
   },
   props: {
@@ -201,6 +228,31 @@ export default {
      */
     toggle() {
       this.$refs["fullscreen"].toggle();
+    },
+    async toggleOriginalImage() {
+      this.showOriginalImage = true;
+      if (this.showOriginalImage) {
+        const result = await uploadImage(this.configuration.selectedImage);
+        const image = {
+          data: [...result.data],
+          width: result.width,
+          height: result.height
+        };
+        d3.select("#originalImage")
+          .selectAll("*")
+          .remove();
+        d3.select("#originalImage")
+          .attr("width", image.width)
+          .attr("height", image.height)
+          .append("svg:image")
+          .attr("viewBox", `0 0 ${image.width} ${image.height}`)
+          .attr("width", document.getElementById("resultContainer").offsetWidth)
+          .attr(
+            "height",
+            document.getElementById("resultContainer").offsetHeight
+          )
+          .attr("xlink:href", toImageDataUrl(image));
+      }
     },
     fullscreenChange(fullscreen) {
       this.fullscreen = fullscreen;
