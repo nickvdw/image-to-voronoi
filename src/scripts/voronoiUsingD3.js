@@ -4,7 +4,7 @@ import * as d3Delaunay from "d3-delaunay";
 // Render a Voronoi diagram based on some random points
 export const renderVoronoiUsingD3 = (centroids, width, height, k) => {
   console.log(k);
-  const canvas = document.getElementById("voronoiCanvas");
+  const canvas = document.getElementById("voronoiResult");
   canvas.width = width;
   canvas.height = height;
 
@@ -108,13 +108,11 @@ export const renderVoronoiUsingD3 = (centroids, width, height, k) => {
       mesh.attr("d", voronoi.render());
     }
 
-    console.log(svg);
     return svg.node();
   }
 
   renderColours();
   // const svg = renderColours();
-  // console.log(svg);
 
   return (
     d3
@@ -128,14 +126,23 @@ export const renderVoronoiUsingD3 = (centroids, width, height, k) => {
   );
 };
 
-export const renderColoredVoronoi = (centroids, width, height, k) => {
+export const renderColouredVoronoi = (
+  centroids,
+  width,
+  height,
+  windowWidth,
+  windowHeight
+) => {
+  console.log(windowHeight, height);
+  console.log(windowWidth, width);
+  console.log(centroids);
   const svg = d3
     .select("#voronoiResult")
     .append("svg")
-    .attr("width", width)
-    .attr("height", height)
-    .style("background-color", "#1a1a1a");
-  console.log(k);
+    .attr("viewBox", `0 0 ${width} ${height}`)
+    .attr("width", windowWidth)
+    .attr("height", windowHeight)
+    .style("background-color", "#fff");
   // Generate the delaunay triangulation of our data
   // takes data, x accessor and y accessor as arguments
   const delaunay = d3Delaunay.Delaunay.from(
@@ -155,22 +162,28 @@ export const renderColoredVoronoi = (centroids, width, height, k) => {
     .attr("d", d => d)
     .style("fill", (d, i) =>
       d3.color(
-        `rgb(${centroids[i].color[0]},${centroids[i].color[1]},${centroids[i].color[2]})`
+        `rgb(${centroids[i].colour[0]},${centroids[i].colour[1]},${centroids[i].colour[2]})`
       )
-    )
-    .style("opacity", 0.8)
-    .style("stroke", "white")
-    .style("stroke-opacity", 0.2);
+    );
+  // .style("opacity", 0.8)
+  // .style("stroke", "white")
+  // .style("stroke-opacity", 0.2);
 
   // append all of our points so that we can see how they line up with the voronoi
-  svg
-    .selectAll("circle")
-    .data(centroids)
-    .join("circle")
-    .attr("cx", d => d.x)
-    .attr("cy", d => d.y)
-    .attr("r", 1.5)
-    .style("fill", "white");
+  // svg
+  //   .selectAll("circle")
+  //   .data(centroids)
+  //   .join("circle")
+  //   .attr("cx", d => d.x)
+  //   .attr("cy", d => d.y)
+  //   .attr("r", 1.5)
+  //   .style("fill", "white");
+
+  // Get the current dimensions
+  // const dimensions = [
+  //   d3.select("svg").attr("width"),
+  //   d3.select("svg").attr("height")
+  // ].map(Number);
 
   return svg.node();
 };

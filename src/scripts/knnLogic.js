@@ -15,7 +15,7 @@ const generateRandomColour = () => {
   );
 };
 
-const computeEuclideanDistance = (a, b) => {
+export const computeEuclideanDistance = (a, b) => {
   return Math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2);
 };
 
@@ -40,7 +40,6 @@ const computeNearestCentroid = (centroids, x, y, k) => {
 };
 
 export const renderVoronoi = (centroids, width, height, k) => {
-  console.log(centroids);
   // Create SVG element
   const svg = d3
     .select("#voronoiResult")
@@ -86,7 +85,7 @@ export const renderVoronoi = (centroids, width, height, k) => {
       .map((_, i) =>
         colourMap.push(
           d3.color(
-            `rgb(${centroids[i].color[0]},${centroids[i].color[1]},${centroids[i].color[2]})`
+            `rgb(${centroids[i].colour[0]},${centroids[i].colour[1]},${centroids[i].colour[2]})`
           )
         )
       );
@@ -122,8 +121,6 @@ export const renderVoronoi = (centroids, width, height, k) => {
             .attr("fill", colourMap[nearestCentroid]);
         });
     });
-
-  console.log("This is the svg" + svg);
 };
 
 export default renderVoronoi;

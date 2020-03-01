@@ -10,8 +10,6 @@ export const computeCentroidsFromGreyScale = (
   densityX = 0, // Positive integer value which skips pixels in X direction if a centroid is found
   densityY = 0 // Positive integer value which skips pixels in Y direction if a centroid is found
 ) => {
-  const canvas = document.getElementById("centroidCanvas");
-  const context = canvas.getContext("2d");
   const centroids = [];
 
   // imageData.data is a flat array of RGB values so we iterate with += 4
@@ -50,17 +48,6 @@ export const computeCentroidsFromGreyScale = (
     // The -1 offsets the addition to i in the loop iteration
     densityX > 0 && (i += 4 * (densityX - 1));
   }
-  // Draw the centroids on the canvas
-  context.putImageData(
-    imageData,
-    0,
-    0,
-    0,
-    0,
-    imageData.width,
-    imageData.height
-  );
-
   return centroids;
 };
 
@@ -68,9 +55,6 @@ export const computeCentroidsFromGreyScale = (
  * Greyscales the given image, expects imageData from a Canvas context
  * */
 export const greyScaleImage = imageData => {
-  const canvas = document.getElementById("greyscaleCanvas");
-  const context = canvas.getContext("2d");
-
   // imageData.data is a flat array of RGB values so we iterate with += 4
   for (let i = 0; i < imageData.data.length; i += 4) {
     // Get average of RGB values
@@ -80,26 +64,15 @@ export const greyScaleImage = imageData => {
     imageData.data[i + 1] = avg;
     imageData.data[i + 2] = avg;
   }
-
-  context.putImageData(
-    imageData,
-    0,
-    0,
-    0,
-    0,
-    imageData.width,
-    imageData.height
-  );
   return imageData;
 };
 
-export const colorCentroidsByCoordinates = (imageData, centroids) => {
-  console.log(imageData);
+export const colourCentroidsByCoordinates = (imageData, centroids) => {
   return centroids.map(centroid => {
     const imageDataIndex = centroid.y * 4 * imageData.width + centroid.x * 4;
 
-    // Retrieve color from coordinates
-    centroid.color = [
+    // Retrieve colour from coordinates
+    centroid.colour = [
       imageData.data[imageDataIndex],
       imageData.data[imageDataIndex + 1],
       imageData.data[imageDataIndex + 2]
@@ -115,7 +88,7 @@ export const colorCentroidsByCoordinates = (imageData, centroids) => {
  * */
 export const uploadImage = image => {
   return new Promise((resolve, reject) => {
-    const canvas = document.getElementById("canvas");
+    const canvas = document.createElement("CANVAS");
     const context = canvas.getContext("2d");
     const reader = new FileReader();
 
@@ -138,6 +111,38 @@ export const uploadImage = image => {
       image.onerror = reject;
     };
 
-    reader.readAsDataURL(image);
+    // Only use the image when there is an actual image
+    image && reader.readAsDataURL(image);
   });
+};
+
+/**
+ * Converts imageData to a data url
+ */
+export const toImageDataUrl = imageData => {
+  const canvas = document.createElement("canvas");
+  // Set the canvas width and height since this is not obtained from the child
+  canvas.width = imageData.width;
+  canvas.height = imageData.height;
+
+  const context = canvas.getContext("2d");
+  const imageDataObject = context.createImageData(
+    imageData.width,
+    imageData.height
+  );
+  // Copy the data into the newly created object
+  imageDataObject.data.set(imageData.data, 0);
+
+  // Draw the imageData on the canvas
+  context.putImageData(
+    imageDataObject,
+    0,
+    0,
+    0,
+    0,
+    imageDataObject.width,
+    imageDataObject.height
+  );
+  // Defaults to png
+  return canvas.toDataURL();
 };
