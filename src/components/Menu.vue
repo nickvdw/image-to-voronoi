@@ -358,7 +358,7 @@ export default {
       "Based on greyscale intensities",
       "Poisson disc sampling"
     ],
-    naiveMethods: ["Based on greyscale intensities"],
+    naiveMethods: ["Based on greyscale intensities", "Edge detection"],
     methodRules: [v => !!v || "A method is required"],
     // TODO: Remove initialisation
     selectedMethod: "Corner detection",

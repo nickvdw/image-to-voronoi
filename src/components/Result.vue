@@ -37,58 +37,6 @@
         </template>
         <span>View the result in fullscreen</span>
       </v-tooltip>
-
-      <!-- <v-menu bottom left origin="center center" transition="scale-transition">
-        <template v-slot:activator="{ on: menu }">
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on: tooltip }">
-              <v-btn
-                dark
-                v-on="{ ...tooltip, ...menu }"
-                icon
-                :disabled="!configuration.selectedImage"
-              >
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
-            </template>
-            <span> Display other options </span>
-          </v-tooltip>
-        </template>
-        <span>Save the image</span>
-      </v-tooltip>
-
-      <v-menu bottom left origin="center center" transition="scale-transition">
-        <template v-slot:activator="{ on: menu }">
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on: tooltip }">
-              <v-btn
-                dark
-                v-on="{ ...tooltip, ...menu }"
-                icon
-                :disabled="!configuration.selectedImage"
-              >
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
-            </template>
-            <span> Display other options </span>
-          </v-tooltip>
-        </template>
-        <v-list>
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>What would you like to see?</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-divider />
-          <v-list-item
-            v-for="(item, i) in items"
-            :key="i"
-            @click="generateResult(item)"
-          >
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu> -->
     </v-card-title>
 
     <!-- Card content -->
@@ -146,6 +94,7 @@ require("tracking");
 import { uploadImage, toImageDataUrl } from "@/scripts/imageHandler";
 import { resultFromDelaunayCorners } from "@/scripts/delaunayBasedRendering/centroidsFromCorners";
 import { resultFromDelaunayEdgesSobel } from "@/scripts/delaunayBasedRendering/centroidsFromEdgesSobel";
+import { resultFromNaiveEdgesSobel } from "@/scripts/naiveRendering/centroidsFromEdgesSobel";
 import { resultFromDelaunayGreyscaling } from "@/scripts/delaunayBasedRendering/centroidsFromGreyscaling";
 import { resultFromDelaunayPoisson } from "@/scripts/delaunayBasedRendering/centroidsFromPoisson";
 import { resultFromNaiveGreyscaling } from "@/scripts/naiveRendering/centroidsFromGreyscaling";
@@ -366,8 +315,22 @@ export default {
                 this.configuration.selectedGreyscaleX,
                 this.configuration.selectedGreyscaleY
               );
-            } else {
-              console.log("This method does not exist");
+            } else if (this.configuration.selectedMethod === "Edge detection") {
+              resultFromNaiveEdgesSobel(
+                this.originalImageData,
+                this.configuration.selectedSobelThreshold,
+                this.configuration.displayEdges,
+                this.configuration.displayCentroids,
+                this.configuration.displayColour,
+                this.configuration.croppedImageData,
+                this.configuration.coordinateMargins,
+                this.configuration.selectedEdgeThickness,
+                this.configuration.selectedEdgeColour,
+                this.configuration.selectedCentroidSize,
+                this.configuration.selectedCentroidColour,
+                this.configuration.selectedCellColour,
+                this.configuration.selectedNumberOfNeighbours
+              );
             }
           }
           break;
