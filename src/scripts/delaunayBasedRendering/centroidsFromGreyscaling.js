@@ -9,9 +9,17 @@ import {
 
 export const resultFromDelaunayGreyscaling = (
   imageData,
-  // threshold,
   displayEdges,
-  displayCentroids
+  displayCentroids,
+  displayColour,
+  selectedEdgeThickness,
+  selectedEdgeColour,
+  selectedCentroidSize,
+  selectedCentroidColour,
+  selectedCellColour,
+  selectedGreyscaleThreshold,
+  selectedGreyscaleX,
+  selectedGreyscaleY
 ) => {
   // I am still not sure why, but this is needed for the colours
   const imageDataCopy = {
@@ -25,11 +33,15 @@ export const resultFromDelaunayGreyscaling = (
   // Compute the centroid based on the greyscaled intensities
   // TODO: Create parameters in the UI for these options
   const centroids = [
-    ...computeCentroidsFromGreyScale(greyScaleImageData, 0.8, false, 20, 10),
-    ...computeCentroidsFromGreyScale(greyScaleImageData, 0.5, true, 20, 10)
+    ...computeCentroidsFromGreyScale(
+      greyScaleImageData,
+      selectedGreyscaleThreshold,
+      false,
+      selectedGreyscaleX,
+      selectedGreyscaleY
+    )
+    // ...computeCentroidsFromGreyScale(greyScaleImageData, 0.5, true, 20, 10)
   ];
-
-  console.log(centroids);
 
   // Obtain colours for the centroids
   const colouredCentroids = colourCentroidsByCoordinates(imageData, centroids);
@@ -54,38 +66,43 @@ export const resultFromDelaunayGreyscaling = (
   const voronoi = delaunay.voronoi([0, 0, imageData.width, imageData.height]);
 
   // Construct the result
-  svg
-    .selectAll("path")
-    // Construct a data object from each cell of our voronoi diagram
-    .data(centroids.map((d, i) => voronoi.renderCell(i)))
-    .join("path")
-    .attr("d", d => d)
-    .style("fill", (d, i) =>
-      d3.color(
-        `rgb(${centroids[i].colour[0]},${centroids[i].colour[1]},${centroids[i].colour[2]})`
-      )
-    );
+  if (!displayColour) {
+    svg
+      .selectAll("path")
+      .data(centroids.map((d, i) => voronoi.renderCell(i)))
+      .join("path")
+      .attr("d", d => d)
+      .style("fill", (d, i) =>
+        d3.color(
+          `rgb(${centroids[i].colour[0]},${centroids[i].colour[1]},${centroids[i].colour[2]})`
+        )
+      );
+  } else {
+    svg
+      .selectAll("path")
+      .data(centroids.map((d, i) => voronoi.renderCell(i)))
+      .join("path")
+      .attr("d", d => d)
+      .style("fill", selectedCellColour);
+  }
 
-  // Add the edges if they need to be added
-  // TODO: Add parameters for colours and opacities in the UI
+  // Render the edges with a certain colour and thickness
   if (displayEdges) {
     svg
       .selectAll("path")
-      .style("opacity", 0.6)
-      .style("stroke", "white")
-      .style("stroke-opacity", 0.2);
+      .style("stroke", selectedEdgeColour)
+      .style("stroke-width", selectedEdgeThickness);
   }
 
-  // Add the centroids if they need to be added
-  // TODO: Add parameters for sizes and colours in the UI
+  // Render the centroids with a certain size and colour
   if (displayCentroids) {
-    centroids.forEach(centroid => {
+    colouredCentroids.forEach(centroid => {
       svg
         .append("circle")
         .attr("cx", centroid.x)
         .attr("cy", centroid.y)
-        .attr("r", 1)
-        .attr("fill", "red");
+        .attr("r", selectedCentroidSize)
+        .attr("fill", selectedCentroidColour);
     });
   }
 };

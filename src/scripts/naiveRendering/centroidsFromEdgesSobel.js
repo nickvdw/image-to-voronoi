@@ -2,11 +2,10 @@ require("tracking");
 // require("tracking/build/data/face-min");
 
 import * as d3 from "d3";
-import * as d3Delaunay from "d3-delaunay";
 
 import { colourCentroidsByCoordinates } from "@/scripts/imageHandler";
 
-export const resultFromDelaunayEdgesSobel = (
+export const resultFromNaiveEdgesSobel = (
   originalImageData,
   threshold,
   displayEdges,
@@ -18,11 +17,14 @@ export const resultFromDelaunayEdgesSobel = (
   selectedEdgeColour,
   selectedCentroidSize,
   selectedCentroidColour,
-  selectedCellColour
+  selectedCellColour,
+  numberOfNeighbours
 ) => {
   // Set the threshold for the number of corners to detect
   window.fastThreshold = threshold;
   window.tracking.Fast.THRESHOLD = window.fastThreshold;
+
+  const k = numberOfNeighbours;
 
   let imageData = originalImageData;
   if (croppedImageData && coordinateMargins) {
@@ -101,10 +103,6 @@ export const resultFromDelaunayEdgesSobel = (
     .attr("height", document.getElementById("resultContainer").offsetHeight)
     .style("background-color", "black");
 
-  // TODO: Add something for dragging centroids
-
-  // TODO: Add a "selector" tool that can be used to select a rectangle and remove all centroinds in that rectangle
-
   svg.on("click", () => {
     // TODO: Using the d3.mouse(d3.event.target) coordinates to obtain the colour does not work and
     // TODO: results in a black cell. This way, we get the colour of some point close to our point...
@@ -151,41 +149,52 @@ export const resultFromDelaunayEdgesSobel = (
 
   // Redraw the canvas every time the 'update' method is called
   const update = () => {
-    // Compute the delaunay triangulation from the centroids
-    const delaunay = d3Delaunay.Delaunay.from(
-      colouredCentroids,
-      d => d.x,
-      d => d.y
-    );
-
-    // Compute the Voronoi diagram from the triangulation
-    const voronoi = delaunay.voronoi([
-      0,
-      0,
-      originalImageData.width,
-      originalImageData.height
-    ]);
-
-    // Construct the result
-    if (!displayColour) {
-      svg
-        .selectAll("path")
-        .data(centroids.map((d, i) => voronoi.renderCell(i)))
-        .join("path")
-        .attr("d", d => d)
-        .style("fill", (d, i) =>
+    const colourMap = [];
+    Array(colouredCentroids.length)
+      .fill()
+      .map((_, i) =>
+        colourMap.push(
           d3.color(
-            `rgb(${centroids[i].colour[0]},${centroids[i].colour[1]},${centroids[i].colour[2]})`
+            `rgb(${colouredCentroids[i].colour[0]},${colouredCentroids[i].colour[1]},${colouredCentroids[i].colour[2]})`
           )
-        );
-    } else {
-      svg
-        .selectAll("path")
-        .data(centroids.map((d, i) => voronoi.renderCell(i)))
-        .join("path")
-        .attr("d", d => d)
-        .style("fill", selectedCellColour);
-    }
+        )
+      );
+
+    const nearestCentroids = [];
+
+    Array(imageData.width)
+      .fill()
+      .map((_, x) => {
+        Array(imageData.height)
+          .fill()
+          .map((_, y) => {
+            // Compute the nearest centroid for each pixel
+            // nearestCentroid is a dictionary in the form of {point: [x_coor, y_coor], nearest_centroid: number}
+            const nearestCentroid = computeNearestCentroid(
+              colouredCentroids,
+              x,
+              y,
+              k
+            );
+
+            // Store all the nearest centroid for each pixel for no apparent reason
+            nearestCentroids.push({
+              point: [x, y],
+              nearest_centroid: nearestCentroid
+            });
+
+            // Colour the pixels
+            svg
+              .append("rect")
+              .attr("x", x)
+              .attr("y", y)
+              .attr("width", 1)
+              .attr("height", 1)
+              .attr("fill", colourMap[nearestCentroid]);
+          });
+
+        console.log(x, imageData.width);
+      });
 
     // Render the edges with a certain colour and thickness
     if (displayEdges) {
@@ -209,4 +218,28 @@ export const resultFromDelaunayEdgesSobel = (
   };
 
   update();
+};
+
+export const computeEuclideanDistance = (a, b) => {
+  return Math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2);
+};
+
+const computeNearestCentroid = (centroids, x, y, k) => {
+  // Compute euclidean distances between centroids and point
+  const distances = [];
+  centroids.map(centroid =>
+    distances.push(computeEuclideanDistance([x, y], [centroid.x, centroid.y]))
+  );
+  // k for k-nearest centroid
+  if (k && k > 1) {
+    let i = k > centroids.length ? centroids.length : k;
+    // Remove the currently nearest centroid and loop until i = 1
+    while (i > 1) {
+      distances.splice(distances.indexOf(Math.min.apply(null, distances)), 1);
+      i -= 1;
+    }
+  }
+  // For k > 1 we have removed the nearest centroid k - 1 times so we return the k-nearest centroid here
+  // Else this just returns the nearest centroid
+  return distances.indexOf(Math.min.apply(null, distances));
 };
