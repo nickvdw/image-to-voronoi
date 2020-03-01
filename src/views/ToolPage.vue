@@ -1,13 +1,13 @@
 <template>
-  <v-container class="fullHeight" fluid>
+  <v-container class="fullHeight" full-width fluid>
     <v-row class="fullHeight">
       <!-- Left column -->
-      <v-col cols="3">
-        <Menu @submit="submittedForm" />
+      <v-col xl="3" lg="3" md="4" sm="12" xs="12">
+        <Menu @submit="submittedForm" :loading="loading" />
       </v-col>
       <!-- Right column -->
-      <v-col cols="9" class="fullHeight">
-        <Result :configuration="this.processedObject" />
+      <v-col xl="9" lg="9" md="8" sm="12" xs="12" class="fullHeight">
+        <Result :configuration="this.processedObject" @loading="setLoading" />
       </v-col>
     </v-row>
   </v-container>
@@ -20,7 +20,8 @@ export default {
   data() {
     return {
       // There is no object (image, etc) present initially
-      processedObject: {}
+      processedObject: {},
+      loading: false
     };
   },
   components: {
@@ -39,6 +40,9 @@ export default {
       } else {
         this.processedObject = {};
       }
+    },
+    setLoading(state) {
+      this.loading = state;
     }
   }
 };
