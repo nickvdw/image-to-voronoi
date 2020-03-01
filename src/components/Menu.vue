@@ -302,7 +302,11 @@
     <v-card-actions>
       <v-row align="center" justify="space-around">
         <v-btn color="error" @click="reset">Reset</v-btn>
-        <v-btn class="blue-grey darken-3 white--text" @click="validate">
+        <v-btn
+          class="blue-grey darken-3 white--text"
+          :loading="isLoading"
+          @click="validate"
+        >
           Submit
         </v-btn>
       </v-row>
@@ -442,11 +446,26 @@ export default {
 
     // All tabs
     tabItems: ["Image", "Methods", "Display"],
-    currentTab: "Image"
+    currentTab: "Image",
+
+    isLoading: false
   }),
 
   components: {
     Cropper
+  },
+
+  props: {
+    loading: {
+      type: Boolean,
+      default: false
+    }
+  },
+
+  watch: {
+    loading() {
+      this.isLoading = this.loading;
+    }
   },
 
   computed: {
@@ -533,6 +552,7 @@ export default {
      * Emits the form data if the form is valid.
      */
     validate() {
+      this.isLoading = true;
       if (this.$refs.form.validate()) {
         this.$emit("submit", {
           selectedImage: this.selectedImage,

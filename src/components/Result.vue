@@ -152,6 +152,13 @@ export default {
     }
   },
   watch: {
+    loading: function() {
+      if (this.loading) {
+        this.$emit("loading", true);
+      } else {
+        this.$emit("loading", false);
+      }
+    },
     /**
      * Watcher on the configuration provided by the user that removes
      * the previous image if the user clicks on the "reset" button and
