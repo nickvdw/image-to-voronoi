@@ -552,8 +552,8 @@ export default {
      * Emits the form data if the form is valid.
      */
     validate() {
-      this.isLoading = true;
       if (this.$refs.form.validate()) {
+        this.isLoading = true;
         this.$emit("submit", {
           selectedImage: this.selectedImage,
           selectedAlgorithm: this.selectedAlgorithm,
