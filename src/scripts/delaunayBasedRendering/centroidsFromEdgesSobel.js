@@ -116,8 +116,6 @@ export const resultFromDelaunayEdgesSobel = (
     centroids
   );
 
-  console.log(colouredCentroids);
-
   // Redraw the canvas every time the 'update' method is called
   const update = (
     croppedImageData,
@@ -210,39 +208,36 @@ export const resultFromDelaunayEdgesSobel = (
           .attr("fill", selectedCentroidColour);
       });
     }
-  };
 
-  console.log(fullSvg.node());
+    // Clone the image to the viewbox voronoiResult
+    const clone = fullSvg.node().cloneNode(true);
 
-  // Clone the image to the viewbox voronoiResult
-  const clone = fullSvg.node().cloneNode(true);
+    // Clear old image
+    document.getElementById("voronoiResult").innerHTML = "";
 
-  console.log(clone);
-  // Clear old image
-  document.getElementById("voronoiResult").innerHTML = "";
+    const svg = d3
+      .select("#voronoiResult")
+      .append("svg")
+      .html(clone.outerHTML)
+      .attr(
+        "viewBox",
+        `0 0 ${originalImageData.width} ${originalImageData.height}`
+      )
+      .attr("width", document.getElementById("resultContainer").offsetWidth)
+      .attr("height", document.getElementById("resultContainer").offsetHeight);
 
-  const svg = d3
-    .select("#voronoiResult")
-    .append("svg")
-    .html(clone.outerHTML)
-    .attr(
-      "viewBox",
-      `0 0 ${originalImageData.width} ${originalImageData.height}`
-    )
-    .attr("width", document.getElementById("resultContainer").offsetWidth)
-    .attr("height", document.getElementById("resultContainer").offsetHeight);
+    svg.on("click", () => {
+      // Add the new centroid to the list of centroids
+      // x, y needs to be floored for the getColour method
+      centroids.push({
+        x: Math.floor(d3.mouse(d3.event.target)[0]),
+        y: Math.floor(d3.mouse(d3.event.target)[1])
+      });
 
-  svg.on("click", () => {
-    // Add the new centroid to the list of centroids
-    // x, y needs to be floored for the getColour method
-    centroids.push({
-      x: Math.floor(d3.mouse(d3.event.target)[0]),
-      y: Math.floor(d3.mouse(d3.event.target)[1])
+      // Update the result with the new centroid
+      update();
     });
-
-    // Update the result with the new centroid
-    update();
-  });
+  };
 
   update(croppedImageData, coordinateMargins, toBeCroppedImageCoordinates);
   return update;

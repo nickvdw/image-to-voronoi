@@ -372,6 +372,8 @@ export default {
                 this.configuration.displayEdges,
                 this.configuration.displayCentroids,
                 this.configuration.displayColour,
+                this.configuration.croppedImageData,
+                this.configuration.coordinateMargins,
                 this.configuration.selectedEdgeThickness,
                 this.configuration.selectedEdgeColour,
                 this.configuration.selectedCentroidSize,
@@ -379,7 +381,8 @@ export default {
                 this.configuration.selectedCellColour,
                 this.configuration.selectedGreyscaleThreshold,
                 this.configuration.selectedGreyscaleX,
-                this.configuration.selectedGreyscaleY
+                this.configuration.selectedGreyscaleY,
+                this.toBeCroppedImageCoordinates
               );
             } else if (
               this.configuration.selectedMethod === "Poisson disc sampling"

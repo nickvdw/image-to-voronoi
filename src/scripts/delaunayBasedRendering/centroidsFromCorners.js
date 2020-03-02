@@ -164,6 +164,7 @@ export const resultFromDelaunayCorners = (
 
     // Clone the image to the viewbox voronoiResult
     const clone = fullSvg.node().cloneNode(true);
+
     // Clear old image
     document.getElementById("voronoiResult").innerHTML = "";
 
