@@ -252,8 +252,7 @@
                 :rules="centroidSizeRules"
                 type="number"
               />
-
-              <v-checkbox
+              <!-- <v-checkbox
                 color="blue-grey darken-3"
                 v-model="displayColour"
                 label="Colour the cells"
@@ -289,7 +288,7 @@
                     </v-card>
                   </v-menu>
                 </template>
-              </v-text-field>
+              </v-text-field> -->
             </v-card-text>
           </v-card>
         </v-tab-item>
