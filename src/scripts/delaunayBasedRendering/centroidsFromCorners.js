@@ -120,27 +120,22 @@ export const resultFromDelaunayCorners = (
       originalImageData.height
     ]);
 
-    // Construct the result
-    if (displayColour) {
-      fullSvg
-        .selectAll("path")
-        // Construct a data object from each cell of our voronoi diagram
-        .data(colouredCentroids.map((d, i) => voronoi.renderCell(i)))
-        .join("path")
-        .attr("d", d => d)
-        .style("fill", (d, i) => {
-          return d3.color(
-            `rgb(${colouredCentroids[i].colour[0]},${colouredCentroids[i].colour[1]},${colouredCentroids[i].colour[2]})`
-          );
-        });
-    } else {
-      fullSvg
-        .selectAll("path")
-        .data(centroids.map((d, i) => voronoi.renderCell(i)))
-        .join("path")
-        .attr("d", d => d)
-        .style("fill", selectedCellColour);
-    }
+    fullSvg
+      .selectAll("path")
+      // Construct a data object from each cell of our voronoi diagram
+      .data(colouredCentroids.map((d, i) => voronoi.renderCell(i)))
+      .join("path")
+      .attr("d", d => d)
+      .style("stroke", (d, i) => {
+        return d3.color(
+          `rgb(${colouredCentroids[i].colour[0]},${colouredCentroids[i].colour[1]},${colouredCentroids[i].colour[2]})`
+        );
+      })
+      .style("fill", (d, i) => {
+        return d3.color(
+          `rgb(${colouredCentroids[i].colour[0]},${colouredCentroids[i].colour[1]},${colouredCentroids[i].colour[2]})`
+        );
+      });
 
     // Render the edges with a certain colour and thickness
     if (displayEdges) {

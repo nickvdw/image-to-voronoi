@@ -362,13 +362,11 @@ export default {
     ],
     naiveMethods: ["Based on greyscale intensities", "Edge detection"],
     methodRules: [v => !!v || "A method is required"],
-    // TODO: Remove initialisation
     selectedMethod: "Corner detection",
 
     // Available methods for the algorithms and associated rules
     algorithms: ["Naive", "Delaunay triangulation"],
     algorithmRules: [v => !!v || "An algorithm is required"],
-    // TODO: Remove initialisation
     selectedAlgorithm: "Delaunay triangulation",
 
     // Selected threshold and associated rules
@@ -380,11 +378,11 @@ export default {
     ],
 
     // Selected thickness and colour for edges with associated rules
-    selectedEdgeThickness: 1,
+    selectedEdgeThickness: 0.1,
     edgeThicknessRules: [
       v =>
-        (!!v && v <= 20 && v >= 1) ||
-        "A thickness of at least 1 and at most 20 is required"
+        (!!v && v <= 20 && v >= 0) ||
+        "A thickness of at least 0 and at most 20 is required"
     ],
     selectedEdgeColour: "#000000FF",
     edgeColourMask: "!#XXXXXXXX",
