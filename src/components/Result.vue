@@ -115,11 +115,25 @@
     </v-card-text>
 
     <!-- Dialog stuff -->
-    <v-dialog v-model="dialog" fullscreen transition="dialog-bottom-transition">
-      <v-card>
-        <v-card-title class="headline"
-          >Select the region where you want to remove centroids</v-card-title
-        >
+    <v-dialog
+      v-model="dialog"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+    >
+      <v-card style="background-color: #ddd">
+        <v-toolbar dark class="blue-grey darken-3 white--text" elevation="0">
+          <v-btn icon dark @click="dialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <v-toolbar-title>
+            Select an area of centroids to remove
+          </v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-toolbar-items>
+            <v-btn dark text @click="submitCrop">Save</v-btn>
+          </v-toolbar-items>
+        </v-toolbar>
         <v-card-text>
           <cropper
             class="cropper"
@@ -128,15 +142,6 @@
             :src="croppedImage"
           ></cropper>
         </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="red darken-1" text @click="dialog = false">
-            Cancel
-          </v-btn>
-          <v-btn color="green darken-1" text @click="submitCrop">
-            Submit
-          </v-btn>
-        </v-card-actions>
       </v-card>
     </v-dialog>
   </v-card>
