@@ -392,12 +392,15 @@ export default {
                 this.configuration.displayEdges,
                 this.configuration.displayCentroids,
                 this.configuration.displayColour,
+                this.configuration.croppedImageData,
+                this.configuration.coordinateMargins,
                 this.configuration.selectedPoissonDistance,
                 this.configuration.selectedEdgeThickness,
                 this.configuration.selectedEdgeColour,
                 this.configuration.selectedCentroidSize,
                 this.configuration.selectedCentroidColour,
-                this.configuration.selectedCellColour
+                this.configuration.selectedCellColour,
+                this.toBeCroppedImageCoordinates
               );
             } else {
               console.log("This method does not exist");
