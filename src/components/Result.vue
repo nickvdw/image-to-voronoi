@@ -6,7 +6,7 @@
   >
     <!-- Card title -->
     <v-card-title class="blue-grey darken-3 white--text">
-      <span class="title">Result</span>
+      <span class="title">Image result</span>
       <v-spacer />
       <!-- TODO: Refactor to for loop -->
       <v-tooltip bottom>
@@ -138,12 +138,12 @@
 <script>
 require("tracking");
 
-/* eslint-disable no-unused-vars */
-
 import { uploadImage, toImageDataUrl } from "@/scripts/imageHandler";
-// import { renderColouredVoronoi } from "@/scripts/voronoiUsingD3";
 import { resultFromDelaunayCorners } from "@/scripts/delaunayBasedRendering/centroidsFromCorners";
+import { resultFromDelaunayEdgesSobel } from "@/scripts/delaunayBasedRendering/centroidsFromEdgesSobel";
+import { resultFromNaiveEdgesSobel } from "@/scripts/naiveRendering/centroidsFromEdgesSobel";
 import { resultFromDelaunayGreyscaling } from "@/scripts/delaunayBasedRendering/centroidsFromGreyscaling";
+import { resultFromDelaunayPoisson } from "@/scripts/delaunayBasedRendering/centroidsFromPoisson";
 import { resultFromNaiveGreyscaling } from "@/scripts/naiveRendering/centroidsFromGreyscaling";
 
 import { Cropper } from "vue-advanced-cropper";
@@ -184,17 +184,34 @@ export default {
           selectedMethod: null,
           selectedThreshold: null,
           selectedAlgorithm: null,
-          // These are false by default in the UI
           displayEdges: false,
           displayCentroids: false,
           displayColour: false,
           croppedImageData: null,
-          coordinateMargins: null
+          coordinateMargins: null,
+          selectedNumberOfNeighbours: 1,
+          selectedEdgeThickness: 1,
+          selectedEdgeColour: null,
+          selectedCentroidSize: 1,
+          selectedCentroidColour: null,
+          selectedCellColour: null,
+          selectedPoissonDistance: 1,
+          selectedSobelThreshold: 40,
+          selectedGreyscaleThreshold: null,
+          selectedGreyscaleX: null,
+          selectedGreyscaleY: null
         };
       }
     }
   },
   watch: {
+    loading: function() {
+      if (this.loading) {
+        this.$emit("loading", true);
+      } else {
+        this.$emit("loading", false);
+      }
+    },
     /**
      * Watcher on the configuration provided by the user that removes
      * the previous image if the user clicks on the "reset" button and
@@ -322,8 +339,28 @@ export default {
                 this.configuration.displayCentroids,
                 this.configuration.displayColour,
                 this.configuration.croppedImageData,
-                this.configuration.coordinateMargins,
                 this.toBeCroppedImageCoordinates
+                this.configuration.coordinateMargins,
+                this.configuration.selectedEdgeThickness,
+                this.configuration.selectedEdgeColour,
+                this.configuration.selectedCentroidSize,
+                this.configuration.selectedCentroidColour,
+                this.configuration.selectedCellColour
+              );
+            } else if (this.configuration.selectedMethod === "Edge detection") {
+              resultFromDelaunayEdgesSobel(
+                this.originalImageData,
+                this.configuration.selectedSobelThreshold,
+                this.configuration.displayEdges,
+                this.configuration.displayCentroids,
+                this.configuration.displayColour,
+                this.configuration.croppedImageData,
+                this.configuration.coordinateMargins,
+                this.configuration.selectedEdgeThickness,
+                this.configuration.selectedEdgeColour,
+                this.configuration.selectedCentroidSize,
+                this.configuration.selectedCentroidColour,
+                this.configuration.selectedCellColour
               );
             } else if (
               this.configuration.selectedMethod ===
@@ -331,9 +368,32 @@ export default {
             ) {
               resultFromDelaunayGreyscaling(
                 this.originalImageData,
-                // parseInt(this.configuration.selectedThreshold),
                 this.configuration.displayEdges,
-                this.configuration.displayCentroids
+                this.configuration.displayCentroids,
+                this.configuration.displayColour,
+                this.configuration.selectedEdgeThickness,
+                this.configuration.selectedEdgeColour,
+                this.configuration.selectedCentroidSize,
+                this.configuration.selectedCentroidColour,
+                this.configuration.selectedCellColour,
+                this.configuration.selectedGreyscaleThreshold,
+                this.configuration.selectedGreyscaleX,
+                this.configuration.selectedGreyscaleY
+              );
+            } else if (
+              this.configuration.selectedMethod === "Poisson disc sampling"
+            ) {
+              resultFromDelaunayPoisson(
+                this.originalImageData,
+                this.configuration.displayEdges,
+                this.configuration.displayCentroids,
+                this.configuration.displayColour,
+                this.configuration.selectedPoissonDistance,
+                this.configuration.selectedEdgeThickness,
+                this.configuration.selectedEdgeColour,
+                this.configuration.selectedCentroidSize,
+                this.configuration.selectedCentroidColour,
+                this.configuration.selectedCellColour
               );
             } else {
               console.log("This method does not exist");
@@ -345,12 +405,35 @@ export default {
             ) {
               resultFromNaiveGreyscaling(
                 this.originalImageData,
-                // parseInt(this.configuration.selectedThreshold),
+                this.configuration.selectedNumberOfNeighbours,
                 this.configuration.displayEdges,
-                this.configuration.displayCentroids
+                this.configuration.displayCentroids,
+                this.configuration.displayColour,
+                this.configuration.selectedEdgeThickness,
+                this.configuration.selectedEdgeColour,
+                this.configuration.selectedCentroidSize,
+                this.configuration.selectedCentroidColour,
+                // this.configuration.selectedCellColour,
+                this.configuration.selectedGreyscaleThreshold,
+                this.configuration.selectedGreyscaleX,
+                this.configuration.selectedGreyscaleY
               );
-            } else {
-              console.log("This method does not exist");
+            } else if (this.configuration.selectedMethod === "Edge detection") {
+              resultFromNaiveEdgesSobel(
+                this.originalImageData,
+                this.configuration.selectedSobelThreshold,
+                this.configuration.displayEdges,
+                this.configuration.displayCentroids,
+                this.configuration.displayColour,
+                this.configuration.croppedImageData,
+                this.configuration.coordinateMargins,
+                this.configuration.selectedEdgeThickness,
+                this.configuration.selectedEdgeColour,
+                this.configuration.selectedCentroidSize,
+                this.configuration.selectedCentroidColour,
+                this.configuration.selectedCellColour,
+                this.configuration.selectedNumberOfNeighbours
+              );
             }
           }
           break;

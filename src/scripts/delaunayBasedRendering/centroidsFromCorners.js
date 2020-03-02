@@ -13,6 +13,11 @@ export const resultFromDelaunayCorners = (
   displayColour,
   croppedImageData,
   coordinateMargins,
+  selectedEdgeThickness,
+  selectedEdgeColour,
+  selectedCentroidSize,
+  selectedCentroidColour,
+  selectedCellColour
   toBeCroppedImageCoordinates
 ) => {
   // Set the threshold for the number of corners to detect
@@ -31,7 +36,6 @@ export const resultFromDelaunayCorners = (
     imageData.height
   );
 
-  // TODO: Experiment with Sobel
   // Find the corners in the grayscaled image using FAST
   const corners = window.tracking.Fast.findCorners(
     gray,
@@ -40,6 +44,15 @@ export const resultFromDelaunayCorners = (
   );
 
   let fullSvg;
+
+  // Store the centroids based on the corners
+  let centroids = [];
+  for (let i = 0; i < corners.length; i += 2) {
+    centroids.push({
+      x: corners[i],
+      y: corners[i + 1]
+    });
+  }
 
   // Set the initial configuration of the svg
   fullSvg = d3
@@ -174,32 +187,29 @@ export const resultFromDelaunayCorners = (
     } else {
       fullSvg
         .selectAll("path")
-        // Construct a data object from each cell of our voronoi diagram
         .data(centroids.map((d, i) => voronoi.renderCell(i)))
         .join("path")
         .attr("d", d => d)
-        .style("fill", d3.color(`rgb(255, 255, 255)`));
+        .style("fill", selectedCellColour);
     }
 
-    // Add the edges if they need to be added
-    // TODO: Add parameters for colours and opacities in the UI
+    // Render the edges with a certain colour and thickness
     if (displayEdges) {
       fullSvg
         .selectAll("path")
-        .style("stroke", "black")
-        .style("stroke-opacity", 1.0);
+        .style("stroke", selectedEdgeColour)
+        .style("stroke-width", selectedEdgeThickness);
     }
 
-    // Add the centroids if they need to be added
-    // TODO: Add parameters for sizes and colours in the UI
+    // Render the centroids with a certain size and colour
     if (displayCentroids) {
       colouredCentroids.forEach(centroid => {
         fullSvg
           .append("circle")
           .attr("cx", centroid.x)
           .attr("cy", centroid.y)
-          .attr("r", 1)
-          .attr("fill", "red");
+          .attr("r", selectedCentroidSize)
+          .attr("fill", selectedCentroidColour);
       });
     }
 
