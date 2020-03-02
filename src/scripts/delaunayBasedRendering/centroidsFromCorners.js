@@ -17,7 +17,7 @@ export const resultFromDelaunayCorners = (
   selectedEdgeColour,
   selectedCentroidSize,
   selectedCentroidColour,
-  selectedCellColour
+  selectedCellColour,
   toBeCroppedImageCoordinates
 ) => {
   // Set the threshold for the number of corners to detect
@@ -44,15 +44,6 @@ export const resultFromDelaunayCorners = (
   );
 
   let fullSvg;
-
-  // Store the centroids based on the corners
-  let centroids = [];
-  for (let i = 0; i < corners.length; i += 2) {
-    centroids.push({
-      x: corners[i],
-      y: corners[i + 1]
-    });
-  }
 
   // Set the initial configuration of the svg
   fullSvg = d3

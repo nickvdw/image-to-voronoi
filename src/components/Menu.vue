@@ -46,7 +46,6 @@
                 block
                 color="blue-grey darken-3"
                 class="white--text mt-4"
-                @click="cropImage"
               >
                 Select an important region
               </v-btn>

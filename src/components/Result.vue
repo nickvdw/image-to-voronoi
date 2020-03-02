@@ -95,13 +95,20 @@
           background="#eee"
         >
           <!-- The image representing the result -->
-          <div align="start" justify="center" ref="result" id="voronoiResult" />
+          <div
+            align="start"
+            justify="center"
+            ref="result"
+            id="voronoiResult"
+            v-show="!fullscreen && !dialog"
+          />
           <div
             align="start"
             justify="center"
             ref="fullResult"
             id="voronoiFullResult"
-            v-bind:class="resultClasses"
+            class="fullResult"
+            v-show="fullscreen || dialog || saving"
           />
         </fullscreen>
       </div>
@@ -146,7 +153,6 @@ import { resultFromDelaunayGreyscaling } from "@/scripts/delaunayBasedRendering/
 import { resultFromDelaunayPoisson } from "@/scripts/delaunayBasedRendering/centroidsFromPoisson";
 import { resultFromNaiveGreyscaling } from "@/scripts/naiveRendering/centroidsFromGreyscaling";
 
-import { Cropper } from "vue-advanced-cropper";
 import * as d3 from "d3";
 import Fullscreen from "vue-fullscreen/src/component.vue";
 
@@ -236,19 +242,6 @@ export default {
       }
     }
   },
-  computed: {
-    resultClasses() {
-      if (this.fullscreen || this.dialog || this.saving) {
-        return {
-          showResult: true
-        };
-      } else {
-        return {
-          hideResult: true
-        };
-      }
-    }
-  },
   methods: {
     async editImage() {
       this.dialog = true;
@@ -269,7 +262,7 @@ export default {
         }
       };
 
-      this.generateResult({ title: "Result" });
+      this.generateResult({ title: "Update" });
 
       this.toBeCroppedImageCoordinates = null;
 
@@ -332,23 +325,23 @@ export default {
             this.configuration.selectedAlgorithm === "Delaunay triangulation"
           ) {
             if (this.configuration.selectedMethod === "Corner detection") {
-              resultFromDelaunayCorners(
+              this.update = resultFromDelaunayCorners(
                 this.originalImageData,
                 parseInt(this.configuration.selectedThreshold),
                 this.configuration.displayEdges,
                 this.configuration.displayCentroids,
                 this.configuration.displayColour,
                 this.configuration.croppedImageData,
-                this.toBeCroppedImageCoordinates
                 this.configuration.coordinateMargins,
                 this.configuration.selectedEdgeThickness,
                 this.configuration.selectedEdgeColour,
                 this.configuration.selectedCentroidSize,
                 this.configuration.selectedCentroidColour,
-                this.configuration.selectedCellColour
+                this.configuration.selectedCellColour,
+                this.toBeCroppedImageCoordinates
               );
             } else if (this.configuration.selectedMethod === "Edge detection") {
-              resultFromDelaunayEdgesSobel(
+              this.update = resultFromDelaunayEdgesSobel(
                 this.originalImageData,
                 this.configuration.selectedSobelThreshold,
                 this.configuration.displayEdges,
@@ -467,12 +460,8 @@ export default {
     align-items: center;
   }
 }
-.showResult {
+.fullResult {
   display: inline-flex;
-  overflow: auto;
-}
-.hideResult {
-  display: none;
   overflow: auto;
 }
 </style>
