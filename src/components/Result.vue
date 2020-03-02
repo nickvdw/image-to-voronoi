@@ -316,9 +316,6 @@ export default {
      * Renders an image depending on the choice
      */
     generateResult(choice) {
-      // Clear the previous image
-      document.getElementById("voronoiResult").innerHTML = "";
-
       // Only display the result chosen by the user
       switch (choice.title) {
         case "Original image":

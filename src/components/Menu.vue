@@ -408,7 +408,7 @@ export default {
 
     displayEdges: false,
     displayCentroids: false,
-    displayColour: false,
+    displayColour: true,
 
     selectedNumberOfNeighbours: 1,
     numberOfNeighboursRules: [

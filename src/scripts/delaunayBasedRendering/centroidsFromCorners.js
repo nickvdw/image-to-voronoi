@@ -43,10 +43,8 @@ export const resultFromDelaunayCorners = (
     imageData.height
   );
 
-  let fullSvg;
-
   // Set the initial configuration of the svg
-  fullSvg = d3
+  let fullSvg = d3
     .select("#voronoiFullResult")
     .append("svg")
     .attr("width", originalImageData.width)
@@ -128,6 +126,7 @@ export const resultFromDelaunayCorners = (
 
     // Construct the result
     if (displayColour) {
+      console.log("LOL");
       fullSvg
         .selectAll("path")
         // Construct a data object from each cell of our voronoi diagram
@@ -195,7 +194,7 @@ export const resultFromDelaunayCorners = (
         y: Math.floor(d3.mouse(d3.event.target)[1])
       });
 
-      // Update the result
+      // Update the result with the new centroid
       update();
     });
   };
