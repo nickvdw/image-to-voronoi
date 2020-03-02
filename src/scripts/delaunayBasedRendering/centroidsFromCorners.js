@@ -68,41 +68,6 @@ export const resultFromDelaunayCorners = (
   // centroids = randomDelete(centroids, 19000);
   // centroids = densityDelete(centroids, 6, true);
 
-  // TODO: Selected pixels dont correspond with real pixels because of the resizing
-  // TODO: Cannot use a cropper and SVG element. Cropper needs to be with image.
-
-  if (toBeCroppedImageCoordinates) {
-    const xStart = toBeCroppedImageCoordinates.start.x;
-    const xEnd = toBeCroppedImageCoordinates.end.x;
-    const yStart = toBeCroppedImageCoordinates.start.y;
-    const yEnd = toBeCroppedImageCoordinates.end.y;
-
-    let removedCentroids = [];
-    // This one doesn't give the correct sizes
-    for (let i = centroids.length - 1; i >= 0; i--) {
-      if (
-        centroids[i].x >= xStart &&
-        centroids[i].x <= xEnd &&
-        centroids[i].y >= yStart &&
-        centroids[i].y <= yEnd
-      ) {
-        removedCentroids.push(centroids[i]);
-        centroids.splice(i, 1);
-      }
-    }
-  }
-
-  // Add margin to the centroids if we use the cropped image
-  if (croppedImageData && coordinateMargins) {
-    centroids = centroids.map(centroid => {
-      return {
-        x: centroid.x + coordinateMargins.width,
-        y: centroid.y + coordinateMargins.height,
-        colour: centroid.colour
-      };
-    });
-  }
-
   // Obtain colours for the centroids
   let colouredCentroids = colourCentroidsByCoordinates(
     originalImageData,
@@ -194,7 +159,7 @@ export const resultFromDelaunayCorners = (
 
     // Render the centroids with a certain size and colour
     if (displayCentroids) {
-      colouredCentroids.forEach(centroid => {
+      centroids.forEach(centroid => {
         fullSvg
           .append("circle")
           .attr("cx", centroid.x)

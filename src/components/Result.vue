@@ -192,7 +192,7 @@ export default {
           selectedAlgorithm: null,
           displayEdges: false,
           displayCentroids: false,
-          displayColour: false,
+          displayColour: true,
           croppedImageData: null,
           coordinateMargins: null,
           selectedNumberOfNeighbours: 1,
@@ -245,7 +245,12 @@ export default {
   methods: {
     async editImage() {
       this.dialog = true;
-
+      console.log(
+        document.getElementById("voronoiFullResult"),
+        this.dialog,
+        this.fullscreen,
+        this.saving
+      );
       this.croppedImage = await this.$html2canvas(this.$refs.fullResult, {
         type: "dataURL"
       });
@@ -313,7 +318,6 @@ export default {
     generateResult(choice) {
       // Clear the previous image
       document.getElementById("voronoiResult").innerHTML = "";
-      document.getElementById("voronoiFullResult").innerHTML = "";
 
       // Only display the result chosen by the user
       switch (choice.title) {
@@ -321,6 +325,7 @@ export default {
           this.setImage(this.originalImageData);
           break;
         case "Result":
+          document.getElementById("voronoiFullResult").innerHTML = "";
           if (
             this.configuration.selectedAlgorithm === "Delaunay triangulation"
           ) {
