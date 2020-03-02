@@ -360,13 +360,14 @@ export default {
                 this.configuration.selectedEdgeColour,
                 this.configuration.selectedCentroidSize,
                 this.configuration.selectedCentroidColour,
-                this.configuration.selectedCellColour
+                this.configuration.selectedCellColour,
+                this.toBeCroppedImageCoordinates
               );
             } else if (
               this.configuration.selectedMethod ===
               "Based on greyscale intensities"
             ) {
-              resultFromDelaunayGreyscaling(
+              this.update = resultFromDelaunayGreyscaling(
                 this.originalImageData,
                 this.configuration.displayEdges,
                 this.configuration.displayCentroids,
@@ -383,7 +384,7 @@ export default {
             } else if (
               this.configuration.selectedMethod === "Poisson disc sampling"
             ) {
-              resultFromDelaunayPoisson(
+              this.update = resultFromDelaunayPoisson(
                 this.originalImageData,
                 this.configuration.displayEdges,
                 this.configuration.displayCentroids,

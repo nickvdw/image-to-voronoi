@@ -51,9 +51,6 @@ export const resultFromDelaunayCorners = (
     .attr("height", originalImageData.height)
     .attr("id", "fullResultSVG")
     .style("background-color", "black");
-  // TODO: Add something for dragging centroids
-
-  // TODO: Add a "selector" tool that can be used to select a rectangle and remove all centroids in that rectangle
 
   // Store the centroids based on the corners
   let centroids = [];
@@ -89,7 +86,6 @@ export const resultFromDelaunayCorners = (
       const yEnd = toBeCroppedImageCoordinates.end.y;
 
       let removedCentroids = [];
-      // This one doesn't give the correct sizes
       for (let i = centroids.length - 1; i >= 0; i--) {
         if (
           centroids[i].x >= xStart &&
@@ -126,7 +122,6 @@ export const resultFromDelaunayCorners = (
 
     // Construct the result
     if (displayColour) {
-      console.log("LOL");
       fullSvg
         .selectAll("path")
         // Construct a data object from each cell of our voronoi diagram
@@ -134,7 +129,6 @@ export const resultFromDelaunayCorners = (
         .join("path")
         .attr("d", d => d)
         .style("fill", (d, i) => {
-          // console.log(colouredCentroids[i]);
           return d3.color(
             `rgb(${colouredCentroids[i].colour[0]},${colouredCentroids[i].colour[1]},${colouredCentroids[i].colour[2]})`
           );
@@ -185,8 +179,6 @@ export const resultFromDelaunayCorners = (
       .attr("height", document.getElementById("resultContainer").offsetHeight);
 
     svg.on("click", () => {
-      // TODO: Using the d3.mouse(d3.event.target) coordinates to obtain the colour does not work and
-
       // Add the new centroid to the list of centroids
       // x, y needs to be floored for the getColour method
       centroids.push({
