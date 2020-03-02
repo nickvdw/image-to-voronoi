@@ -8,9 +8,18 @@ import {
 
 export const resultFromNaiveGreyscaling = (
   imageData,
-  // threshold,
+  numberOfNeighbours,
   displayEdges,
-  displayCentroids
+  displayCentroids,
+  displayColour,
+  selectedEdgeThickness,
+  selectedEdgeColour,
+  selectedCentroidSize,
+  selectedCentroidColour,
+  // selectedCellColour
+  selectedGreyscaleThreshold,
+  selectedGreyscaleX,
+  selectedGreyscaleY
 ) => {
   // I am still not sure why, but this is needed for the colours
   const imageDataCopy = {
@@ -18,7 +27,7 @@ export const resultFromNaiveGreyscaling = (
     data: [...imageData.data]
   };
 
-  const k = 1;
+  const k = numberOfNeighbours;
 
   // Greyscale the image
   const greyScaleImageData = greyScaleImage(imageDataCopy);
@@ -26,8 +35,14 @@ export const resultFromNaiveGreyscaling = (
   // Compute the centroid based on the greyscaled intensities
   // TODO: Create parameters in the UI for these options
   const centroids = [
-    ...computeCentroidsFromGreyScale(greyScaleImageData, 0.8, false, 20, 10),
-    ...computeCentroidsFromGreyScale(greyScaleImageData, 0.5, true, 20, 10)
+    ...computeCentroidsFromGreyScale(
+      greyScaleImageData,
+      selectedGreyscaleThreshold,
+      false,
+      selectedGreyscaleX,
+      selectedGreyscaleY
+    )
+    // ...computeCentroidsFromGreyScale(greyScaleImageData, 0.5, true, 20, 10)
   ];
 
   // Obtain colours for the centroids
@@ -117,26 +132,25 @@ export const resultFromNaiveGreyscaling = (
       console.log(x, imageData.width);
     });
 
-  // Add the edges if they need to be added
-  // TODO: Add parameters for colours and opacities in the UI
+  // TODO: This does not work. See what we can do with it since we colour pixels.
+  // Render the edges with a certain colour and thickness
   if (displayEdges) {
     svg
       .selectAll("path")
-      .style("opacity", 0.6)
-      .style("stroke", "white")
-      .style("stroke-opacity", 0.2);
+      .style("stroke", selectedEdgeColour)
+      .style("stroke-width", selectedEdgeThickness);
   }
 
-  // Add the centroids if they need to be added
-  // TODO: Add parameters for sizes and colours in the UI
+  // TODO: This does not work. See what we can do with it since we colour pixels.
+  // Render the centroids with a certain size and colour
   if (displayCentroids) {
-    centroids.forEach(centroid => {
+    colouredCentroids.forEach(centroid => {
       svg
         .append("circle")
         .attr("cx", centroid.x)
         .attr("cy", centroid.y)
-        .attr("r", 1)
-        .attr("fill", "red");
+        .attr("r", selectedCentroidSize)
+        .attr("fill", selectedCentroidColour);
     });
   }
 };

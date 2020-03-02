@@ -37,58 +37,6 @@
         </template>
         <span>View the result in fullscreen</span>
       </v-tooltip>
-
-      <!-- <v-menu bottom left origin="center center" transition="scale-transition">
-        <template v-slot:activator="{ on: menu }">
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on: tooltip }">
-              <v-btn
-                dark
-                v-on="{ ...tooltip, ...menu }"
-                icon
-                :disabled="!configuration.selectedImage"
-              >
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
-            </template>
-            <span> Display other options </span>
-          </v-tooltip>
-        </template>
-        <span>Save the image</span>
-      </v-tooltip>
-
-      <v-menu bottom left origin="center center" transition="scale-transition">
-        <template v-slot:activator="{ on: menu }">
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on: tooltip }">
-              <v-btn
-                dark
-                v-on="{ ...tooltip, ...menu }"
-                icon
-                :disabled="!configuration.selectedImage"
-              >
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
-            </template>
-            <span> Display other options </span>
-          </v-tooltip>
-        </template>
-        <v-list>
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>What would you like to see?</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-divider />
-          <v-list-item
-            v-for="(item, i) in items"
-            :key="i"
-            @click="generateResult(item)"
-          >
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu> -->
     </v-card-title>
 
     <!-- Card content -->
@@ -146,10 +94,10 @@
 <script>
 require("tracking");
 
-/* eslint-disable no-unused-vars */
-
 import { uploadImage, toImageDataUrl } from "@/scripts/imageHandler";
 import { resultFromDelaunayCorners } from "@/scripts/delaunayBasedRendering/centroidsFromCorners";
+import { resultFromDelaunayEdgesSobel } from "@/scripts/delaunayBasedRendering/centroidsFromEdgesSobel";
+import { resultFromNaiveEdgesSobel } from "@/scripts/naiveRendering/centroidsFromEdgesSobel";
 import { resultFromDelaunayGreyscaling } from "@/scripts/delaunayBasedRendering/centroidsFromGreyscaling";
 import { resultFromDelaunayPoisson } from "@/scripts/delaunayBasedRendering/centroidsFromPoisson";
 import { resultFromNaiveGreyscaling } from "@/scripts/naiveRendering/centroidsFromGreyscaling";
@@ -197,12 +145,23 @@ export default {
           selectedCentroidSize: 1,
           selectedCentroidColour: null,
           selectedCellColour: null,
-          selectedPoissonDistance: 1
+          selectedPoissonDistance: 1,
+          selectedSobelThreshold: 40,
+          selectedGreyscaleThreshold: null,
+          selectedGreyscaleX: null,
+          selectedGreyscaleY: null
         };
       }
     }
   },
   watch: {
+    loading: function() {
+      if (this.loading) {
+        this.$emit("loading", true);
+      } else {
+        this.$emit("loading", false);
+      }
+    },
     /**
      * Watcher on the configuration provided by the user that removes
      * the previous image if the user clicks on the "reset" button and
@@ -288,7 +247,27 @@ export default {
                 this.configuration.displayCentroids,
                 this.configuration.displayColour,
                 this.configuration.croppedImageData,
-                this.configuration.coordinateMargins
+                this.configuration.coordinateMargins,
+                this.configuration.selectedEdgeThickness,
+                this.configuration.selectedEdgeColour,
+                this.configuration.selectedCentroidSize,
+                this.configuration.selectedCentroidColour,
+                this.configuration.selectedCellColour
+              );
+            } else if (this.configuration.selectedMethod === "Edge detection") {
+              resultFromDelaunayEdgesSobel(
+                this.originalImageData,
+                this.configuration.selectedSobelThreshold,
+                this.configuration.displayEdges,
+                this.configuration.displayCentroids,
+                this.configuration.displayColour,
+                this.configuration.croppedImageData,
+                this.configuration.coordinateMargins,
+                this.configuration.selectedEdgeThickness,
+                this.configuration.selectedEdgeColour,
+                this.configuration.selectedCentroidSize,
+                this.configuration.selectedCentroidColour,
+                this.configuration.selectedCellColour
               );
             } else if (
               this.configuration.selectedMethod ===
@@ -297,7 +276,16 @@ export default {
               resultFromDelaunayGreyscaling(
                 this.originalImageData,
                 this.configuration.displayEdges,
-                this.configuration.displayCentroids
+                this.configuration.displayCentroids,
+                this.configuration.displayColour,
+                this.configuration.selectedEdgeThickness,
+                this.configuration.selectedEdgeColour,
+                this.configuration.selectedCentroidSize,
+                this.configuration.selectedCentroidColour,
+                this.configuration.selectedCellColour,
+                this.configuration.selectedGreyscaleThreshold,
+                this.configuration.selectedGreyscaleX,
+                this.configuration.selectedGreyscaleY
               );
             } else if (
               this.configuration.selectedMethod === "Poisson disc sampling"
@@ -306,7 +294,13 @@ export default {
                 this.originalImageData,
                 this.configuration.displayEdges,
                 this.configuration.displayCentroids,
-                this.configuration.selectedPoissonDistance
+                this.configuration.displayColour,
+                this.configuration.selectedPoissonDistance,
+                this.configuration.selectedEdgeThickness,
+                this.configuration.selectedEdgeColour,
+                this.configuration.selectedCentroidSize,
+                this.configuration.selectedCentroidColour,
+                this.configuration.selectedCellColour
               );
             } else {
               console.log("This method does not exist");
@@ -318,12 +312,35 @@ export default {
             ) {
               resultFromNaiveGreyscaling(
                 this.originalImageData,
-                // parseInt(this.configuration.selectedThreshold),
+                this.configuration.selectedNumberOfNeighbours,
                 this.configuration.displayEdges,
-                this.configuration.displayCentroids
+                this.configuration.displayCentroids,
+                this.configuration.displayColour,
+                this.configuration.selectedEdgeThickness,
+                this.configuration.selectedEdgeColour,
+                this.configuration.selectedCentroidSize,
+                this.configuration.selectedCentroidColour,
+                // this.configuration.selectedCellColour,
+                this.configuration.selectedGreyscaleThreshold,
+                this.configuration.selectedGreyscaleX,
+                this.configuration.selectedGreyscaleY
               );
-            } else {
-              console.log("This method does not exist");
+            } else if (this.configuration.selectedMethod === "Edge detection") {
+              resultFromNaiveEdgesSobel(
+                this.originalImageData,
+                this.configuration.selectedSobelThreshold,
+                this.configuration.displayEdges,
+                this.configuration.displayCentroids,
+                this.configuration.displayColour,
+                this.configuration.croppedImageData,
+                this.configuration.coordinateMargins,
+                this.configuration.selectedEdgeThickness,
+                this.configuration.selectedEdgeColour,
+                this.configuration.selectedCentroidSize,
+                this.configuration.selectedCentroidColour,
+                this.configuration.selectedCellColour,
+                this.configuration.selectedNumberOfNeighbours
+              );
             }
           }
           break;

@@ -107,8 +107,48 @@
               <v-text-field
                 color="blue-grey darken-3"
                 label="Number of nearest neighbours"
+                v-show="this.selectedAlgorithm === 'Naive'"
                 v-model="selectedNumberOfNeighbours"
                 :rules="numberOfNeighboursRules"
+                type="number"
+              />
+              <!-- Threshold for sobel edges -->
+              <v-text-field
+                color="blue-grey darken-3"
+                label="Threshold"
+                v-show="this.selectedMethod === 'Edge detection'"
+                v-model="selectedSobelThreshold"
+                :rules="sobelThresholdRules"
+                type="number"
+              />
+              <v-text-field
+                color="blue-grey darken-3"
+                label="Threshold"
+                v-show="
+                  this.selectedMethod === 'Based on greyscale intensities'
+                "
+                v-model="selectedGreyscaleThreshold"
+                :rules="greyscaleThresholdRules"
+                type="number"
+              />
+              <v-text-field
+                color="blue-grey darken-3"
+                label="Skip x-axis pixels"
+                v-show="
+                  this.selectedMethod === 'Based on greyscale intensities'
+                "
+                v-model="selectedGreyscaleX"
+                :rules="sobelThresholdRules"
+                type="number"
+              />
+              <v-text-field
+                color="blue-grey darken-3"
+                label="Skip y-axis pixels"
+                v-show="
+                  this.selectedMethod === 'Based on greyscale intensities'
+                "
+                v-model="selectedGreyscaleY"
+                :rules="sobelThresholdRules"
                 type="number"
               />
             </v-card-text>
@@ -165,7 +205,6 @@
                 v-model="selectedEdgeThickness"
                 :rules="edgeThicknessRules"
                 type="number"
-                hide-details
               />
 
               <v-checkbox
@@ -213,7 +252,6 @@
                 v-model="selectedCentroidSize"
                 :rules="centroidSizeRules"
                 type="number"
-                hide-details
               />
 
               <v-checkbox
@@ -265,8 +303,8 @@
       <v-row align="center" justify="space-around">
         <v-btn color="error" @click="reset">Reset</v-btn>
         <v-btn
-          :disabled="!valid"
           class="blue-grey darken-3 white--text"
+          :loading="isLoading"
           @click="validate"
         >
           Submit
@@ -324,12 +362,7 @@ export default {
       "Based on greyscale intensities",
       "Poisson disc sampling"
     ],
-    naiveMethods: [
-      "Corner detection",
-      "Edge detection",
-      "Based on greyscale intensities",
-      "Poisson disc sampling"
-    ],
+    naiveMethods: ["Based on greyscale intensities", "Edge detection"],
     methodRules: [v => !!v || "A method is required"],
     // TODO: Remove initialisation
     selectedMethod: "Corner detection",
@@ -341,7 +374,7 @@ export default {
     selectedAlgorithm: "Delaunay triangulation",
 
     // Selected threshold and associated rules
-    selectedThreshold: 5,
+    selectedThreshold: 40,
     thresholdRules: [
       v =>
         (!!v && v <= 100 && v >= 0) ||
@@ -370,7 +403,7 @@ export default {
     centroidColourMenu: false,
     centroidColourMask: "!#XXXXXXXX",
 
-    selectedCellColour: "#000000FF",
+    selectedCellColour: "#FFFFFFFF",
     cellColourMenu: false,
     cellColourMask: "!#XXXXXXXX",
 
@@ -385,12 +418,27 @@ export default {
         "The number of nearest neighbours should be between 1 and 30"
     ],
 
-    selectedPoissonDistance: 1,
+    selectedPoissonDistance: 20,
     poissonDistanceRules: [
       v =>
         (!!v && v <= 2000 && v >= 1) ||
         "The distance should be between 1 and 2000 pixels."
     ],
+
+    selectedSobelThreshold: 40,
+    sobelThresholdRules: [
+      v =>
+        (!!v && v >= 0 && v <= 255) ||
+        "The threshold should be between 0 and 255."
+    ],
+
+    selectedGreyscaleThreshold: 0.5,
+    greyscaleThresholdRules: [
+      v =>
+        (!!v && v >= 0 && v <= 1) || "The threshold should be between 0 and 1."
+    ],
+    selectedGreyscaleX: 1,
+    selectedGreyscaleY: 1,
 
     // Whether or not the form is valid
     valid: false,
@@ -398,11 +446,26 @@ export default {
 
     // All tabs
     tabItems: ["Image", "Methods", "Display"],
-    currentTab: "Image"
+    currentTab: "Image",
+
+    isLoading: false
   }),
 
   components: {
     Cropper
+  },
+
+  props: {
+    loading: {
+      type: Boolean,
+      default: false
+    }
+  },
+
+  watch: {
+    loading() {
+      this.isLoading = this.loading;
+    }
   },
 
   computed: {
@@ -489,6 +552,7 @@ export default {
      * Emits the form data if the form is valid.
      */
     validate() {
+      this.isLoading = true;
       if (this.$refs.form.validate()) {
         this.$emit("submit", {
           selectedImage: this.selectedImage,
@@ -506,7 +570,11 @@ export default {
           selectedCentroidSize: this.selectedCentroidSize,
           selectedCentroidColour: this.selectedCentroidColour,
           selectedCellColour: this.selectedCellColour,
-          selectedPoissonDistance: this.selectedPoissonDistance
+          selectedPoissonDistance: this.selectedPoissonDistance,
+          selectedSobelThreshold: this.selectedSobelThreshold,
+          selectedGreyscaleThreshold: this.selectedGreyscaleThreshold,
+          selectedGreyscaleX: this.selectedGreyscaleX,
+          selectedGreyscaleY: this.selectedGreyscaleY
         });
       }
     },
