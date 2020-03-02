@@ -13,6 +13,20 @@
         <template v-slot:activator="{ on }">
           <v-btn
             dark
+            @click="editImage"
+            v-on="on"
+            icon
+            :disabled="!configuration.selectedImage"
+          >
+            <v-icon>mdi-image-edit-outline</v-icon>
+          </v-btn>
+        </template>
+        <span>Remove centroids</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            dark
             @click="saveImage"
             v-on="on"
             icon
@@ -81,10 +95,55 @@
           background="#eee"
         >
           <!-- The image representing the result -->
-          <div align="start" justify="center" ref="result" id="voronoiResult" />
+          <div
+            align="start"
+            justify="center"
+            ref="result"
+            id="voronoiResult"
+            v-show="!fullscreen && !dialog"
+          />
+          <div
+            align="start"
+            justify="center"
+            ref="fullResult"
+            id="voronoiFullResult"
+            class="fullResult"
+            v-show="fullscreen || dialog || saving"
+          />
         </fullscreen>
       </div>
     </v-card-text>
+
+    <!-- Dialog stuff -->
+    <v-dialog
+      v-model="dialog"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+    >
+      <v-card style="background-color: #ddd">
+        <v-toolbar dark class="blue-grey darken-3 white--text" elevation="0">
+          <v-btn icon dark @click="dialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <v-toolbar-title>
+            Select an area of centroids to remove
+          </v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-toolbar-items>
+            <v-btn dark text @click="submitCrop">Save</v-btn>
+          </v-toolbar-items>
+        </v-toolbar>
+        <v-card-text>
+          <cropper
+            class="cropper"
+            id="cropper"
+            ref="cropper"
+            :src="croppedImage"
+          ></cropper>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -117,7 +176,12 @@ export default {
       ],
       originalImageData: [],
       centroids: [],
-      fullscreen: false
+      fullscreen: false,
+      dialog: false,
+      saving: false,
+      croppedImage: null,
+      toBeCroppedImageCoordinates: null,
+      update: null
     };
   },
   props: {
@@ -133,7 +197,7 @@ export default {
           selectedAlgorithm: null,
           displayEdges: false,
           displayCentroids: false,
-          displayColour: false,
+          displayColour: true,
           croppedImageData: null,
           coordinateMargins: null,
           selectedNumberOfNeighbours: 1,
@@ -179,18 +243,51 @@ export default {
       } else {
         // Clear the previous image
         document.getElementById("voronoiResult").innerHTML = "";
+        document.getElementById("voronoiFullResult").innerHTML = "";
       }
     }
   },
   methods: {
+    async editImage() {
+      this.dialog = true;
+      console.log(
+        document.getElementById("voronoiFullResult"),
+        this.dialog,
+        this.fullscreen,
+        this.saving
+      );
+      this.croppedImage = await this.$html2canvas(this.$refs.fullResult, {
+        type: "dataURL"
+      });
+    },
+    submitCrop() {
+      // Obtain the coordinates of the cropped image selection
+      const { coordinates } = this.$refs.cropper.getResult();
+
+      this.toBeCroppedImageCoordinates = {
+        start: { x: coordinates.left, y: coordinates.top },
+        end: {
+          x: coordinates.left + coordinates.width,
+          y: coordinates.top + coordinates.height
+        }
+      };
+
+      this.generateResult({ title: "Update" });
+
+      this.toBeCroppedImageCoordinates = null;
+
+      this.dialog = false;
+    },
     /**
      * Opens a prompt with which an image can be saved.
      */
     async saveImage() {
       // Convert the image from a div to a canvas element
-      const result = await this.$html2canvas(this.$refs.result, {
+      this.saving = true;
+      const result = await this.$html2canvas(this.$refs.fullResult, {
         type: "dataURL"
       });
+      this.saving = false;
       const link = document.createElement("a");
       link.download = "filename.png";
       link.href = result;
@@ -224,20 +321,18 @@ export default {
      * Renders an image depending on the choice
      */
     generateResult(choice) {
-      // Clear the previous image
-      document.getElementById("voronoiResult").innerHTML = "";
-
       // Only display the result chosen by the user
       switch (choice.title) {
         case "Original image":
           this.setImage(this.originalImageData);
           break;
         case "Result":
+          document.getElementById("voronoiFullResult").innerHTML = "";
           if (
             this.configuration.selectedAlgorithm === "Delaunay triangulation"
           ) {
             if (this.configuration.selectedMethod === "Corner detection") {
-              resultFromDelaunayCorners(
+              this.update = resultFromDelaunayCorners(
                 this.originalImageData,
                 parseInt(this.configuration.selectedThreshold),
                 this.configuration.displayEdges,
@@ -249,10 +344,11 @@ export default {
                 this.configuration.selectedEdgeColour,
                 this.configuration.selectedCentroidSize,
                 this.configuration.selectedCentroidColour,
-                this.configuration.selectedCellColour
+                this.configuration.selectedCellColour,
+                this.toBeCroppedImageCoordinates
               );
             } else if (this.configuration.selectedMethod === "Edge detection") {
-              resultFromDelaunayEdgesSobel(
+              this.update = resultFromDelaunayEdgesSobel(
                 this.originalImageData,
                 this.configuration.selectedSobelThreshold,
                 this.configuration.displayEdges,
@@ -344,9 +440,18 @@ export default {
         case "Centroids":
           // TODO: We probably have to handle centroid stuff in the files used for generation the result since we have direct access to the centroids there
           break;
+        case "Update":
+          this.update(
+            this.configuration.croppedImageData,
+            this.configuration.coordinateMargins,
+            this.toBeCroppedImageCoordinates
+          );
+          break;
         default:
         // TODO: catch error
       }
+      this.croppedImage = null;
+      this.croppedImageCoordinates = null;
     }
   }
 };
@@ -361,5 +466,9 @@ export default {
     justify-content: center;
     align-items: center;
   }
+}
+.fullResult {
+  display: inline-flex;
+  overflow: auto;
 }
 </style>

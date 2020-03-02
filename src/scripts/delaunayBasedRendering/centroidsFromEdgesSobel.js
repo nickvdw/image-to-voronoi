@@ -209,4 +209,5 @@ export const resultFromDelaunayEdgesSobel = (
   };
 
   update();
+  return update;
 };

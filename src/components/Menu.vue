@@ -46,7 +46,6 @@
                 block
                 color="blue-grey darken-3"
                 class="white--text mt-4"
-                @click="cropImage"
               >
                 Select an important region
               </v-btn>
@@ -253,8 +252,7 @@
                 :rules="centroidSizeRules"
                 type="number"
               />
-
-              <v-checkbox
+              <!-- <v-checkbox
                 color="blue-grey darken-3"
                 v-model="displayColour"
                 label="Colour the cells"
@@ -290,7 +288,7 @@
                     </v-card>
                   </v-menu>
                 </template>
-              </v-text-field>
+              </v-text-field> -->
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -409,7 +407,7 @@ export default {
 
     displayEdges: false,
     displayCentroids: false,
-    displayColour: false,
+    displayColour: true,
 
     selectedNumberOfNeighbours: 1,
     numberOfNeighboursRules: [
@@ -537,13 +535,6 @@ export default {
         // Start the reader job - read file as a data url (base64 format)
         reader.readAsDataURL(input.files[0]);
       }
-    },
-
-    change({ coordinates }) {
-      this.croppedCoordinates = coordinates;
-    },
-    cropImage() {
-      this.dialog = true;
     },
     /**
      * Validates whether or not the form is valid (i.e., all REQUIRED
