@@ -210,7 +210,9 @@ export default {
           selectedSobelThreshold: 40,
           selectedGreyscaleThreshold: null,
           selectedGreyscaleX: null,
-          selectedGreyscaleY: null
+          selectedGreyscaleY: null,
+          customColour: false,
+          inverseThreshold: false
         };
       }
     }
@@ -345,7 +347,8 @@ export default {
                 this.configuration.selectedCentroidSize,
                 this.configuration.selectedCentroidColour,
                 this.configuration.selectedCellColour,
-                this.toBeCroppedImageCoordinates
+                this.toBeCroppedImageCoordinates,
+                this.configuration.customColour
               );
             } else if (this.configuration.selectedMethod === "Edge detection") {
               this.update = resultFromDelaunayEdgesSobel(
@@ -360,17 +363,21 @@ export default {
                 this.configuration.selectedEdgeColour,
                 this.configuration.selectedCentroidSize,
                 this.configuration.selectedCentroidColour,
-                this.configuration.selectedCellColour
+                this.configuration.selectedCellColour,
+                this.toBeCroppedImageCoordinates,
+                this.configuration.customColour
               );
             } else if (
               this.configuration.selectedMethod ===
               "Based on greyscale intensities"
             ) {
-              resultFromDelaunayGreyscaling(
+              this.update = resultFromDelaunayGreyscaling(
                 this.originalImageData,
                 this.configuration.displayEdges,
                 this.configuration.displayCentroids,
                 this.configuration.displayColour,
+                this.configuration.croppedImageData,
+                this.configuration.coordinateMargins,
                 this.configuration.selectedEdgeThickness,
                 this.configuration.selectedEdgeColour,
                 this.configuration.selectedCentroidSize,
@@ -378,22 +385,29 @@ export default {
                 this.configuration.selectedCellColour,
                 this.configuration.selectedGreyscaleThreshold,
                 this.configuration.selectedGreyscaleX,
-                this.configuration.selectedGreyscaleY
+                this.configuration.selectedGreyscaleY,
+                this.toBeCroppedImageCoordinates,
+                this.configuration.customColour,
+                this.configuration.inverseThreshold
               );
             } else if (
               this.configuration.selectedMethod === "Poisson disc sampling"
             ) {
-              resultFromDelaunayPoisson(
+              this.update = resultFromDelaunayPoisson(
                 this.originalImageData,
                 this.configuration.displayEdges,
                 this.configuration.displayCentroids,
                 this.configuration.displayColour,
+                this.configuration.croppedImageData,
+                this.configuration.coordinateMargins,
                 this.configuration.selectedPoissonDistance,
                 this.configuration.selectedEdgeThickness,
                 this.configuration.selectedEdgeColour,
                 this.configuration.selectedCentroidSize,
                 this.configuration.selectedCentroidColour,
-                this.configuration.selectedCellColour
+                this.configuration.selectedCellColour,
+                this.toBeCroppedImageCoordinates,
+                this.configuration.customColour
               );
             } else {
               console.log("This method does not exist");
