@@ -22,7 +22,8 @@ export const resultFromDelaunayGreyscaling = (
   selectedGreyscaleThreshold,
   selectedGreyscaleX,
   selectedGreyscaleY,
-  toBeCroppedImageCoordinates
+  toBeCroppedImageCoordinates,
+  customColour
 ) => {
   let imageDataCopy = {
     ...originalImageData,
@@ -42,11 +43,11 @@ export const resultFromDelaunayGreyscaling = (
     ...computeCentroidsFromGreyScale(
       greyScaleImageData,
       selectedGreyscaleThreshold,
-      false,
+      true,
       selectedGreyscaleX,
       selectedGreyscaleY
     )
-    // ...computeCentroidsFromGreyScale(greyScaleImageData, 0.5, true, 20, 10)
+    //...computeCentroidsFromGreyScale(greyScaleImageData, 0.2, true, 20, 10)
   ];
 
   // Add margin to the centroids if we use the cropped image
@@ -128,29 +129,31 @@ export const resultFromDelaunayGreyscaling = (
 
     // Construct the result
     if (displayColour) {
-      fullSvg
-        .selectAll("path")
-        // Construct a data object from each cell of our voronoi diagram
-        .data(colouredCentroids.map((d, i) => voronoi.renderCell(i)))
-        .join("path")
-        .attr("d", d => d)
-        .style("stroke", (d, i) => {
-          return d3.color(
-            `rgb(${colouredCentroids[i].colour[0]},${colouredCentroids[i].colour[1]},${colouredCentroids[i].colour[2]})`
-          );
-        })
-        .style("fill", (d, i) => {
-          return d3.color(
-            `rgb(${colouredCentroids[i].colour[0]},${colouredCentroids[i].colour[1]},${colouredCentroids[i].colour[2]})`
-          );
-        });
-    } else {
-      fullSvg
-        .selectAll("path")
-        .data(centroids.map((d, i) => voronoi.renderCell(i)))
-        .join("path")
-        .attr("d", d => d)
-        .style("fill", selectedCellColour);
+      if (!customColour) {
+        fullSvg
+          .selectAll("path")
+          // Construct a data object from each cell of our voronoi diagram
+          .data(colouredCentroids.map((d, i) => voronoi.renderCell(i)))
+          .join("path")
+          .attr("d", d => d)
+          .style("stroke", (d, i) => {
+            return d3.color(
+              `rgb(${colouredCentroids[i].colour[0]},${colouredCentroids[i].colour[1]},${colouredCentroids[i].colour[2]})`
+            );
+          })
+          .style("fill", (d, i) => {
+            return d3.color(
+              `rgb(${colouredCentroids[i].colour[0]},${colouredCentroids[i].colour[1]},${colouredCentroids[i].colour[2]})`
+            );
+          });
+      } else {
+        fullSvg
+          .selectAll("path")
+          .data(centroids.map((d, i) => voronoi.renderCell(i)))
+          .join("path")
+          .attr("d", d => d)
+          .style("fill", selectedCellColour);
+      }
     }
 
     // Render the edges with a certain colour and thickness

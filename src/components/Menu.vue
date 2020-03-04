@@ -252,14 +252,21 @@
                 :rules="centroidSizeRules"
                 type="number"
               />
-              <!-- <v-checkbox
+              <v-checkbox
                 color="blue-grey darken-3"
                 v-model="displayColour"
                 label="Colour the cells"
                 hide-details
               />
-              <v-text-field
+              <v-checkbox
+                color="blue-grey darken-3"
                 v-if="displayColour"
+                v-model="customColour"
+                label="Custom colour"
+                hide-details
+              />
+              <v-text-field
+                v-if="customColour"
                 v-model="selectedCellColour"
                 v-mask="cellColourMask"
                 hide-details
@@ -288,7 +295,7 @@
                     </v-card>
                   </v-menu>
                 </template>
-              </v-text-field> -->
+              </v-text-field>
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -406,6 +413,7 @@ export default {
     displayEdges: false,
     displayCentroids: false,
     displayColour: true,
+    customColour: false,
 
     selectedNumberOfNeighbours: 1,
     numberOfNeighboursRules: [
@@ -563,7 +571,8 @@ export default {
           selectedSobelThreshold: this.selectedSobelThreshold,
           selectedGreyscaleThreshold: this.selectedGreyscaleThreshold,
           selectedGreyscaleX: this.selectedGreyscaleX,
-          selectedGreyscaleY: this.selectedGreyscaleY
+          selectedGreyscaleY: this.selectedGreyscaleY,
+          customColour: this.customColour
         });
       }
     },

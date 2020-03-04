@@ -210,7 +210,8 @@ export default {
           selectedSobelThreshold: 40,
           selectedGreyscaleThreshold: null,
           selectedGreyscaleX: null,
-          selectedGreyscaleY: null
+          selectedGreyscaleY: null,
+          customColour: false
         };
       }
     }
@@ -345,7 +346,8 @@ export default {
                 this.configuration.selectedCentroidSize,
                 this.configuration.selectedCentroidColour,
                 this.configuration.selectedCellColour,
-                this.toBeCroppedImageCoordinates
+                this.toBeCroppedImageCoordinates,
+                this.configuration.customColour
               );
             } else if (this.configuration.selectedMethod === "Edge detection") {
               this.update = resultFromDelaunayEdgesSobel(
@@ -361,7 +363,8 @@ export default {
                 this.configuration.selectedCentroidSize,
                 this.configuration.selectedCentroidColour,
                 this.configuration.selectedCellColour,
-                this.toBeCroppedImageCoordinates
+                this.toBeCroppedImageCoordinates,
+                this.configuration.customColour
               );
             } else if (
               this.configuration.selectedMethod ===
@@ -382,7 +385,8 @@ export default {
                 this.configuration.selectedGreyscaleThreshold,
                 this.configuration.selectedGreyscaleX,
                 this.configuration.selectedGreyscaleY,
-                this.toBeCroppedImageCoordinates
+                this.toBeCroppedImageCoordinates,
+                this.configuration.customColour
               );
             } else if (
               this.configuration.selectedMethod === "Poisson disc sampling"
@@ -400,7 +404,8 @@ export default {
                 this.configuration.selectedCentroidSize,
                 this.configuration.selectedCentroidColour,
                 this.configuration.selectedCellColour,
-                this.toBeCroppedImageCoordinates
+                this.toBeCroppedImageCoordinates,
+                this.configuration.customColour
               );
             } else {
               console.log("This method does not exist");
