@@ -211,7 +211,8 @@ export default {
           selectedGreyscaleThreshold: null,
           selectedGreyscaleX: null,
           selectedGreyscaleY: null,
-          customColour: false
+          customColour: false,
+          inverseThreshold: false
         };
       }
     }
@@ -386,7 +387,8 @@ export default {
                 this.configuration.selectedGreyscaleX,
                 this.configuration.selectedGreyscaleY,
                 this.toBeCroppedImageCoordinates,
-                this.configuration.customColour
+                this.configuration.customColour,
+                this.configuration.inverseThreshold
               );
             } else if (
               this.configuration.selectedMethod === "Poisson disc sampling"

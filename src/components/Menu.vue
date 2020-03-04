@@ -129,6 +129,17 @@
                 v-model="selectedGreyscaleThreshold"
                 :rules="greyscaleThresholdRules"
                 type="number"
+                hide-details
+              />
+              <v-checkbox
+                color="blue-grey darken-3"
+                class="mb-4"
+                v-show="
+                  this.selectedMethod === 'Based on greyscale intensities'
+                "
+                v-model="inverseThreshold"
+                label="Inverse threshold"
+                hide-details
               />
               <v-text-field
                 color="blue-grey darken-3"
@@ -205,7 +216,6 @@
                 :rules="edgeThicknessRules"
                 type="number"
               />
-
               <v-checkbox
                 color="blue-grey darken-3"
                 v-model="displayCentroids"
@@ -413,7 +423,9 @@ export default {
     displayEdges: false,
     displayCentroids: false,
     displayColour: true,
+
     customColour: false,
+    inverseThreshold: false,
 
     selectedNumberOfNeighbours: 1,
     numberOfNeighboursRules: [
@@ -572,7 +584,8 @@ export default {
           selectedGreyscaleThreshold: this.selectedGreyscaleThreshold,
           selectedGreyscaleX: this.selectedGreyscaleX,
           selectedGreyscaleY: this.selectedGreyscaleY,
-          customColour: this.customColour
+          customColour: this.customColour,
+          inverseThreshold: this.inverseThreshold
         });
       }
     },

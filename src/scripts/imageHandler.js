@@ -24,17 +24,17 @@ export const computeCentroidsFromGreyScale = (
         centroids.push(centroid);
 
         // Set the pixel of the centroid to red for testing purposes
-        imageData.data[i] = 255;
-        imageData.data[i + 1] = 100;
-        imageData.data[i + 2] = 100;
+        // imageData.data[i] = 255;
+        // imageData.data[i + 1] = 100;
+        // imageData.data[i + 2] = 100;
       }
     } else if (imageData.data[i] / 255 >= threshold) {
       centroids.push(centroid);
 
       // Set the pixel of the centroid to red for testing purposes
-      imageData.data[i] = 255;
-      imageData.data[i + 1] = 100;
-      imageData.data[i + 2] = 100;
+      // imageData.data[i] = 255;
+      // imageData.data[i + 1] = 100;
+      // imageData.data[i + 2] = 100;
     }
 
     // If we entered the next row

@@ -23,14 +23,10 @@ export const resultFromDelaunayGreyscaling = (
   selectedGreyscaleX,
   selectedGreyscaleY,
   toBeCroppedImageCoordinates,
-  customColour
+  customColour,
+  inverseThreshold
 ) => {
-  let imageDataCopy = {
-    ...originalImageData,
-    data: [...originalImageData.data]
-  };
-
-  let imageData = imageDataCopy;
+  let imageData = originalImageData;
   if (croppedImageData && coordinateMargins) {
     imageData = croppedImageData;
   }
@@ -43,11 +39,17 @@ export const resultFromDelaunayGreyscaling = (
     ...computeCentroidsFromGreyScale(
       greyScaleImageData,
       selectedGreyscaleThreshold,
-      true,
+      inverseThreshold,
       selectedGreyscaleX,
       selectedGreyscaleY
     )
-    //...computeCentroidsFromGreyScale(greyScaleImageData, 0.2, true, 20, 10)
+    // ...computeCentroidsFromGreyScale(
+    //   greyScaleImageData,
+    //   selectedGreyscaleThreshold,
+    //   inverseThreshold,
+    //   20,
+    //   20
+    // )
   ];
 
   // Add margin to the centroids if we use the cropped image
@@ -83,7 +85,7 @@ export const resultFromDelaunayGreyscaling = (
     toBeCroppedImageCoordinates
   ) => {
     if (croppedImageData && coordinateMargins) {
-      imageDataCopy = croppedImageData;
+      imageData = croppedImageData;
     }
 
     if (toBeCroppedImageCoordinates) {
