@@ -63,7 +63,7 @@ const pruneCentroids = (centroid, centroids, distance) => {
       computeEuclideanDistance(
         [centroid.x, centroid.y],
         [secondCentroid.x, secondCentroid.y]
-      ) < distance &&
+      ) <= distance &&
       centroid.x !== secondCentroid.x &&
       centroid.y !== secondCentroid.y
     ) {
