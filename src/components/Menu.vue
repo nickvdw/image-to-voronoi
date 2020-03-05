@@ -424,7 +424,7 @@ export default {
     displayCentroids: false,
     displayColour: true,
 
-    customColour: false,
+    customColour: null,
     inverseThreshold: false,
 
     selectedNumberOfNeighbours: 1,
