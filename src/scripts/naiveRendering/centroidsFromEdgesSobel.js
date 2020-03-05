@@ -3,6 +3,11 @@ require("tracking");
 
 import * as d3 from "d3";
 
+import {
+  generatePartitions,
+  computeNearestCentroidFromPartitions
+} from "../partitioning";
+
 import { colourCentroidsByCoordinates } from "@/scripts/imageHandler";
 
 export const resultFromNaiveEdgesSobel = (
@@ -91,6 +96,13 @@ export const resultFromNaiveEdgesSobel = (
     }
   }
 
+  const partitions = generatePartitions(
+    centroids,
+    imageData.width,
+    imageData.height,
+    5
+  );
+
   // Set the initial configuration of the svg
   const svg = d3
     .select("#voronoiResult")
@@ -146,7 +158,7 @@ export const resultFromNaiveEdgesSobel = (
     originalImageData,
     centroids
   );
-
+  console.log(partitions);
   // Redraw the canvas every time the 'update' method is called
   const update = () => {
     const colourMap = [];
@@ -160,37 +172,30 @@ export const resultFromNaiveEdgesSobel = (
         )
       );
 
-    const nearestCentroids = [];
-
     Array(imageData.width)
       .fill()
       .map((_, x) => {
         Array(imageData.height)
           .fill()
           .map((_, y) => {
-            // Compute the nearest centroid for each pixel
-            // nearestCentroid is a dictionary in the form of {point: [x_coor, y_coor], nearest_centroid: number}
-            const nearestCentroid = computeNearestCentroid(
-              colouredCentroids,
+            const nearestCentroid = computeNearestCentroidFromPartitions(
               x,
               y,
-              k
+              k,
+              imageData.width,
+              imageData.height,
+              partitions
             );
-
-            // Store all the nearest centroid for each pixel for no apparent reason
-            nearestCentroids.push({
-              point: [x, y],
-              nearest_centroid: nearestCentroid
-            });
-
             // Colour the pixels
-            svg
-              .append("rect")
-              .attr("x", x)
-              .attr("y", y)
-              .attr("width", 1)
-              .attr("height", 1)
-              .attr("fill", colourMap[nearestCentroid]);
+            if (nearestCentroid != -1) {
+              svg
+                .append("rect")
+                .attr("x", x)
+                .attr("y", y)
+                .attr("width", 1)
+                .attr("height", 1)
+                .attr("fill", colourMap[nearestCentroid]);
+            }
           });
 
         console.log(x, imageData.width);
@@ -218,28 +223,4 @@ export const resultFromNaiveEdgesSobel = (
   };
 
   update();
-};
-
-export const computeEuclideanDistance = (a, b) => {
-  return Math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2);
-};
-
-const computeNearestCentroid = (centroids, x, y, k) => {
-  // Compute euclidean distances between centroids and point
-  const distances = [];
-  centroids.map(centroid =>
-    distances.push(computeEuclideanDistance([x, y], [centroid.x, centroid.y]))
-  );
-  // k for k-nearest centroid
-  if (k && k > 1) {
-    let i = k > centroids.length ? centroids.length : k;
-    // Remove the currently nearest centroid and loop until i = 1
-    while (i > 1) {
-      distances.splice(distances.indexOf(Math.min.apply(null, distances)), 1);
-      i -= 1;
-    }
-  }
-  // For k > 1 we have removed the nearest centroid k - 1 times so we return the k-nearest centroid here
-  // Else this just returns the nearest centroid
-  return distances.indexOf(Math.min.apply(null, distances));
 };

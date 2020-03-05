@@ -132,13 +132,14 @@ export const computeNearestCentroidFromPartitions = (
   imageHeight,
   partitions
 ) => {
-  const currentPartition = getPartitionFromCoordinates(
-    x,
-    y,
-    imageWidth,
-    imageHeight,
-    partitions
-  );
+  //   const currentPartition = getPartitionFromCoordinates(
+  //     x,
+  //     y,
+  //     imageWidth,
+  //     imageHeight,
+  //     partitions
+  //   );
+  const currentPartition = getPartitionFromCoordinatesSlow(x, y, partitions);
   if (currentPartition) {
     let smallest = { distance: Infinity, index: -1 };
     currentPartition.centroids.forEach((centroid, index) => {
