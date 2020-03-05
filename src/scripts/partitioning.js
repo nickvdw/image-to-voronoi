@@ -1,3 +1,11 @@
+/**
+ * Generates a number of partitions, it will always create a square like shape
+ * The count squared amount of partitions will be generated, to split the image in blocks
+ * @param {*} centroids
+ * @param {*} imageWidth
+ * @param {*} imageHeight
+ * @param {*} count
+ */
 export const generatePartitions = (
   centroids,
   imageWidth,
@@ -9,23 +17,25 @@ export const generatePartitions = (
   const partitionHeight = imageHeight / count;
   const partitions = [];
 
-  // Create the partition objects
   let currentWidth = 0;
   let currentHeight = 0;
 
+  // Fill and create the partitions
   for (let i = 0; i < count; i++) {
     for (let j = 0; j < count; j++) {
       const partitionCentroids = [];
       centroids.forEach(centroid => {
+        // The centroid is in this partition
         if (
-          centroid.x < currentWidth + partitionWidth &&
-          centroid.y < currentHeight + partitionHeight &&
+          centroid.x <= currentWidth + partitionWidth &&
+          centroid.y <= currentHeight + partitionHeight &&
           centroid.x >= currentWidth &&
           centroid.y >= currentHeight
         ) {
           partitionCentroids.push(centroid);
         }
       });
+      // Add the partition
       partitions.push({
         centroids: partitionCentroids,
         coordinates: [
@@ -47,6 +57,11 @@ export const generatePartitions = (
   return partitions;
 };
 
+/**
+ * Tries to get the neighbours of a partition in 4 directions
+ * @param {*} partition
+ * @param {*} partitions
+ */
 export const getNeighbours = (partition, partitions) => {
   const neighbours = [];
 
@@ -65,6 +80,14 @@ export const getNeighbours = (partition, partitions) => {
   return neighbours;
 };
 
+/**
+ * Gets the partition that the given coordinates are part of
+ * @param {*} x
+ * @param {*} y
+ * @param {*} imageWidth
+ * @param {*} imageHeight
+ * @param {*} partitions
+ */
 export const getPartitionFromCoordinates = (
   x,
   y,
@@ -80,6 +103,12 @@ export const getPartitionFromCoordinates = (
   return partitions[index];
 };
 
+/**
+ * Gets the partition that the given coordinates are part of
+ * @param {*} x
+ * @param {*} y
+ * @param {*} partitions
+ */
 export const getPartitionFromCoordinatesSlow = (x, y, partitions) => {
   let p;
   partitions.forEach(partition => {
@@ -124,6 +153,15 @@ const boundaryCheckNeighbours = (partition, centroid, smallestDistance) => {
   return false;
 };
 
+/**
+ * Tries to determine the nearest centroid. Starting from the current partition, and then checking neighbours
+ * @param {*} x - X of the centroid
+ * @param {*} y - Y of the centroid
+ * @param {*} k - Order
+ * @param {*} imageWidth
+ * @param {*} imageHeight
+ * @param {*} partitions - The array of partitions
+ */
 export const computeNearestCentroidFromPartitions = (
   x,
   y,
@@ -140,6 +178,8 @@ export const computeNearestCentroidFromPartitions = (
   //     partitions
   //   );
   const currentPartition = getPartitionFromCoordinatesSlow(x, y, partitions);
+
+  // Get centroid with the smallest distance in the partition
   if (currentPartition) {
     let smallest = { distance: Infinity, index: -1 };
     currentPartition.centroids.forEach((centroid, index) => {
@@ -163,7 +203,7 @@ export const computeNearestCentroidFromPartitions = (
     ) {
       return smallest.index;
     } else {
-      // Check neighbouring partitions...
+      // Check neighbouring partitions (Not exhaustive atm)...
       const neighbours = getNeighbours(currentPartition, partitions);
       let smallest = { distance: Infinity, index: -1 };
       for (let neighbour of neighbours) {

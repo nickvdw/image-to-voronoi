@@ -100,7 +100,7 @@ export const resultFromNaiveEdgesSobel = (
     centroids,
     imageData.width,
     imageData.height,
-    5
+    4
   );
 
   // Set the initial configuration of the svg
