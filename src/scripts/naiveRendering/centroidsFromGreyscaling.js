@@ -45,13 +45,6 @@ export const resultFromNaiveGreyscaling = (
       false,
       selectedGreyscaleX,
       selectedGreyscaleY
-    ),
-    ...computeCentroidsFromGreyScale(
-      greyScaleImageData,
-      selectedGreyscaleThreshold,
-      true,
-      selectedGreyscaleX,
-      selectedGreyscaleY
     )
   ];
 
@@ -61,7 +54,7 @@ export const resultFromNaiveGreyscaling = (
     colouredCentroids,
     imageData.width,
     imageData.height,
-    3
+    4
   );
   console.log(colouredCentroids);
   console.log(partitions);
@@ -130,7 +123,6 @@ export const resultFromNaiveGreyscaling = (
               imageData.height,
               partitions
             );
-            console.log(nearestCentroid);
             // Colour the pixels
             if (nearestCentroid != -1) {
               svg

@@ -37,8 +37,7 @@ export const generatePartitions = (
             y: currentHeight + partitionHeight
           }
         ],
-        width: partitionWidth,
-        height: partitionHeight
+        index: partitions.length
       });
       currentWidth += partitionWidth;
     }
@@ -50,10 +49,19 @@ export const generatePartitions = (
 
 export const getNeighbours = (partition, partitions) => {
   const neighbours = [];
-  console.log(partition);
-  partitions.forEach(partition => {
-    console.log(partition);
-  });
+
+  partitions[partition.index + 1] &&
+    neighbours.push(partitions[partition.index + 1]);
+
+  partitions[partition.index - 1] &&
+    neighbours.push(partitions[partition.index - 1]);
+
+  partitions[partition.index + Math.sqrt(partitions.length)] &&
+    neighbours.push(partitions[partition.index + Math.sqrt(partitions.length)]);
+
+  partitions[partition.index - Math.sqrt(partitions.length)] &&
+    neighbours.push(partitions[partition.index - Math.sqrt(partitions.length)]);
+
   return neighbours;
 };
 
@@ -64,35 +72,57 @@ export const getPartitionFromCoordinates = (
   imageHeight,
   partitions
 ) => {
-  const index =
-    Math.ceil(x / (imageWidth / Math.sqrt(partitions.length))) *
-    Math.ceil(y / (imageHeight / Math.sqrt(partitions.length)));
+  let rowLength = Math.sqrt(partitions.length);
+  let px = x / (imageWidth / rowLength);
+  let py = y / (imageHeight / rowLength);
+
+  const index = Math.floor(px) + Math.floor(py) * rowLength;
   return partitions[index];
 };
 
-export const getPartitionFromCoordinatesSlow = (
-  x,
-  y,
-  imageWidth,
-  imageHeight,
-  partitions
-) => {
-  const index =
-    Math.ceil(x / (imageWidth / Math.sqrt(partitions.length))) *
-    Math.ceil(y / (imageHeight / Math.sqrt(partitions.length)));
-  return partitions[index];
+export const getPartitionFromCoordinatesSlow = (x, y, partitions) => {
+  let p;
+  partitions.forEach(partition => {
+    if (
+      x >= partition.coordinates[0].x &&
+      x <= partition.coordinates[3].x &&
+      y >= partition.coordinates[0].y &&
+      y <= partition.coordinates[3].y
+    ) {
+      p = partition;
+    }
+  });
+  return p;
 };
 
 const computeEuclideanDistance = (a, b) => {
   return Math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2);
 };
 
-// const boundaryCheck = (partition, centroid) => {
-//     const left;
-//     const right;
-//     const top
-//     const bottom;
-// }
+const boundaryCheckNeighbours = (partition, centroid, smallestDistance) => {
+  const left = Math.abs(centroid.x - partition.coordinates[0].x);
+  const right = Math.abs(partition.coordinates[1].x - centroid.x);
+  const top = Math.abs(centroid.y - partition.coordinates[0].y);
+  const bottom = Math.abs(partition.coordinates[1].y - centroid.y);
+  // TODO all diagonal neighbours
+
+  if (smallestDistance > left) {
+    return "left";
+  }
+
+  if (smallestDistance > right) {
+    return "right";
+  }
+
+  if (smallestDistance > top) {
+    return "top";
+  }
+
+  if (smallestDistance > bottom) {
+    return "bottom";
+  }
+  return false;
+};
 
 export const computeNearestCentroidFromPartitions = (
   x,
@@ -122,7 +152,33 @@ export const computeNearestCentroidFromPartitions = (
       }
     });
     // Check if smallest is smaller than distance to partition edges
-    return smallest.index;
+    if (
+      currentPartition.centroids.length > 0 &&
+      !boundaryCheckNeighbours(
+        currentPartition,
+        currentPartition.centroids[smallest.index],
+        smallest.distance
+      )
+    ) {
+      return smallest.index;
+    } else {
+      // Check neighbouring partitions...
+      const neighbours = getNeighbours(currentPartition, partitions);
+      let smallest = { distance: Infinity, index: -1 };
+      for (let neighbour of neighbours) {
+        neighbour.centroids.forEach((centroid, index) => {
+          const distance = computeEuclideanDistance(
+            [x, y],
+            [centroid.x, centroid.y]
+          );
+          if (distance < smallest.distance) {
+            smallest.index = index;
+            smallest.distance = distance;
+          }
+        });
+      }
+      return smallest.index;
+    }
   }
   return null;
 };
