@@ -5,6 +5,10 @@ import {
   computeCentroidsFromGreyScale,
   colourCentroidsByCoordinates
 } from "@/scripts/imageHandler";
+import {
+  generatePartitions,
+  computeNearestCentroidFromPartitions
+} from "../partitioning";
 
 export const resultFromNaiveGreyscaling = (
   imageData,
@@ -41,13 +45,28 @@ export const resultFromNaiveGreyscaling = (
       false,
       selectedGreyscaleX,
       selectedGreyscaleY
+    ),
+    ...computeCentroidsFromGreyScale(
+      greyScaleImageData,
+      selectedGreyscaleThreshold,
+      true,
+      selectedGreyscaleX,
+      selectedGreyscaleY
     )
-    // ...computeCentroidsFromGreyScale(greyScaleImageData, 0.5, true, 20, 10)
   ];
 
   // Obtain colours for the centroids
   const colouredCentroids = colourCentroidsByCoordinates(imageData, centroids);
+  const partitions = generatePartitions(
+    colouredCentroids,
+    imageData.width,
+    imageData.height,
+    3
+  );
+  console.log(colouredCentroids);
+  console.log(partitions);
 
+  console.log(centroids.length, imageData.width, imageData.height);
   // Construct the result
   // TODO: Handle the cases for @displayEdges and @displayCentroids
   console.log(displayEdges, displayCentroids);
@@ -94,43 +113,36 @@ export const resultFromNaiveGreyscaling = (
       );
   }
 
-  // Array that stores dictionarities in the form of {point: [x_coor, y_coor], nearest_centroid: number}
-  const nearestCentroids = [];
-
   // Loop over all pixels and compute the nearest centroid
-  Array(imageData.width)
-    .fill()
-    .map((_, x) => {
-      Array(imageData.height)
-        .fill()
-        .map((_, y) => {
-          // Compute the nearest centroid for each pixel
-          // nearestCentroid is a dictionary in the form of {point: [x_coor, y_coor], nearest_centroid: number}
-          const nearestCentroid = computeNearestCentroid(
-            colouredCentroids,
-            x,
-            y,
-            k
-          );
-
-          // Store all the nearest centroid for each pixel for no apparent reason
-          nearestCentroids.push({
-            point: [x, y],
-            nearest_centroid: nearestCentroid
+  console.warn("No centroids were generated (Length of 0)");
+  centroids.length > 0 &&
+    Array(imageData.width)
+      .fill()
+      .map((_, x) => {
+        Array(imageData.height)
+          .fill()
+          .map((_, y) => {
+            const nearestCentroid = computeNearestCentroidFromPartitions(
+              x,
+              y,
+              k,
+              imageData.width,
+              imageData.height,
+              partitions
+            );
+            console.log(nearestCentroid);
+            // Colour the pixels
+            if (nearestCentroid != -1) {
+              svg
+                .append("rect")
+                .attr("x", x)
+                .attr("y", y)
+                .attr("width", 1)
+                .attr("height", 1)
+                .attr("fill", colourMap[nearestCentroid]);
+            }
           });
-
-          // Colour the pixels
-          svg
-            .append("rect")
-            .attr("x", x)
-            .attr("y", y)
-            .attr("width", 1)
-            .attr("height", 1)
-            .attr("fill", colourMap[nearestCentroid]);
-        });
-
-      console.log(x, imageData.width);
-    });
+      });
 
   // TODO: This does not work. See what we can do with it since we colour pixels.
   // Render the edges with a certain colour and thickness
@@ -163,26 +175,26 @@ const generateRandomColour = () => {
   );
 };
 
-export const computeEuclideanDistance = (a, b) => {
-  return Math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2);
-};
+// export const computeEuclideanDistance = (a, b) => {
+//   return Math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2);
+// };
 
-const computeNearestCentroid = (centroids, x, y, k) => {
-  // Compute euclidean distances between centroids and point
-  const distances = [];
-  centroids.map(centroid =>
-    distances.push(computeEuclideanDistance([x, y], [centroid.x, centroid.y]))
-  );
-  // k for k-nearest centroid
-  if (k && k > 1) {
-    let i = k > centroids.length ? centroids.length : k;
-    // Remove the currently nearest centroid and loop until i = 1
-    while (i > 1) {
-      distances.splice(distances.indexOf(Math.min.apply(null, distances)), 1);
-      i -= 1;
-    }
-  }
-  // For k > 1 we have removed the nearest centroid k - 1 times so we return the k-nearest centroid here
-  // Else this just returns the nearest centroid
-  return distances.indexOf(Math.min.apply(null, distances));
-};
+// const computeNearestCentroid = (centroids, x, y, k) => {
+//   // Compute euclidean distances between centroids and point
+//   const distances = [];
+//   centroids.map(centroid =>
+//     distances.push(computeEuclideanDistance([x, y], [centroid.x, centroid.y]))
+//   );
+//   // k for k-nearest centroid
+//   if (k && k > 1) {
+//     let i = k > centroids.length ? centroids.length : k;
+//     // Remove the currently nearest centroid and loop until i = 1
+//     while (i > 1) {
+//       distances.splice(distances.indexOf(Math.min.apply(null, distances)), 1);
+//       i -= 1;
+//     }
+//   }
+//   // For k > 1 we have removed the nearest centroid k - 1 times so we return the k-nearest centroid here
+//   // Else this just returns the nearest centroid
+//   return distances.indexOf(Math.min.apply(null, distances));
+// };
