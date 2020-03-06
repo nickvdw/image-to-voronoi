@@ -4,6 +4,39 @@ const pickRandomIndexFromArray = array => {
   return Math.floor(Math.random() * Math.floor(array.length - 1));
 };
 
+export const pruneCentroidsByMethod = (
+  centroids,
+  selectedPruningMethod,
+  pruningThreshold,
+  pruningDistance
+) => {
+  console.log("# of centroids before pruning " + centroids.length);
+  let pruned;
+  switch (selectedPruningMethod) {
+    case "Random":
+      pruned = randomDelete(
+        centroids,
+        Math.floor(centroids.length * (pruningThreshold / 100))
+      );
+      console.log("# of centroids after pruning " + pruned.length);
+      return pruned;
+    case "Distance-based":
+      pruned = distanceDelete(centroids, pruningDistance, true);
+      console.log("# of centroids after pruning " + pruned.length);
+      return pruned;
+    case "Cluster-based":
+      console.log("Not implemented");
+      break;
+    case "Even":
+      pruned = evenDelete(centroids);
+      console.log("# of centroids after pruning " + pruned.length);
+      return pruned;
+    case "None":
+      return centroids;
+    default:
+      return centroids;
+  }
+};
 /**
  * Randomly picks centroids and removes them from the array
  * @param {Array of centroid objects {x, y, colour}} centroids
@@ -22,11 +55,32 @@ export const randomDelete = (centroids, count) => {
 };
 
 /**
+ * Removes centroids for which the array index is even
+ * @param {*} centroids
+ */
+export const evenDelete = centroids => {
+  if (centroids && centroids.length > 0) {
+    const willBeRemoved = [];
+    for (let i = 0; i < centroids.length; i++) {
+      if (i % 2 === 0) {
+        willBeRemoved.push(i);
+      }
+    }
+    while (willBeRemoved.length) {
+      centroids.splice(willBeRemoved.pop(), 1);
+    }
+  } else {
+    console.warn("evenDelete was called with empty set of centroids");
+  }
+  return centroids;
+};
+
+/**
  * Removes centroids according to a distance parameter, This essentially tries to sparsen cluster like centroids
  * @param {Array of centroid objects {x, y, colour}} centroids
  * @param {Int, Float} distance - Threshold, centroids that have a distance smaller than 'distance' will be removed
  */
-export const densityDelete = (centroids, distance, randomSelect) => {
+export const distanceDelete = (centroids, distance, randomSelect) => {
   let newCentroids = [...centroids];
   // For each centroid we check the distances to other centroids
   // Worst case n^2? where n = amount of centroids

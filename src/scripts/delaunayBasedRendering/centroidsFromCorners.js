@@ -4,6 +4,7 @@ require("tracking");
 import * as d3 from "d3";
 import * as d3Delaunay from "d3-delaunay";
 import { colourCentroidsByCoordinates } from "@/scripts/imageHandler";
+import { pruneCentroidsByMethod } from "../pointCloudLogic";
 
 export const resultFromDelaunayCorners = (
   originalImageData,
@@ -19,7 +20,10 @@ export const resultFromDelaunayCorners = (
   selectedCentroidColour,
   selectedCellColour,
   toBeCroppedImageCoordinates,
-  customColour
+  customColour,
+  selectedPruningMethod,
+  pruningThreshold,
+  pruningDistance
 ) => {
   // Set the threshold for the number of corners to detect
   window.fastThreshold = threshold;
@@ -61,9 +65,14 @@ export const resultFromDelaunayCorners = (
       y: corners[i + 1]
     });
   }
-  // centroids = randomDelete(centroids, 19000);
-  // centroids = densityDelete(centroids, 6, true);
 
+  // Apply pruning
+  centroids = pruneCentroidsByMethod(
+    centroids,
+    selectedPruningMethod,
+    pruningThreshold,
+    pruningDistance
+  );
   // Obtain colours for the centroids
   let colouredCentroids = colourCentroidsByCoordinates(
     originalImageData,
@@ -105,6 +114,8 @@ export const resultFromDelaunayCorners = (
       originalImageData,
       centroids
     );
+
+    console.log(colouredCentroids);
 
     // Compute the delaunay triangulation from the centroids
     const delaunay = d3Delaunay.Delaunay.from(
@@ -149,7 +160,18 @@ export const resultFromDelaunayCorners = (
       }
     }
     // Render the edges with a certain colour and thickness
-    if (displayEdges) {
+    if (displayEdges && !displayColour) {
+      fullSvg
+        .selectAll("path")
+        .data(centroids.map((d, i) => voronoi.renderCell(i)))
+        .join("path")
+        .attr("d", d => d)
+        .style("fill", selectedCellColour);
+      fullSvg
+        .selectAll("path")
+        .style("stroke", selectedEdgeColour)
+        .style("stroke-width", selectedEdgeThickness);
+    } else if (displayEdges) {
       fullSvg
         .selectAll("path")
         .style("stroke", selectedEdgeColour)

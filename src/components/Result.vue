@@ -198,6 +198,9 @@ export default {
           selectedMethod: null,
           selectedThreshold: null,
           selectedAlgorithm: null,
+          selectedPruningMethod: null,
+          pruningThreshold: 90,
+          pruningDistance: 10,
           displayEdges: false,
           displayCentroids: false,
           displayColour: true,
@@ -214,7 +217,7 @@ export default {
           selectedGreyscaleThreshold: null,
           selectedGreyscaleX: null,
           selectedGreyscaleY: null,
-          customColour: false,
+          customColour: null,
           inverseThreshold: false
         };
       }
@@ -351,7 +354,10 @@ export default {
                 this.configuration.selectedCentroidColour,
                 this.configuration.selectedCellColour,
                 this.toBeCroppedImageCoordinates,
-                this.configuration.customColour
+                this.configuration.customColour,
+                this.configuration.selectedPruningMethod,
+                this.configuration.pruningThreshold,
+                this.configuration.pruningDistance
               );
             } else if (this.configuration.selectedMethod === "Edge detection") {
               this.update = resultFromDelaunayEdgesSobel(
@@ -368,7 +374,10 @@ export default {
                 this.configuration.selectedCentroidColour,
                 this.configuration.selectedCellColour,
                 this.toBeCroppedImageCoordinates,
-                this.configuration.customColour
+                this.configuration.customColour,
+                this.configuration.selectedPruningMethod,
+                this.configuration.pruningThreshold,
+                this.configuration.pruningDistance
               );
             } else if (
               this.configuration.selectedMethod ===
@@ -391,7 +400,10 @@ export default {
                 this.configuration.selectedGreyscaleY,
                 this.toBeCroppedImageCoordinates,
                 this.configuration.customColour,
-                this.configuration.inverseThreshold
+                this.configuration.inverseThreshold,
+                this.configuration.selectedPruningMethod,
+                this.configuration.pruningThreshold,
+                this.configuration.pruningDistance
               );
             } else if (
               this.configuration.selectedMethod === "Poisson disc sampling"
@@ -410,7 +422,10 @@ export default {
                 this.configuration.selectedCentroidColour,
                 this.configuration.selectedCellColour,
                 this.toBeCroppedImageCoordinates,
-                this.configuration.customColour
+                this.configuration.customColour,
+                this.configuration.selectedPruningMethod,
+                this.configuration.pruningThreshold,
+                this.configuration.pruningDistance
               );
             } else {
               console.log("This method does not exist");
@@ -433,7 +448,10 @@ export default {
                 // this.configuration.selectedCellColour,
                 this.configuration.selectedGreyscaleThreshold,
                 this.configuration.selectedGreyscaleX,
-                this.configuration.selectedGreyscaleY
+                this.configuration.selectedGreyscaleY,
+                this.configuration.selectedPruningMethod,
+                this.configuration.pruningThreshold,
+                this.configuration.pruningDistance
               );
             } else if (this.configuration.selectedMethod === "Edge detection") {
               resultFromNaiveEdgesSobel(
@@ -449,7 +467,10 @@ export default {
                 this.configuration.selectedCentroidSize,
                 this.configuration.selectedCentroidColour,
                 this.configuration.selectedCellColour,
-                this.configuration.selectedNumberOfNeighbours
+                this.configuration.selectedNumberOfNeighbours,
+                this.configuration.selectedPruningMethod,
+                this.configuration.pruningThreshold,
+                this.configuration.pruningDistance
               );
             }
           }

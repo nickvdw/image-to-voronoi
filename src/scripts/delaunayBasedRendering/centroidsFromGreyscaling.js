@@ -6,6 +6,7 @@ import {
   computeCentroidsFromGreyScale,
   colourCentroidsByCoordinates
 } from "@/scripts/imageHandler";
+import { pruneCentroidsByMethod } from "../pointCloudLogic";
 
 export const resultFromDelaunayGreyscaling = (
   originalImageData,
@@ -24,7 +25,10 @@ export const resultFromDelaunayGreyscaling = (
   selectedGreyscaleY,
   toBeCroppedImageCoordinates,
   customColour,
-  inverseThreshold
+  inverseThreshold,
+  selectedPruningMethod,
+  pruningThreshold,
+  pruningDistance
 ) => {
   let imageData = originalImageData;
   if (croppedImageData && coordinateMargins) {
@@ -51,6 +55,14 @@ export const resultFromDelaunayGreyscaling = (
     //   20
     // )
   ];
+
+  // Apply pruning
+  centroids = pruneCentroidsByMethod(
+    centroids,
+    selectedPruningMethod,
+    pruningThreshold,
+    pruningDistance
+  );
 
   // Add margin to the centroids if we use the cropped image
   if (croppedImageData && coordinateMargins) {
@@ -159,7 +171,18 @@ export const resultFromDelaunayGreyscaling = (
     }
 
     // Render the edges with a certain colour and thickness
-    if (displayEdges) {
+    if (displayEdges && !displayColour) {
+      fullSvg
+        .selectAll("path")
+        .data(centroids.map((d, i) => voronoi.renderCell(i)))
+        .join("path")
+        .attr("d", d => d)
+        .style("fill", selectedCellColour);
+      fullSvg
+        .selectAll("path")
+        .style("stroke", selectedEdgeColour)
+        .style("stroke-width", selectedEdgeThickness);
+    } else if (displayEdges) {
       fullSvg
         .selectAll("path")
         .style("stroke", selectedEdgeColour)

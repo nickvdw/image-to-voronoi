@@ -5,6 +5,7 @@ import {
   computeCentroidsFromGreyScale,
   colourCentroidsByCoordinates
 } from "@/scripts/imageHandler";
+import { pruneCentroidsByMethod } from "../pointCloudLogic";
 
 export const resultFromNaiveGreyscaling = (
   imageData,
@@ -19,7 +20,10 @@ export const resultFromNaiveGreyscaling = (
   // selectedCellColour
   selectedGreyscaleThreshold,
   selectedGreyscaleX,
-  selectedGreyscaleY
+  selectedGreyscaleY,
+  selectedPruningMethod,
+  pruningThreshold,
+  pruningDistance
 ) => {
   // I am still not sure why, but this is needed for the colours
   const imageDataCopy = {
@@ -34,7 +38,7 @@ export const resultFromNaiveGreyscaling = (
 
   // Compute the centroid based on the greyscaled intensities
   // TODO: Create parameters in the UI for these options
-  const centroids = [
+  let centroids = [
     ...computeCentroidsFromGreyScale(
       greyScaleImageData,
       selectedGreyscaleThreshold,
@@ -44,6 +48,14 @@ export const resultFromNaiveGreyscaling = (
     )
     // ...computeCentroidsFromGreyScale(greyScaleImageData, 0.5, true, 20, 10)
   ];
+
+  // Apply pruning
+  centroids = pruneCentroidsByMethod(
+    centroids,
+    selectedPruningMethod,
+    pruningThreshold,
+    pruningDistance
+  );
 
   // Obtain colours for the centroids
   const colouredCentroids = colourCentroidsByCoordinates(imageData, centroids);
