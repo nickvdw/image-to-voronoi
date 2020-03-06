@@ -445,7 +445,10 @@ export default {
                 // this.configuration.selectedCellColour,
                 this.configuration.selectedGreyscaleThreshold,
                 this.configuration.selectedGreyscaleX,
-                this.configuration.selectedGreyscaleY
+                this.configuration.selectedGreyscaleY,
+                this.configuration.selectedPruningMethod,
+                this.configuration.pruningThreshold,
+                this.configuration.pruningDistance
               );
             } else if (this.configuration.selectedMethod === "Edge detection") {
               resultFromNaiveEdgesSobel(
@@ -461,7 +464,10 @@ export default {
                 this.configuration.selectedCentroidSize,
                 this.configuration.selectedCentroidColour,
                 this.configuration.selectedCellColour,
-                this.configuration.selectedNumberOfNeighbours
+                this.configuration.selectedNumberOfNeighbours,
+                this.configuration.selectedPruningMethod,
+                this.configuration.pruningThreshold,
+                this.configuration.pruningDistance
               );
             }
           }

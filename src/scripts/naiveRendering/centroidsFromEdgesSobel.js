@@ -4,6 +4,7 @@ require("tracking");
 import * as d3 from "d3";
 
 import { colourCentroidsByCoordinates } from "@/scripts/imageHandler";
+import { pruneCentroidsByMethod } from "../pointCloudLogic";
 
 export const resultFromNaiveEdgesSobel = (
   originalImageData,
@@ -18,7 +19,10 @@ export const resultFromNaiveEdgesSobel = (
   selectedCentroidSize,
   selectedCentroidColour,
   selectedCellColour,
-  numberOfNeighbours
+  numberOfNeighbours,
+  selectedPruningMethod,
+  pruningThreshold,
+  pruningDistance
 ) => {
   // Set the threshold for the number of corners to detect
   window.fastThreshold = threshold;
@@ -90,6 +94,14 @@ export const resultFromNaiveEdgesSobel = (
       });
     }
   }
+
+  // Apply pruning
+  centroids = pruneCentroidsByMethod(
+    centroids,
+    selectedPruningMethod,
+    pruningThreshold,
+    pruningDistance
+  );
 
   // Set the initial configuration of the svg
   const svg = d3
