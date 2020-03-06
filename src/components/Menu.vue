@@ -161,6 +161,38 @@
                 :rules="sobelThresholdRules"
                 type="number"
               />
+              <!-- Field to select method for centroid pruning -->
+              <v-select
+                color="blue-grey darken-3"
+                item-color="blue-grey darken-4"
+                :items="pruningMethods"
+                v-model="selectedPruningMethod"
+                label="Method for centroid pruning"
+                hint="This method will be used to prune centroids."
+              />
+              <!-- Threshold percentage for centroid pruning -->
+              <v-slider
+                color="blue-grey darken-3"
+                label="Pruning Threshold"
+                v-show="this.selectedPruningMethod === 'Random'"
+                v-model="pruningThreshold"
+                step="0.5"
+                min="0"
+                max="100"
+                :thumb-label="true"
+                hint="A lower threshold results in more centroids."
+              />
+              <v-slider
+                color="blue-grey darken-3"
+                label="Pruning distance"
+                v-show="this.selectedPruningMethod === 'Distance-based'"
+                v-model="pruningDistance"
+                step="0.5"
+                min="0"
+                max="100"
+                :thumb-label="true"
+                hint="Centroids with a lower distance to another will be pruned."
+              />
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -381,6 +413,19 @@ export default {
     methodRules: [v => !!v || "A method is required"],
     selectedMethod: "Corner detection",
 
+    // Available methods for centroid pruning
+    pruningMethods: [
+      "Random",
+      "Even",
+      "Distance-based",
+      "Cluster-based",
+      "None"
+    ],
+    // % of centroids to prune 0 - 100
+    pruningThreshold: 50,
+    pruningDistance: 10,
+    selectedPruningMethod: "Random",
+
     // Available methods for the algorithms and associated rules
     algorithms: ["Naive", "Delaunay triangulation"],
     algorithmRules: [v => !!v || "An algorithm is required"],
@@ -585,7 +630,10 @@ export default {
           selectedGreyscaleX: this.selectedGreyscaleX,
           selectedGreyscaleY: this.selectedGreyscaleY,
           customColour: this.customColour,
-          inverseThreshold: this.inverseThreshold
+          inverseThreshold: this.inverseThreshold,
+          pruningThreshold: this.pruningThreshold,
+          pruningDistance: this.pruningDistance,
+          selectedPruningMethod: this.selectedPruningMethod
         });
       }
     },
@@ -606,6 +654,8 @@ export default {
       this.selectedEdgeThickness = 1;
       this.selectedCentroidSize = 1;
       this.currentTab = "Image";
+      this.pruningThreshold = 90;
+      this.pruningDistance = 10;
     }
   }
 };
