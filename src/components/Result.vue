@@ -195,6 +195,9 @@ export default {
           selectedMethod: null,
           selectedThreshold: null,
           selectedAlgorithm: null,
+          selectedPruningMethod: null,
+          pruningThreshold: 90,
+          pruningDistance: 10,
           displayEdges: false,
           displayCentroids: false,
           displayColour: true,
@@ -348,7 +351,10 @@ export default {
                 this.configuration.selectedCentroidColour,
                 this.configuration.selectedCellColour,
                 this.toBeCroppedImageCoordinates,
-                this.configuration.customColour
+                this.configuration.customColour,
+                this.configuration.selectedPruningMethod,
+                this.configuration.pruningThreshold,
+                this.configuration.pruningDistance
               );
             } else if (this.configuration.selectedMethod === "Edge detection") {
               this.update = resultFromDelaunayEdgesSobel(

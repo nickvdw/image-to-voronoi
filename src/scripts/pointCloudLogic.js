@@ -26,7 +26,7 @@ export const randomDelete = (centroids, count) => {
  * @param {Array of centroid objects {x, y, colour}} centroids
  * @param {Int, Float} distance - Threshold, centroids that have a distance smaller than 'distance' will be removed
  */
-export const densityDelete = (centroids, distance, randomSelect) => {
+export const distanceDelete = (centroids, distance, randomSelect) => {
   let newCentroids = [...centroids];
   // For each centroid we check the distances to other centroids
   // Worst case n^2? where n = amount of centroids
