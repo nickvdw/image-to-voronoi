@@ -60,10 +60,14 @@ export const randomDelete = (centroids, count) => {
  */
 export const evenDelete = centroids => {
   if (centroids && centroids.length > 0) {
+    const willBeRemoved = [];
     for (let i = 0; i < centroids.length; i++) {
-      if ((i & 2) === 0) {
-        centroids.splice(i, 1);
+      if (i % 2 === 0) {
+        willBeRemoved.push(i);
       }
+    }
+    while (willBeRemoved.length) {
+      centroids.splice(willBeRemoved.pop(), 1);
     }
   } else {
     console.warn("evenDelete was called with empty set of centroids");
