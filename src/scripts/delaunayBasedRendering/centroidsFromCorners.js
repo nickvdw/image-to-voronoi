@@ -4,7 +4,7 @@ require("tracking");
 import * as d3 from "d3";
 import * as d3Delaunay from "d3-delaunay";
 import { colourCentroidsByCoordinates } from "@/scripts/imageHandler";
-import { randomDelete, distanceDelete } from "@/scripts/pointCloudLogic";
+import { pruneCentroidsByMethod } from "../pointCloudLogic";
 
 export const resultFromDelaunayCorners = (
   originalImageData,
@@ -65,27 +65,14 @@ export const resultFromDelaunayCorners = (
       y: corners[i + 1]
     });
   }
-  // centroids = randomDelete(centroids, 19000);
-  // centroids = densityDelete(centroids, 6, true);
 
   // Apply pruning
-  switch (selectedPruningMethod) {
-    case "Random":
-      centroids = randomDelete(
-        centroids,
-        Math.floor(centroids.length * (pruningThreshold / 100))
-      );
-      break;
-    case "Distance-based":
-      centroids = distanceDelete(centroids, pruningDistance, true);
-      break;
-    case "Cluster-based":
-      console.log("Not implemented");
-      break;
-    default:
-      break;
-  }
-
+  centroids = pruneCentroidsByMethod(
+    centroids,
+    selectedPruningMethod,
+    pruningThreshold,
+    pruningDistance
+  );
   // Obtain colours for the centroids
   let colouredCentroids = colourCentroidsByCoordinates(
     originalImageData,

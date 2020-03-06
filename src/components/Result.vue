@@ -371,7 +371,10 @@ export default {
                 this.configuration.selectedCentroidColour,
                 this.configuration.selectedCellColour,
                 this.toBeCroppedImageCoordinates,
-                this.configuration.customColour
+                this.configuration.customColour,
+                this.configuration.selectedPruningMethod,
+                this.configuration.pruningThreshold,
+                this.configuration.pruningDistance
               );
             } else if (
               this.configuration.selectedMethod ===
@@ -394,7 +397,10 @@ export default {
                 this.configuration.selectedGreyscaleY,
                 this.toBeCroppedImageCoordinates,
                 this.configuration.customColour,
-                this.configuration.inverseThreshold
+                this.configuration.inverseThreshold,
+                this.configuration.selectedPruningMethod,
+                this.configuration.pruningThreshold,
+                this.configuration.pruningDistance
               );
             } else if (
               this.configuration.selectedMethod === "Poisson disc sampling"
@@ -413,7 +419,10 @@ export default {
                 this.configuration.selectedCentroidColour,
                 this.configuration.selectedCellColour,
                 this.toBeCroppedImageCoordinates,
-                this.configuration.customColour
+                this.configuration.customColour,
+                this.configuration.selectedPruningMethod,
+                this.configuration.pruningThreshold,
+                this.configuration.pruningDistance
               );
             } else {
               console.log("This method does not exist");

@@ -4,6 +4,29 @@ const pickRandomIndexFromArray = array => {
   return Math.floor(Math.random() * Math.floor(array.length - 1));
 };
 
+export const pruneCentroidsByMethod = (
+  centroids,
+  selectedPruningMethod,
+  pruningThreshold,
+  pruningDistance
+) => {
+  switch (selectedPruningMethod) {
+    case "Random":
+      return randomDelete(
+        centroids,
+        Math.floor(centroids.length * (pruningThreshold / 100))
+      );
+    case "Distance-based":
+      return distanceDelete(centroids, pruningDistance, true);
+    case "Cluster-based":
+      console.log("Not implemented");
+      break;
+    case "None":
+      return centroids;
+    default:
+      return centroids;
+  }
+};
 /**
  * Randomly picks centroids and removes them from the array
  * @param {Array of centroid objects {x, y, colour}} centroids

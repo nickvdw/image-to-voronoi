@@ -100,7 +100,7 @@
                 step="1"
                 min="0"
                 max="100"
-                thumb-label="true"
+                :thumb-label="true"
                 hint="A lower threshold results in more centroids."
               />
               <v-slider
@@ -111,7 +111,7 @@
                 step="1"
                 min="0"
                 max="100"
-                thumb-label="true"
+                :thumb-label="true"
                 hint="Centroids with a lower distance to another will be pruned."
               />
               <!-- Threshold for number of centroids -->
@@ -416,7 +416,7 @@ export default {
     // Available methods for centroid pruning
     pruningMethods: ["Random", "Distance-based", "Cluster-based", "None"],
     // % of centroids to prune 0 - 100
-    pruningThreshold: 90,
+    pruningThreshold: 50,
     pruningDistance: 10,
     selectedPruningMethod: "Random",
 

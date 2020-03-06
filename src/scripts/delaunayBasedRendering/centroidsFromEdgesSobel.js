@@ -5,6 +5,7 @@ import * as d3 from "d3";
 import * as d3Delaunay from "d3-delaunay";
 
 import { colourCentroidsByCoordinates } from "@/scripts/imageHandler";
+import { pruneCentroidsByMethod } from "../pointCloudLogic";
 
 export const resultFromDelaunayEdgesSobel = (
   originalImageData,
@@ -20,7 +21,10 @@ export const resultFromDelaunayEdgesSobel = (
   selectedCentroidColour,
   selectedCellColour,
   toBeCroppedImageCoordinates,
-  customColour
+  customColour,
+  selectedPruningMethod,
+  pruningThreshold,
+  pruningDistance
 ) => {
   // Set the threshold for the number of edges to detect
   window.fastThreshold = threshold;
@@ -99,6 +103,14 @@ export const resultFromDelaunayEdgesSobel = (
       });
     }
   }
+
+  // Apply pruning
+  centroids = pruneCentroidsByMethod(
+    centroids,
+    selectedPruningMethod,
+    pruningThreshold,
+    pruningDistance
+  );
 
   // Add margin to the centroids if we use the cropped image
   if (croppedImageData && coordinateMargins) {
