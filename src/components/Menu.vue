@@ -82,38 +82,6 @@
                 :rules="methodRules"
                 hint="This method will be used for picking the centroids."
               />
-              <!-- Field to select method for centroid pruning -->
-              <v-select
-                color="blue-grey darken-3"
-                item-color="blue-grey darken-4"
-                :items="pruningMethods"
-                v-model="selectedPruningMethod"
-                label="Method for centroid pruning"
-                hint="This method will be used to prune centroids."
-              />
-              <!-- Threshold percentage for centroid pruning -->
-              <v-slider
-                color="blue-grey darken-3"
-                label="Pruning Threshold"
-                v-show="this.selectedPruningMethod === 'Random'"
-                v-model="pruningThreshold"
-                step="0.5"
-                min="0"
-                max="100"
-                :thumb-label="true"
-                hint="A lower threshold results in more centroids."
-              />
-              <v-slider
-                color="blue-grey darken-3"
-                label="Pruning distance"
-                v-show="this.selectedPruningMethod === 'Distance-based'"
-                v-model="pruningDistance"
-                step="0.5"
-                min="0"
-                max="100"
-                :thumb-label="true"
-                hint="Centroids with a lower distance to another will be pruned."
-              />
               <!-- Threshold for number of centroids -->
               <v-text-field
                 color="blue-grey darken-3"
@@ -192,6 +160,38 @@
                 v-model="selectedGreyscaleY"
                 :rules="sobelThresholdRules"
                 type="number"
+              />
+              <!-- Field to select method for centroid pruning -->
+              <v-select
+                color="blue-grey darken-3"
+                item-color="blue-grey darken-4"
+                :items="pruningMethods"
+                v-model="selectedPruningMethod"
+                label="Method for centroid pruning"
+                hint="This method will be used to prune centroids."
+              />
+              <!-- Threshold percentage for centroid pruning -->
+              <v-slider
+                color="blue-grey darken-3"
+                label="Pruning Threshold"
+                v-show="this.selectedPruningMethod === 'Random'"
+                v-model="pruningThreshold"
+                step="0.5"
+                min="0"
+                max="100"
+                :thumb-label="true"
+                hint="A lower threshold results in more centroids."
+              />
+              <v-slider
+                color="blue-grey darken-3"
+                label="Pruning distance"
+                v-show="this.selectedPruningMethod === 'Distance-based'"
+                v-model="pruningDistance"
+                step="0.5"
+                min="0"
+                max="100"
+                :thumb-label="true"
+                hint="Centroids with a lower distance to another will be pruned."
               />
             </v-card-text>
           </v-card>
