@@ -61,7 +61,7 @@ export const randomDelete = (centroids, count) => {
 export const evenDelete = centroids => {
   if (centroids && centroids.length > 0) {
     for (let i = 0; i < centroids.length; i++) {
-      if (i & 2) {
+      if ((i & 2) === 0) {
         centroids.splice(i, 1);
       }
     }
