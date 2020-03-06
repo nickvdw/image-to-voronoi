@@ -10,14 +10,20 @@ export const pruneCentroidsByMethod = (
   pruningThreshold,
   pruningDistance
 ) => {
+  console.log("# of centroids before pruning " + centroids.length);
+  let pruned;
   switch (selectedPruningMethod) {
     case "Random":
-      return randomDelete(
+      pruned = randomDelete(
         centroids,
         Math.floor(centroids.length * (pruningThreshold / 100))
       );
+      console.log("# of centroids after pruning " + pruned.length);
+      return pruned;
     case "Distance-based":
-      return distanceDelete(centroids, pruningDistance, true);
+      pruned = distanceDelete(centroids, pruningDistance, true);
+      console.log("# of centroids after pruning " + pruned.length);
+      return pruned;
     case "Cluster-based":
       console.log("Not implemented");
       break;
