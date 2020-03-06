@@ -414,7 +414,13 @@ export default {
     selectedMethod: "Corner detection",
 
     // Available methods for centroid pruning
-    pruningMethods: ["Random", "Distance-based", "Cluster-based", "None"],
+    pruningMethods: [
+      "Random",
+      "Even",
+      "Distance-based",
+      "Cluster-based",
+      "None"
+    ],
     // % of centroids to prune 0 - 100
     pruningThreshold: 50,
     pruningDistance: 10,

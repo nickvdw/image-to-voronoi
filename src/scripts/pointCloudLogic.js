@@ -27,6 +27,10 @@ export const pruneCentroidsByMethod = (
     case "Cluster-based":
       console.log("Not implemented");
       break;
+    case "Even":
+      pruned = evenDelete(centroids);
+      console.log("# of centroids after pruning " + pruned.length);
+      return pruned;
     case "None":
       return centroids;
     default:
@@ -46,6 +50,23 @@ export const randomDelete = (centroids, count) => {
     }
   } else {
     console.warn("randomDelete was called with empty set of centroids");
+  }
+  return centroids;
+};
+
+/**
+ * Removes centroids for which the array index is even
+ * @param {*} centroids
+ */
+export const evenDelete = centroids => {
+  if (centroids && centroids.length > 0) {
+    for (let i = 0; i < centroids.length; i++) {
+      if (i & 2) {
+        centroids.splice(i, 1);
+      }
+    }
+  } else {
+    console.warn("evenDelete was called with empty set of centroids");
   }
   return centroids;
 };
