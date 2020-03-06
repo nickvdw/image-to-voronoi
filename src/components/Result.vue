@@ -214,7 +214,7 @@ export default {
           selectedGreyscaleThreshold: null,
           selectedGreyscaleX: null,
           selectedGreyscaleY: null,
-          customColour: false,
+          customColour: null,
           inverseThreshold: false
         };
       }

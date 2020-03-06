@@ -140,7 +140,18 @@ export const resultFromDelaunayPoisson = (
     }
 
     // Render the edges with a certain colour and thickness
-    if (displayEdges) {
+    if (displayEdges && !displayColour) {
+      fullSvg
+        .selectAll("path")
+        .data(centroids.map((d, i) => voronoi.renderCell(i)))
+        .join("path")
+        .attr("d", d => d)
+        .style("fill", selectedCellColour);
+      fullSvg
+        .selectAll("path")
+        .style("stroke", selectedEdgeColour)
+        .style("stroke-width", selectedEdgeThickness);
+    } else if (displayEdges) {
       fullSvg
         .selectAll("path")
         .style("stroke", selectedEdgeColour)

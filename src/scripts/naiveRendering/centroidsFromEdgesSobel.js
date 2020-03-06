@@ -133,15 +133,6 @@ export const resultFromNaiveEdgesSobel = (
     update();
   });
 
-  // // Store the centroids based on the corners
-  // let centroids = [];
-  // for (let i = 0; i < corners.length; i += 2) {
-  //   centroids.push({
-  //     x: corners[i],
-  //     y: corners[i + 1]
-  //   });
-  // }
-
   // Add margin to the centroids if we use the cropped image
   if (croppedImageData && coordinateMargins) {
     centroids = centroids.map(centroid => {
