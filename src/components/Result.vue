@@ -244,7 +244,9 @@ export default {
           height: result.height
         };
         this.generateResult({ title: "Result" });
-        this.loading = false;
+        setTimeout(() => {
+          this.toggleLoading();
+        }, 0);
       } else {
         // Clear the previous image
         document.getElementById("voronoiResult").innerHTML = "";
@@ -253,6 +255,9 @@ export default {
     }
   },
   methods: {
+    toggleLoading() {
+      this.loading ? (this.loading = false) : (this.loading = true);
+    },
     async editImage() {
       this.dialog = true;
       console.log(
