@@ -46,7 +46,6 @@
                 block
                 color="blue-grey darken-3"
                 class="white--text mt-4"
-                @click="cropImage"
               >
                 Select an important region
               </v-btn>
@@ -130,6 +129,17 @@
                 v-model="selectedGreyscaleThreshold"
                 :rules="greyscaleThresholdRules"
                 type="number"
+                hide-details
+              />
+              <v-checkbox
+                color="blue-grey darken-3"
+                class="mb-4"
+                v-show="
+                  this.selectedMethod === 'Based on greyscale intensities'
+                "
+                v-model="inverseThreshold"
+                label="Inverse threshold"
+                hide-details
               />
               <v-text-field
                 color="blue-grey darken-3"
@@ -150,6 +160,38 @@
                 v-model="selectedGreyscaleY"
                 :rules="sobelThresholdRules"
                 type="number"
+              />
+              <!-- Field to select method for centroid pruning -->
+              <v-select
+                color="blue-grey darken-3"
+                item-color="blue-grey darken-4"
+                :items="pruningMethods"
+                v-model="selectedPruningMethod"
+                label="Method for centroid pruning"
+                hint="This method will be used to prune centroids."
+              />
+              <!-- Threshold percentage for centroid pruning -->
+              <v-slider
+                color="blue-grey darken-3"
+                label="Pruning Threshold"
+                v-show="this.selectedPruningMethod === 'Random'"
+                v-model="pruningThreshold"
+                step="0.5"
+                min="0"
+                max="100"
+                :thumb-label="true"
+                hint="A lower threshold results in more centroids."
+              />
+              <v-slider
+                color="blue-grey darken-3"
+                label="Pruning distance"
+                v-show="this.selectedPruningMethod === 'Distance-based'"
+                v-model="pruningDistance"
+                step="0.5"
+                min="0"
+                max="100"
+                :thumb-label="true"
+                hint="Centroids with a lower distance to another will be pruned."
               />
             </v-card-text>
           </v-card>
@@ -206,7 +248,6 @@
                 :rules="edgeThicknessRules"
                 type="number"
               />
-
               <v-checkbox
                 color="blue-grey darken-3"
                 v-model="displayCentroids"
@@ -253,15 +294,21 @@
                 :rules="centroidSizeRules"
                 type="number"
               />
-
               <v-checkbox
                 color="blue-grey darken-3"
                 v-model="displayColour"
                 label="Colour the cells"
                 hide-details
               />
-              <v-text-field
+              <v-checkbox
+                color="blue-grey darken-3"
                 v-if="displayColour"
+                v-model="customColour"
+                label="Custom colour"
+                hide-details
+              />
+              <v-text-field
+                v-if="customColour"
                 v-model="selectedCellColour"
                 v-mask="cellColourMask"
                 hide-details
@@ -364,13 +411,24 @@ export default {
     ],
     naiveMethods: ["Based on greyscale intensities", "Edge detection"],
     methodRules: [v => !!v || "A method is required"],
-    // TODO: Remove initialisation
     selectedMethod: "Corner detection",
+
+    // Available methods for centroid pruning
+    pruningMethods: [
+      "Random",
+      "Even",
+      "Distance-based",
+      "Cluster-based",
+      "None"
+    ],
+    // % of centroids to prune 0 - 100
+    pruningThreshold: 50,
+    pruningDistance: 10,
+    selectedPruningMethod: "Random",
 
     // Available methods for the algorithms and associated rules
     algorithms: ["Naive", "Delaunay triangulation"],
     algorithmRules: [v => !!v || "An algorithm is required"],
-    // TODO: Remove initialisation
     selectedAlgorithm: "Delaunay triangulation",
 
     // Selected threshold and associated rules
@@ -382,11 +440,11 @@ export default {
     ],
 
     // Selected thickness and colour for edges with associated rules
-    selectedEdgeThickness: 1,
+    selectedEdgeThickness: 0.1,
     edgeThicknessRules: [
       v =>
-        (!!v && v <= 20 && v >= 1) ||
-        "A thickness of at least 1 and at most 20 is required"
+        (!!v && v <= 20 && v >= 0) ||
+        "A thickness of at least 0 and at most 20 is required"
     ],
     selectedEdgeColour: "#000000FF",
     edgeColourMask: "!#XXXXXXXX",
@@ -409,7 +467,10 @@ export default {
 
     displayEdges: false,
     displayCentroids: false,
-    displayColour: false,
+    displayColour: true,
+
+    customColour: null,
+    inverseThreshold: false,
 
     selectedNumberOfNeighbours: 1,
     numberOfNeighboursRules: [
@@ -538,13 +599,6 @@ export default {
         reader.readAsDataURL(input.files[0]);
       }
     },
-
-    change({ coordinates }) {
-      this.croppedCoordinates = coordinates;
-    },
-    cropImage() {
-      this.dialog = true;
-    },
     /**
      * Validates whether or not the form is valid (i.e., all REQUIRED
      * parameters have been filled in).
@@ -574,7 +628,12 @@ export default {
           selectedSobelThreshold: this.selectedSobelThreshold,
           selectedGreyscaleThreshold: this.selectedGreyscaleThreshold,
           selectedGreyscaleX: this.selectedGreyscaleX,
-          selectedGreyscaleY: this.selectedGreyscaleY
+          selectedGreyscaleY: this.selectedGreyscaleY,
+          customColour: this.customColour,
+          inverseThreshold: this.inverseThreshold,
+          pruningThreshold: this.pruningThreshold,
+          pruningDistance: this.pruningDistance,
+          selectedPruningMethod: this.selectedPruningMethod
         });
       }
     },
@@ -595,6 +654,8 @@ export default {
       this.selectedEdgeThickness = 1;
       this.selectedCentroidSize = 1;
       this.currentTab = "Image";
+      this.pruningThreshold = 90;
+      this.pruningDistance = 10;
     }
   }
 };

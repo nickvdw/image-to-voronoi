@@ -4,6 +4,7 @@ require("tracking");
 import * as d3 from "d3";
 
 import { colourCentroidsByCoordinates } from "@/scripts/imageHandler";
+import { pruneCentroidsByMethod } from "../pointCloudLogic";
 
 export const resultFromNaiveEdgesSobel = (
   originalImageData,
@@ -18,7 +19,10 @@ export const resultFromNaiveEdgesSobel = (
   selectedCentroidSize,
   selectedCentroidColour,
   selectedCellColour,
-  numberOfNeighbours
+  numberOfNeighbours,
+  selectedPruningMethod,
+  pruningThreshold,
+  pruningDistance
 ) => {
   // Set the threshold for the number of corners to detect
   window.fastThreshold = threshold;
@@ -91,6 +95,14 @@ export const resultFromNaiveEdgesSobel = (
     }
   }
 
+  // Apply pruning
+  centroids = pruneCentroidsByMethod(
+    centroids,
+    selectedPruningMethod,
+    pruningThreshold,
+    pruningDistance
+  );
+
   // Set the initial configuration of the svg
   const svg = d3
     .select("#voronoiResult")
@@ -120,15 +132,6 @@ export const resultFromNaiveEdgesSobel = (
     // Update the result
     update();
   });
-
-  // // Store the centroids based on the corners
-  // let centroids = [];
-  // for (let i = 0; i < corners.length; i += 2) {
-  //   centroids.push({
-  //     x: corners[i],
-  //     y: corners[i + 1]
-  //   });
-  // }
 
   // Add margin to the centroids if we use the cropped image
   if (croppedImageData && coordinateMargins) {
@@ -235,7 +238,7 @@ const computeNearestCentroid = (centroids, x, y, k) => {
     let i = k > centroids.length ? centroids.length : k;
     // Remove the currently nearest centroid and loop until i = 1
     while (i > 1) {
-      distances.splice(distances.indexOf(Math.min.apply(null, distances)), 1);
+      distances[distances.indexOf(Math.min.apply(null, distances))] = Infinity;
       i -= 1;
     }
   }
