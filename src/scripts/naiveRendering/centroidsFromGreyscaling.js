@@ -106,9 +106,6 @@ export const resultFromNaiveGreyscaling = (
       );
   }
 
-  // Array that stores dictionarities in the form of {point: [x_coor, y_coor], nearest_centroid: number}
-  const nearestCentroids = [];
-
   // Loop over all pixels and compute the nearest centroid
   Array(imageData.width)
     .fill()
@@ -124,12 +121,6 @@ export const resultFromNaiveGreyscaling = (
             y,
             k
           );
-
-          // Store all the nearest centroid for each pixel for no apparent reason
-          nearestCentroids.push({
-            point: [x, y],
-            nearest_centroid: nearestCentroid
-          });
 
           // Colour the pixels
           svg
@@ -190,7 +181,7 @@ const computeNearestCentroid = (centroids, x, y, k) => {
     let i = k > centroids.length ? centroids.length : k;
     // Remove the currently nearest centroid and loop until i = 1
     while (i > 1) {
-      distances.splice(distances.indexOf(Math.min.apply(null, distances)), 1);
+      distances[distances.indexOf(Math.min.apply(null, distances))] = Infinity;
       i -= 1;
     }
   }

@@ -35,8 +35,13 @@ export const resultFromDelaunayGreyscaling = (
     imageData = croppedImageData;
   }
 
+  const imageDataCopy = {
+    ...imageData,
+    data: [...imageData.data]
+  };
+
   // Greyscale the image
-  const greyScaleImageData = greyScaleImage(imageData);
+  const greyScaleImageData = greyScaleImage(imageDataCopy);
 
   // Compute the centroid based on the greyscaled intensities
   let centroids = [
