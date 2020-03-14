@@ -79,9 +79,10 @@ export const evenDelete = centroids => {
 };
 
 /**
- *
- * @param {*} centroids
- * @param {*} k
+ * Prunes centroids by computing kmeans clusters, the centroids of the clusters are returned afterwards
+ * So in the end k centroids are returned
+ * @param {*} centroids - Starting set of centroids
+ * @param {*} k - Number of clusters to generate
  */
 export const kMeansClusterDelete = (centroids, k = 100) => {
   if (k >= centroids.length) {
@@ -95,8 +96,14 @@ export const kMeansClusterDelete = (centroids, k = 100) => {
   centroids.forEach(centroid => {
     formatted.push([centroid.x, centroid.y]);
   });
-  const clusters = skmeans(formatted, k);
-  console.log(clusters);
+  // Pick centroids randomly, do 10 iterations, use our distance function for the distance computations
+  const clusters = skmeans(
+    formatted,
+    k,
+    "kmrand",
+    10,
+    computeEuclideanDistance
+  );
   // Return the found centroid of each cluster in the correct format
   return clusters.centroids.map(centroid => {
     return { x: centroid[0], y: centroid[1] };
