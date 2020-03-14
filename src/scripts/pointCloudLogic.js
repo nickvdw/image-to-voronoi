@@ -1,4 +1,5 @@
 import { computeEuclideanDistance } from "./knnLogic.js";
+import skmeans from "skmeans";
 
 const pickRandomIndexFromArray = array => {
   return Math.floor(Math.random() * Math.floor(array.length - 1));
@@ -8,7 +9,8 @@ export const pruneCentroidsByMethod = (
   centroids,
   selectedPruningMethod,
   pruningThreshold,
-  pruningDistance
+  pruningDistance,
+  pruningClusterCount
 ) => {
   console.log("# of centroids before pruning " + centroids.length);
   let pruned;
@@ -25,8 +27,9 @@ export const pruneCentroidsByMethod = (
       console.log("# of centroids after pruning " + pruned.length);
       return pruned;
     case "Cluster-based":
-      console.log("Not implemented");
-      break;
+      pruned = kMeansClusterDelete(centroids, pruningClusterCount);
+      console.log("# of centroids after pruning " + pruningClusterCount);
+      return pruned;
     case "Even":
       pruned = evenDelete(centroids);
       console.log("# of centroids after pruning " + pruned.length);
@@ -73,6 +76,31 @@ export const evenDelete = centroids => {
     console.warn("evenDelete was called with empty set of centroids");
   }
   return centroids;
+};
+
+/**
+ *
+ * @param {*} centroids
+ * @param {*} k
+ */
+export const kMeansClusterDelete = (centroids, k = 100) => {
+  if (k >= centroids.length) {
+    console.error(
+      "Kmeans clustering was given a k larger than the amount of centroids --> k will be set to ~10% of the centroids"
+    );
+    k = Math.floor(centroids.length / 10);
+  }
+  // Convert centroids to expected double array format
+  const formatted = [];
+  centroids.forEach(centroid => {
+    formatted.push([centroid.x, centroid.y]);
+  });
+  const clusters = skmeans(formatted, k);
+  console.log(clusters);
+  // Return the found centroid of each cluster in the correct format
+  return clusters.centroids.map(centroid => {
+    return { x: centroid[0], y: centroid[1] };
+  });
 };
 
 /**

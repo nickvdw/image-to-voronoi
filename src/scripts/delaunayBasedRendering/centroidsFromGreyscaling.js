@@ -28,7 +28,8 @@ export const resultFromDelaunayGreyscaling = (
   inverseThreshold,
   selectedPruningMethod,
   pruningThreshold,
-  pruningDistance
+  pruningDistance,
+  pruningClusterCount
 ) => {
   let imageData = originalImageData;
   if (croppedImageData && coordinateMargins) {
@@ -66,7 +67,8 @@ export const resultFromDelaunayGreyscaling = (
     centroids,
     selectedPruningMethod,
     pruningThreshold,
-    pruningDistance
+    pruningDistance,
+    pruningClusterCount
   );
 
   // Add margin to the centroids if we use the cropped image

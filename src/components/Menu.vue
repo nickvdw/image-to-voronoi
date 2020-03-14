@@ -193,6 +193,14 @@
                 :thumb-label="true"
                 hint="Centroids with a lower distance to another will be pruned."
               />
+              <!-- Number of clusters for kmeans centroid pruning -->
+              <v-text-field
+                color="blue-grey darken-3"
+                label="Number of clusters"
+                v-show="this.selectedPruningMethod === 'Cluster-based'"
+                v-model="pruningClusterCount"
+                type="number"
+              />
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -425,6 +433,7 @@ export default {
     pruningThreshold: 50,
     pruningDistance: 10,
     selectedPruningMethod: "Random",
+    pruningClusterCount: 250,
 
     // Available methods for the algorithms and associated rules
     algorithms: ["Naive", "Delaunay triangulation"],
@@ -633,7 +642,8 @@ export default {
           inverseThreshold: this.inverseThreshold,
           pruningThreshold: this.pruningThreshold,
           pruningDistance: this.pruningDistance,
-          selectedPruningMethod: this.selectedPruningMethod
+          selectedPruningMethod: this.selectedPruningMethod,
+          pruningClusterCount: this.pruningClusterCount
         });
       }
     },

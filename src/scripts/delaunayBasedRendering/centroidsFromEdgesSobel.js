@@ -24,7 +24,8 @@ export const resultFromDelaunayEdgesSobel = (
   customColour,
   selectedPruningMethod,
   pruningThreshold,
-  pruningDistance
+  pruningDistance,
+  pruningClusterCount
 ) => {
   // Set the threshold for the number of edges to detect
   window.fastThreshold = threshold;
@@ -109,7 +110,8 @@ export const resultFromDelaunayEdgesSobel = (
     centroids,
     selectedPruningMethod,
     pruningThreshold,
-    pruningDistance
+    pruningDistance,
+    pruningClusterCount
   );
 
   // Add margin to the centroids if we use the cropped image

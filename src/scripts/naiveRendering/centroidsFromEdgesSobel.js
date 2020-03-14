@@ -22,7 +22,8 @@ export const resultFromNaiveEdgesSobel = (
   numberOfNeighbours,
   selectedPruningMethod,
   pruningThreshold,
-  pruningDistance
+  pruningDistance,
+  pruningClusterCount
 ) => {
   // Set the threshold for the number of corners to detect
   window.fastThreshold = threshold;
@@ -100,7 +101,8 @@ export const resultFromNaiveEdgesSobel = (
     centroids,
     selectedPruningMethod,
     pruningThreshold,
-    pruningDistance
+    pruningDistance,
+    pruningClusterCount
   );
 
   // Set the initial configuration of the svg
