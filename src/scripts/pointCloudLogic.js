@@ -120,8 +120,9 @@ export const distanceDelete = (centroids, distance, randomSelect) => {
   // For each centroid we check the distances to other centroids
   // Worst case n^2? where n = amount of centroids
   // Usually somewhat faster if a lot of centroids are removed in iterations
+  const length = newCentroids.length;
   if (randomSelect) {
-    for (let i = 0; i < newCentroids.length; i++) {
+    for (let i = 0; i < length; i++) {
       let chosenIndex = pickRandomIndexFromArray(newCentroids);
       newCentroids = pruneCentroids(
         newCentroids[chosenIndex],
@@ -130,7 +131,7 @@ export const distanceDelete = (centroids, distance, randomSelect) => {
       );
     }
   } else {
-    for (let i = 0; i < newCentroids.length; i++) {
+    for (let i = 0; i < length; i++) {
       newCentroids = pruneCentroids(newCentroids[i], newCentroids, distance);
     }
   }
