@@ -120,7 +120,7 @@ export const distanceDelete = (centroids, distance, randomSelect) => {
   // For each centroid we check the distances to other centroids
   // Worst case n^2? where n = amount of centroids
   // Usually somewhat faster if a lot of centroids are removed in iterations
-  const length = newCentroids.length;
+  const length = centroids.length;
   if (randomSelect) {
     for (let i = 0; i < length; i++) {
       let chosenIndex = pickRandomIndexFromArray(newCentroids);
@@ -132,7 +132,11 @@ export const distanceDelete = (centroids, distance, randomSelect) => {
     }
   } else {
     for (let i = 0; i < length; i++) {
-      newCentroids = pruneCentroids(newCentroids[i], newCentroids, distance);
+      newCentroids = pruneCentroids(
+        newCentroids[i % newCentroids.length],
+        newCentroids,
+        distance
+      );
     }
   }
   return newCentroids;
@@ -153,17 +157,17 @@ const pruneCentroids = (centroid, centroids, distance) => {
       computeEuclideanDistance(
         [centroid.x, centroid.y],
         [secondCentroid.x, secondCentroid.y]
-      ) <= distance &&
-      centroid.x !== secondCentroid.x &&
-      centroid.y !== secondCentroid.y
+      ) <= distance
     ) {
-      // secondCentroid is too close to the centroid
-      indexes.push(index);
+      if (centroid.x !== secondCentroid.x && centroid.y !== secondCentroid.y) {
+        // secondCentroid is too close to the centroid
+        indexes.push(index);
+      }
     }
   });
   // Prune all centroids that were to close to the 'main' centroids
-  indexes.forEach(i => {
-    centroids.splice(i, 1);
-  });
+  while (indexes.length) {
+    centroids.splice(indexes.pop(), 1);
+  }
   return centroids;
 };
