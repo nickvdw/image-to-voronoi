@@ -174,7 +174,10 @@
               <v-slider
                 color="blue-grey darken-3"
                 label="Pruning Threshold"
-                v-show="this.selectedPruningMethod === 'Random'"
+                v-show="
+                  this.selectedPruningMethod === 'Random' ||
+                    this.selectedPruningMethod === 'Distance-based'
+                "
                 v-model="pruningThreshold"
                 step="0.5"
                 min="0"
@@ -435,8 +438,8 @@ export default {
     selectedThreshold: 40,
     thresholdRules: [
       v =>
-        (!!v && v <= 100 && v >= 0) ||
-        "A threshold of at least 0 and at most 100 is required"
+        (!!v && v <= 255 && v >= 0) ||
+        "A threshold of at least 0 and at most 255 is required"
     ],
 
     // Selected thickness and colour for edges with associated rules
