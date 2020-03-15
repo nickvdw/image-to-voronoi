@@ -238,7 +238,7 @@ const computeNearestCentroid = (centroids, x, y, k) => {
     let i = k > centroids.length ? centroids.length : k;
     // Remove the currently nearest centroid and loop until i = 1
     while (i > 1) {
-      distances.splice(distances.indexOf(Math.min.apply(null, distances)), 1);
+      distances[distances.indexOf(Math.min.apply(null, distances))] = Infinity;
       i -= 1;
     }
   }
