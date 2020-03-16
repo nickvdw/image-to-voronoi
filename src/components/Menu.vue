@@ -181,7 +181,7 @@
                     this.selectedPruningMethod === 'Distance-based'
                 "
                 v-model="pruningThreshold"
-                step="0.5"
+                step="1"
                 min="0"
                 max="100"
                 :thumb-label="true"
