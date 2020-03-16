@@ -32,6 +32,7 @@
               />
               <v-btn
                 small
+                :disabled="true"
                 outlined
                 block
                 color="blue-grey darken-3"
@@ -44,6 +45,7 @@
                 small
                 outlined
                 block
+                @click="dialog = true"
                 color="blue-grey darken-3"
                 class="white--text mt-4"
               >
