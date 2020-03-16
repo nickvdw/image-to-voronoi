@@ -355,6 +355,7 @@
         <v-btn
           class="blue-grey darken-3 white--text"
           :loading="isLoading"
+          :disabled="!valid"
           @click="validate"
         >
           Submit
