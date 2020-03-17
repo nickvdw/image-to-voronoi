@@ -54,7 +54,12 @@
     </v-card-title>
 
     <!-- Card content -->
-    <v-card-text id="resultContainer" class="pa-0 ma-0" style="height: 100%">
+    <v-card-text
+      id="resultContainer"
+      class="pa-0 ma-0"
+      style="height: 100%"
+      :loading="dialog"
+    >
       <v-row
         v-show="!this.configuration.selectedImage && !this.loading"
         class="fill-height"
@@ -432,7 +437,7 @@ export default {
               this.configuration.selectedMethod ===
               "Based on greyscale intensities"
             ) {
-              resultFromNaiveGreyscaling(
+              this.update = resultFromNaiveGreyscaling(
                 this.originalImageData,
                 this.configuration.selectedNumberOfNeighbours,
                 this.configuration.displayEdges,
@@ -448,10 +453,13 @@ export default {
                 this.configuration.selectedGreyscaleY,
                 this.configuration.selectedPruningMethod,
                 this.configuration.pruningThreshold,
-                this.configuration.pruningDistance
+                this.configuration.pruningDistance,
+                this.configuration.croppedImageData,
+                this.configuration.coordinateMargins,
+                this.toBeCroppedImageCoordinates
               );
             } else if (this.configuration.selectedMethod === "Edge detection") {
-              resultFromNaiveEdgesSobel(
+              this.update = resultFromNaiveEdgesSobel(
                 this.originalImageData,
                 this.configuration.selectedSobelThreshold,
                 this.configuration.displayEdges,
@@ -467,7 +475,8 @@ export default {
                 this.configuration.selectedNumberOfNeighbours,
                 this.configuration.selectedPruningMethod,
                 this.configuration.pruningThreshold,
-                this.configuration.pruningDistance
+                this.configuration.pruningDistance,
+                this.toBeCroppedImageCoordinates
               );
             }
           }
