@@ -354,7 +354,8 @@ export default {
                 this.configuration.customColour,
                 this.configuration.selectedPruningMethod,
                 this.configuration.pruningThreshold,
-                this.configuration.pruningDistance
+                this.configuration.pruningDistance,
+                this.configuration.pruningClusterCount
               );
             } else if (this.configuration.selectedMethod === "Edge detection") {
               this.update = resultFromDelaunayEdgesSobel(
@@ -374,7 +375,8 @@ export default {
                 this.configuration.customColour,
                 this.configuration.selectedPruningMethod,
                 this.configuration.pruningThreshold,
-                this.configuration.pruningDistance
+                this.configuration.pruningDistance,
+                this.configuration.pruningClusterCount
               );
             } else if (
               this.configuration.selectedMethod ===
@@ -400,7 +402,8 @@ export default {
                 this.configuration.inverseThreshold,
                 this.configuration.selectedPruningMethod,
                 this.configuration.pruningThreshold,
-                this.configuration.pruningDistance
+                this.configuration.pruningDistance,
+                this.configuration.pruningClusterCount
               );
             } else if (
               this.configuration.selectedMethod === "Poisson disc sampling"
@@ -422,7 +425,8 @@ export default {
                 this.configuration.customColour,
                 this.configuration.selectedPruningMethod,
                 this.configuration.pruningThreshold,
-                this.configuration.pruningDistance
+                this.configuration.pruningDistance,
+                this.configuration.pruningClusterCount
               );
             } else {
               console.log("This method does not exist");
@@ -448,7 +452,8 @@ export default {
                 this.configuration.selectedGreyscaleY,
                 this.configuration.selectedPruningMethod,
                 this.configuration.pruningThreshold,
-                this.configuration.pruningDistance
+                this.configuration.pruningDistance,
+                this.configuration.pruningClusterCount
               );
             } else if (this.configuration.selectedMethod === "Edge detection") {
               resultFromNaiveEdgesSobel(
@@ -467,7 +472,8 @@ export default {
                 this.configuration.selectedNumberOfNeighbours,
                 this.configuration.selectedPruningMethod,
                 this.configuration.pruningThreshold,
-                this.configuration.pruningDistance
+                this.configuration.pruningDistance,
+                this.configuration.pruningClusterCount
               );
             }
           }

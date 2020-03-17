@@ -23,7 +23,8 @@ export const resultFromNaiveGreyscaling = (
   selectedGreyscaleY,
   selectedPruningMethod,
   pruningThreshold,
-  pruningDistance
+  pruningDistance,
+  pruningClusterCount
 ) => {
   // I am still not sure why, but this is needed for the colours
   const imageDataCopy = {
@@ -54,7 +55,8 @@ export const resultFromNaiveGreyscaling = (
     centroids,
     selectedPruningMethod,
     pruningThreshold,
-    pruningDistance
+    pruningDistance,
+    pruningClusterCount
   );
 
   // Obtain colours for the centroids
