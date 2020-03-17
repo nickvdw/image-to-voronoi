@@ -103,15 +103,6 @@ export const resultFromNaiveEdgesSobel = (
     pruningDistance
   );
 
-  // Set the initial configuration of the svg
-  let fullSvg = d3
-    .select("#voronoiFullResult")
-    .append("svg")
-    .attr("width", originalImageData.width)
-    .attr("height", originalImageData.height)
-    .attr("id", "fullResultSVG")
-    .style("background-color", "black");
-
   // Add margin to the centroids if we use the cropped image
   if (croppedImageData && coordinateMargins) {
     centroids = centroids.map(centroid => {
@@ -129,6 +120,17 @@ export const resultFromNaiveEdgesSobel = (
     coordinateMargins,
     toBeCroppedImageCoordinates
   ) => {
+    // Clear old image
+    document.getElementById("voronoiFullResult").innerHTML = "";
+    // Set the initial configuration of the svg
+    let fullSvg = d3
+      .select("#voronoiFullResult")
+      .append("svg")
+      .attr("width", originalImageData.width)
+      .attr("height", originalImageData.height)
+      .attr("id", "fullResultSVG")
+      .style("background-color", "black");
+
     if (croppedImageData && coordinateMargins) {
       imageData = croppedImageData;
     }

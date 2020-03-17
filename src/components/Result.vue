@@ -271,6 +271,7 @@ export default {
       });
     },
     submitCrop() {
+      console.log("lol");
       // Obtain the coordinates of the cropped image selection
       const { coordinates } = this.$refs.cropper.getResult();
 

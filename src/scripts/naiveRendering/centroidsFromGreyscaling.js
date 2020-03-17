@@ -62,24 +62,6 @@ export const resultFromNaiveGreyscaling = (
     pruningDistance
   );
 
-  // Set the initial configuration of the svg
-  let fullSvg = d3
-    .select("#voronoiFullResult")
-    .append("svg")
-    .attr("width", originalImageData.width)
-    .attr("height", originalImageData.height)
-    .attr("id", "fullResultSVG")
-    .style("background-color", "black");
-
-  // Create and append rectangle element
-  fullSvg
-    .append("rect")
-    .attr("x", 0)
-    .attr("y", 0)
-    .attr("width", imageData.width)
-    .attr("height", imageData.height)
-    .attr("fill", "white");
-
   // Whether or not to randomly generate colours
   const generateRandomColours = false;
 
@@ -91,6 +73,26 @@ export const resultFromNaiveGreyscaling = (
     coordinateMargins,
     toBeCroppedImageCoordinates
   ) => {
+    // Clear old image
+    document.getElementById("voronoiFullResult").innerHTML = "";
+    // Set the initial configuration of the svg
+    let fullSvg = d3
+      .select("#voronoiFullResult")
+      .append("svg")
+      .attr("width", originalImageData.width)
+      .attr("height", originalImageData.height)
+      .attr("id", "fullResultSVG")
+      .style("background-color", "black");
+
+    // Create and append rectangle element
+    fullSvg
+      .append("rect")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("width", imageData.width)
+      .attr("height", imageData.height)
+      .attr("fill", "white");
+
     if (croppedImageData && coordinateMargins) {
       imageData = croppedImageData;
     }
