@@ -23,7 +23,8 @@ export const pruneCentroidsByMethod = (
       console.log("# of centroids after pruning " + pruned.length);
       return pruned;
     case "Distance-based":
-      pruned = distanceDelete(centroids, pruningDistance, true);
+      // pruned = distanceDelete(centroids, pruningDistance, true);
+      pruned = distanceDelete(centroids, pruningDistance, false);
       console.log("# of centroids after pruning " + pruned.length);
       return pruned;
     case "Cluster-based":
