@@ -38,7 +38,7 @@
           block
           @click="dialog = true"
           color="blue-grey darken-3"
-          class="white--text mt-2"
+          class="white--text mt-4"
         >
           Select an important region
         </v-btn>
@@ -48,6 +48,7 @@
       <v-tabs
         background-color="blue-grey darken-3"
         dark
+        height="45"
         class="mt-4"
         v-model="currentTab"
         grow
@@ -57,158 +58,6 @@
         </v-tab>
       </v-tabs>
       <v-tabs-items v-model="currentTab">
-        <v-tab-item>
-          <v-card flat>
-            <v-card-text class="pt-0">
-              <!-- Algorithms to use -->
-              <v-select
-                class="mt-4"
-                color="blue-grey darken-3"
-                item-color="blue-grey darken-4"
-                :items="algorithms"
-                v-model="selectedAlgorithm"
-                label="Algorithm"
-                required
-                hint="This algorithms will be used to generate the result."
-                :rules="algorithmRules"
-              />
-              <!-- Field to select method for centroid generation -->
-              <v-select
-                color="blue-grey darken-3"
-                item-color="blue-grey darken-4"
-                :items="
-                  selectedAlgorithm === 'Delaunay triangulation'
-                    ? delaunayMethods
-                    : naiveMethods
-                "
-                v-model="selectedMethod"
-                label="Method for centroid generation"
-                required
-                :rules="methodRules"
-                hint="This method will be used for picking the centroids."
-              />
-              <!-- Threshold for number of centroids -->
-              <v-text-field
-                color="blue-grey darken-3"
-                label="Threshold"
-                v-show="this.selectedMethod === 'Corner detection'"
-                v-model="selectedThreshold"
-                :rules="thresholdRules"
-                type="number"
-                hint="A lower threshold results in more centroids."
-              />
-              <!-- Minimum radius for poissoin disc sampling -->
-              <v-text-field
-                color="blue-grey darken-3"
-                label="Minimum distance for between points"
-                v-show="this.selectedMethod === 'Poisson disc sampling'"
-                v-model="selectedPoissonDistance"
-                :rules="poissonDistanceRules"
-                type="number"
-                hint="The minimum distance (in pixels) between points when using poisson disc sampling."
-              />
-              <!-- Number of nearest neighbours -->
-              <v-text-field
-                color="blue-grey darken-3"
-                label="Number of nearest neighbours"
-                v-show="this.selectedAlgorithm === 'Naive'"
-                v-model="selectedNumberOfNeighbours"
-                :rules="numberOfNeighboursRules"
-                type="number"
-              />
-              <!-- Threshold for sobel edges -->
-              <v-text-field
-                color="blue-grey darken-3"
-                label="Threshold"
-                v-show="this.selectedMethod === 'Edge detection'"
-                v-model="selectedSobelThreshold"
-                :rules="sobelThresholdRules"
-                type="number"
-              />
-              <v-text-field
-                color="blue-grey darken-3"
-                label="Threshold"
-                v-show="
-                  this.selectedMethod === 'Based on greyscale intensities'
-                "
-                v-model="selectedGreyscaleThreshold"
-                :rules="greyscaleThresholdRules"
-                type="number"
-                hide-details
-              />
-              <v-checkbox
-                color="blue-grey darken-3"
-                class="mb-4"
-                v-show="
-                  this.selectedMethod === 'Based on greyscale intensities'
-                "
-                v-model="inverseThreshold"
-                label="Inverse threshold"
-                hide-details
-              />
-              <v-text-field
-                color="blue-grey darken-3"
-                label="Skip x-axis pixels"
-                v-show="
-                  this.selectedMethod === 'Based on greyscale intensities'
-                "
-                v-model="selectedGreyscaleX"
-                :rules="sobelThresholdRules"
-                type="number"
-              />
-              <v-text-field
-                color="blue-grey darken-3"
-                label="Skip y-axis pixels"
-                v-show="
-                  this.selectedMethod === 'Based on greyscale intensities'
-                "
-                v-model="selectedGreyscaleY"
-                :rules="sobelThresholdRules"
-                type="number"
-              />
-              <!-- Field to select method for centroid pruning -->
-              <v-select
-                color="blue-grey darken-3"
-                item-color="blue-grey darken-4"
-                :items="pruningMethods"
-                v-model="selectedPruningMethod"
-                label="Method for centroid pruning"
-                hint="This method will be used to prune centroids."
-              />
-              <!-- Threshold percentage for centroid pruning -->
-              <v-slider
-                color="blue-grey darken-3"
-                label="Pruning Threshold"
-                v-show="this.selectedPruningMethod === 'Random'"
-                v-model="pruningThreshold"
-                step="0.5"
-                min="0"
-                max="100"
-                :thumb-label="true"
-                hint="A lower threshold results in more centroids."
-              />
-              <v-slider
-                color="blue-grey darken-3"
-                label="Pruning distance"
-                v-show="this.selectedPruningMethod === 'Distance-based'"
-                v-model="pruningDistance"
-                step="0.5"
-                min="0"
-                max="100"
-                :thumb-label="true"
-                hint="Centroids with a lower distance to another will be pruned."
-              />
-              <!-- Number of clusters for kmeans centroid pruning -->
-              <v-text-field
-                color="blue-grey darken-3"
-                label="Number of clusters"
-                v-show="this.selectedPruningMethod === 'Cluster-based'"
-                v-model="pruningClusterCount"
-                type="number"
-              />
-            </v-card-text>
-          </v-card>
-        </v-tab-item>
         <v-tab-item>
           <v-card flat>
             <v-card-text class="pt-0">
