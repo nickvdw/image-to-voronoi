@@ -73,7 +73,7 @@
       <!-- Progress bar -->
       <v-row
         style="height: 100%"
-        v-show="this.loading"
+        v-if="this.loading"
         class="fill-height"
         align-content="center"
         justify="center"
