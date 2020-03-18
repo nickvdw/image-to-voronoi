@@ -117,9 +117,6 @@
           />
         </fullscreen>
       </div>
-      <div>
-        <canvas v-show="this.displayEdges" id="findEdges" />
-      </div>
     </v-card-text>
 
     <!-- Dialog stuff -->
