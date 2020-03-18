@@ -28,7 +28,8 @@ export const resultFromDelaunayGreyscaling = (
   inverseThreshold,
   selectedPruningMethod,
   pruningThreshold,
-  pruningDistance
+  pruningDistance,
+  pruningClusterCount
 ) => {
   let imageData = originalImageData;
   if (croppedImageData && coordinateMargins) {
@@ -66,7 +67,8 @@ export const resultFromDelaunayGreyscaling = (
     centroids,
     selectedPruningMethod,
     pruningThreshold,
-    pruningDistance
+    pruningDistance,
+    pruningClusterCount
   );
 
   // Add margin to the centroids if we use the cropped image
@@ -86,21 +88,23 @@ export const resultFromDelaunayGreyscaling = (
     centroids
   );
 
-  // Set the initial configuration of the svg
-  let fullSvg = d3
-    .select("#voronoiFullResult")
-    .append("svg")
-    .attr("width", originalImageData.width)
-    .attr("height", originalImageData.height)
-    .attr("id", "fullResultSVG")
-    .style("background-color", "black");
-
   // Redraw the canvas every time the 'update' method is called
   const update = (
     croppedImageData,
     coordinateMargins,
     toBeCroppedImageCoordinates
   ) => {
+    // Clear old image
+    document.getElementById("voronoiFullResult").innerHTML = "";
+    // Set the initial configuration of the svg
+    let fullSvg = d3
+      .select("#voronoiFullResult")
+      .append("svg")
+      .attr("width", originalImageData.width)
+      .attr("height", originalImageData.height)
+      .attr("id", "fullResultSVG")
+      .style("background-color", "black");
+
     if (croppedImageData && coordinateMargins) {
       imageData = croppedImageData;
     }
