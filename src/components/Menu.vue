@@ -23,7 +23,6 @@
         />
         <v-btn
           small
-          :disabled="true"
           outlined
           block
           color="blue-grey darken-3"

@@ -4,24 +4,24 @@
     <v-content class="grey lighten-5">
       <router-view />
     </v-content>
-    <Footer />
+    <!-- <Footer /> -->
   </v-app>
 </template>
 
 <script>
 import Toolbar from "@/components/Toolbar.vue";
-import Footer from "@/components/Footer.vue";
+// import Footer from "@/components/Footer.vue";
 
 export default {
   components: {
-    Toolbar,
-    Footer
-  },
+    Toolbar
+    // Footer
+  }
 
   // Only used for development
-  created() {
-    this.$router.push("/tool");
-  }
+  // created() {
+  //   this.$router.push("/tool");
+  // }
 };
 </script>
 
