@@ -95,7 +95,7 @@
               <!-- Minimum radius for poissoin disc sampling -->
               <v-text-field
                 color="blue-grey darken-3"
-                label="Minimum distance for between points"
+                label="Minimum distance between points"
                 v-show="this.selectedMethod === 'Poisson disc sampling'"
                 v-model="selectedPoissonDistance"
                 :rules="poissonDistanceRules"
