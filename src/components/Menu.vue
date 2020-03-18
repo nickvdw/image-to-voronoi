@@ -38,7 +38,7 @@
           block
           @click="dialog = true"
           color="blue-grey darken-3"
-          class="white--text mt-2"
+          class="white--text mt-4"
         >
           Select an important region
         </v-btn>
@@ -48,6 +48,7 @@
       <v-tabs
         background-color="blue-grey darken-3"
         dark
+        height="45"
         class="mt-4"
         v-model="currentTab"
         grow
@@ -72,7 +73,7 @@
                 v-model="selectedEdgeColour"
                 v-mask="edgeColourMask"
                 hide-details
-                class="mt-4"
+                class="mt-4 ml-4"
                 solo
               >
                 <template v-slot:append>
@@ -105,7 +106,7 @@
                 track-color="blue-grey lighten-3"
                 color="blue-grey darken-3"
                 label="Edge thickness"
-                class="mt-4"
+                class="mt-4 ml-4"
                 v-model="selectedEdgeThickness"
                 :rules="edgeThicknessRules"
                 step="0.1"
@@ -125,7 +126,7 @@
                 v-model="selectedCentroidColour"
                 v-mask="centroidColourMask"
                 hide-details
-                class="ma-0 pa-0 mt-4"
+                class="ma-0 pa-0 mt-4 ml-4"
                 solo
               >
                 <template v-slot:append>
@@ -156,7 +157,7 @@
                 track-color="blue-grey lighten-3"
                 color="blue-grey darken-3"
                 label="Centroid size"
-                class="mt-4"
+                class="mt-4 ml-4"
                 v-model="selectedCentroidSize"
                 :rules="centroidSizeRules"
                 step="0.1"
@@ -173,6 +174,7 @@
               />
               <v-checkbox
                 color="blue-grey darken-3"
+                class="ml-4"
                 v-if="displayColour"
                 v-model="customColour"
                 label="Custom colour"
@@ -183,7 +185,7 @@
                 v-model="selectedCellColour"
                 v-mask="cellColourMask"
                 hide-details
-                class="ma-0 pa-0 mt-4"
+                class="ma-0 pa-0 mt-4 ml-8"
                 solo
               >
                 <template v-slot:append>
@@ -478,6 +480,7 @@ export default {
     pruningThreshold: 50,
     pruningDistance: 10,
     selectedPruningMethod: "Random",
+    pruningClusterCount: 250,
 
     // Available methods for the algorithms and associated rules
     algorithms: ["Naive", "Delaunay triangulation"],
@@ -686,7 +689,8 @@ export default {
           inverseThreshold: this.inverseThreshold,
           pruningThreshold: this.pruningThreshold,
           pruningDistance: this.pruningDistance,
-          selectedPruningMethod: this.selectedPruningMethod
+          selectedPruningMethod: this.selectedPruningMethod,
+          pruningClusterCount: this.pruningClusterCount
         });
       }
     },

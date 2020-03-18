@@ -23,7 +23,8 @@ export const resultFromDelaunayCorners = (
   customColour,
   selectedPruningMethod,
   pruningThreshold,
-  pruningDistance
+  pruningDistance,
+  pruningClusterCount
 ) => {
   // Set the threshold for the number of corners to detect
   window.fastThreshold = threshold;
@@ -62,7 +63,8 @@ export const resultFromDelaunayCorners = (
     centroids,
     selectedPruningMethod,
     pruningThreshold,
-    pruningDistance
+    pruningDistance,
+    pruningClusterCount
   );
   // Obtain colours for the centroids
   let colouredCentroids = colourCentroidsByCoordinates(

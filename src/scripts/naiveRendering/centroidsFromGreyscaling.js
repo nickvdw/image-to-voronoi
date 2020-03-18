@@ -25,7 +25,8 @@ export const resultFromNaiveGreyscaling = (
   pruningThreshold,
   pruningDistance,
   croppedImageData,
-  coordinateMargins
+  coordinateMargins,
+  pruningClusterCount
 ) => {
   let imageData = originalImageData;
   if (croppedImageData && coordinateMargins) {
@@ -59,7 +60,8 @@ export const resultFromNaiveGreyscaling = (
     centroids,
     selectedPruningMethod,
     pruningThreshold,
-    pruningDistance
+    pruningDistance,
+    pruningClusterCount
   );
 
   // Whether or not to randomly generate colours

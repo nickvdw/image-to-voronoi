@@ -21,7 +21,8 @@ export const resultFromDelaunayPoisson = (
   customColour,
   selectedPruningMethod,
   pruningThreshold,
-  pruningDistance
+  pruningDistance,
+  pruningClusterCount
 ) => {
   // Compute centroids basied on poisson disc sampling with a certain radius (distance)
   let centroids = [
@@ -44,7 +45,8 @@ export const resultFromDelaunayPoisson = (
     centroids,
     selectedPruningMethod,
     pruningThreshold,
-    pruningDistance
+    pruningDistance,
+    pruningClusterCount
   );
 
   // Obtain colours for the centroids
