@@ -54,7 +54,12 @@
     </v-card-title>
 
     <!-- Card content -->
-    <v-card-text id="resultContainer" class="pa-0 ma-0" style="height: 100%">
+    <v-card-text
+      id="resultContainer"
+      class="pa-0 ma-0"
+      style="height: 100%"
+      :loading="dialog"
+    >
       <v-row
         v-show="!this.configuration.selectedImage && !this.loading"
         class="fill-height"
@@ -68,7 +73,7 @@
       <!-- Progress bar -->
       <v-row
         style="height: 100%"
-        v-show="this.loading"
+        v-if="this.loading"
         class="fill-height"
         align-content="center"
         justify="center"
@@ -269,6 +274,7 @@ export default {
       });
     },
     submitCrop() {
+      console.log("lol");
       // Obtain the coordinates of the cropped image selection
       const { coordinates } = this.$refs.cropper.getResult();
 
@@ -357,7 +363,8 @@ export default {
                 this.configuration.customColour,
                 this.configuration.selectedPruningMethod,
                 this.configuration.pruningThreshold,
-                this.configuration.pruningDistance
+                this.configuration.pruningDistance,
+                this.configuration.pruningClusterCount
               );
             } else if (this.configuration.selectedMethod === "Edge detection") {
               this.update = resultFromDelaunayEdgesSobel(
@@ -377,7 +384,8 @@ export default {
                 this.configuration.customColour,
                 this.configuration.selectedPruningMethod,
                 this.configuration.pruningThreshold,
-                this.configuration.pruningDistance
+                this.configuration.pruningDistance,
+                this.configuration.pruningClusterCount
               );
             } else if (
               this.configuration.selectedMethod ===
@@ -403,7 +411,8 @@ export default {
                 this.configuration.inverseThreshold,
                 this.configuration.selectedPruningMethod,
                 this.configuration.pruningThreshold,
-                this.configuration.pruningDistance
+                this.configuration.pruningDistance,
+                this.configuration.pruningClusterCount
               );
             } else if (
               this.configuration.selectedMethod === "Poisson disc sampling"
@@ -425,7 +434,8 @@ export default {
                 this.configuration.customColour,
                 this.configuration.selectedPruningMethod,
                 this.configuration.pruningThreshold,
-                this.configuration.pruningDistance
+                this.configuration.pruningDistance,
+                this.configuration.pruningClusterCount
               );
             } else {
               console.log("This method does not exist");
@@ -435,7 +445,7 @@ export default {
               this.configuration.selectedMethod ===
               "Based on greyscale intensities"
             ) {
-              resultFromNaiveGreyscaling(
+              this.update = resultFromNaiveGreyscaling(
                 this.originalImageData,
                 this.configuration.selectedNumberOfNeighbours,
                 this.configuration.displayEdges,
@@ -451,10 +461,13 @@ export default {
                 this.configuration.selectedGreyscaleY,
                 this.configuration.selectedPruningMethod,
                 this.configuration.pruningThreshold,
-                this.configuration.pruningDistance
+                this.configuration.pruningDistance,
+                this.configuration.croppedImageData,
+                this.configuration.coordinateMargins,
+                this.toBeCroppedImageCoordinates
               );
             } else if (this.configuration.selectedMethod === "Edge detection") {
-              resultFromNaiveEdgesSobel(
+              this.update = resultFromNaiveEdgesSobel(
                 this.originalImageData,
                 this.configuration.selectedSobelThreshold,
                 this.configuration.displayEdges,
@@ -470,7 +483,9 @@ export default {
                 this.configuration.selectedNumberOfNeighbours,
                 this.configuration.selectedPruningMethod,
                 this.configuration.pruningThreshold,
-                this.configuration.pruningDistance
+                this.configuration.pruningDistance,
+                this.toBeCroppedImageCoordinates,
+                this.configuration.pruningClusterCount
               );
             }
           }

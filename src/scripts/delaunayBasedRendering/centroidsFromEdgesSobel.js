@@ -24,7 +24,8 @@ export const resultFromDelaunayEdgesSobel = (
   customColour,
   selectedPruningMethod,
   pruningThreshold,
-  pruningDistance
+  pruningDistance,
+  pruningClusterCount
 ) => {
   // Set the threshold for the number of edges to detect
   window.fastThreshold = threshold;
@@ -84,15 +85,6 @@ export const resultFromDelaunayEdgesSobel = (
     }
   }
 
-  // Set the initial configuration of the svg
-  let fullSvg = d3
-    .select("#voronoiFullResult")
-    .append("svg")
-    .attr("width", originalImageData.width)
-    .attr("height", originalImageData.height)
-    .attr("id", "fullResultSVG")
-    .style("background-color", "black");
-
   // Centroids are now being made under a certain threshold condition (value over ...)
   let centroids = [];
   for (let i = 0; i < edges.length; i++) {
@@ -109,7 +101,8 @@ export const resultFromDelaunayEdgesSobel = (
     centroids,
     selectedPruningMethod,
     pruningThreshold,
-    pruningDistance
+    pruningDistance,
+    pruningClusterCount
   );
 
   // Add margin to the centroids if we use the cropped image
@@ -135,6 +128,17 @@ export const resultFromDelaunayEdgesSobel = (
     coordinateMargins,
     toBeCroppedImageCoordinates
   ) => {
+    // Clear old image
+    document.getElementById("voronoiFullResult").innerHTML = "";
+    // Set the initial configuration of the svg
+    let fullSvg = d3
+      .select("#voronoiFullResult")
+      .append("svg")
+      .attr("width", originalImageData.width)
+      .attr("height", originalImageData.height)
+      .attr("id", "fullResultSVG")
+      .style("background-color", "black");
+
     if (croppedImageData && coordinateMargins) {
       imageData = croppedImageData;
     }

@@ -1,21 +1,40 @@
 <template>
-  <!-- TODO: Replace parallax image with something related to Voronoi diagrams -->
-  <v-parallax
+  <v-carousel
+    hide-delimiter-background
+    show-arrows-on-hoverv-model="model"
     height="100%"
-    src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"
+    style="height:100%"
   >
-    <v-row align="center" justify="center">
-      <v-col class="text-center" cols="12">
-        <h1 class="display-1 font-weight-thin mb-4">Application name</h1>
-        <h4 class="subheading">Application description</h4>
-      </v-col>
-    </v-row>
-  </v-parallax>
+    <v-carousel-item style="height: 100%">
+      <v-sheet color="blue-grey darken-1" height="100%" tile>
+        <v-row class="fill-height" align="center" justify="center">
+          <div class="display-3">Slide</div>
+        </v-row>
+      </v-sheet>
+    </v-carousel-item>
+    <v-carousel-item style="height: 100%">
+      <v-sheet color="blue-grey darken-1" height="100%" tile>
+        <v-row class="fill-height" align="center" justify="center">
+          <div class="display-3">Slide</div>
+        </v-row>
+      </v-sheet>
+    </v-carousel-item>
+    <v-carousel-item style="height: 100%">
+      <v-sheet color="blue-grey darken-1" height="100%" tile>
+        <v-row class="fill-height" align="center" justify="center">
+          <div class="display-3">Slide</div>
+        </v-row>
+      </v-sheet>
+    </v-carousel-item>
+  </v-carousel>
 </template>
 
-<style scoped>
-/* The v-parallax class does not provide a way to use the full height */
-.v-parallax {
-  height: 100% !important;
-}
-</style>
+<script>
+export default {
+  data() {
+    return {
+      model: 0
+    };
+  }
+};
+</script>
