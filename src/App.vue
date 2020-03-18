@@ -16,12 +16,12 @@ export default {
   components: {
     Toolbar,
     Footer
-  },
+  }
 
   // Only used for development
-  created() {
-    this.$router.push("/tool");
-  }
+  // created() {
+  //   this.$router.push("/tool");
+  // }
 };
 </script>
 
