@@ -105,36 +105,6 @@ export const resultFromNaiveEdgesSobel = (
     pruningClusterCount
   );
 
-  // Set the initial configuration of the svg
-  const svg = d3
-    .select("#voronoiResult")
-    .append("svg")
-    .attr(
-      "viewBox",
-      `0 0 ${originalImageData.width} ${originalImageData.height}`
-    )
-    .attr("width", document.getElementById("resultContainer").offsetWidth)
-    .attr("height", document.getElementById("resultContainer").offsetHeight)
-    .style("background-color", "black");
-
-  svg.on("click", () => {
-    // TODO: Using the d3.mouse(d3.event.target) coordinates to obtain the colour does not work and
-    // TODO: results in a black cell. This way, we get the colour of some point close to our point...
-    const colour = colourCentroidsByCoordinates(originalImageData, [
-      { x: d3.event.layerX, y: d3.event.layerY }
-    ])[0].colour;
-
-    // Add the new centroid to the list of centroids with a colour
-    colouredCentroids.push({
-      x: d3.mouse(d3.event.target)[0],
-      y: d3.mouse(d3.event.target)[1],
-      colour: colour
-    });
-
-    // Update the result
-    update();
-  });
-
   // Add margin to the centroids if we use the cropped image
   if (croppedImageData && coordinateMargins) {
     centroids = centroids.map(centroid => {
@@ -146,14 +116,53 @@ export const resultFromNaiveEdgesSobel = (
     });
   }
 
-  // Obtain colours for the centroids
-  let colouredCentroids = colourCentroidsByCoordinates(
-    originalImageData,
-    centroids
-  );
-
   // Redraw the canvas every time the 'update' method is called
-  const update = () => {
+  const update = (
+    croppedImageData,
+    coordinateMargins,
+    toBeCroppedImageCoordinates
+  ) => {
+    // Clear old image
+    document.getElementById("voronoiFullResult").innerHTML = "";
+    // Set the initial configuration of the svg
+    let fullSvg = d3
+      .select("#voronoiFullResult")
+      .append("svg")
+      .attr("width", originalImageData.width)
+      .attr("height", originalImageData.height)
+      .attr("id", "fullResultSVG")
+      .style("background-color", "black");
+
+    if (croppedImageData && coordinateMargins) {
+      imageData = croppedImageData;
+    }
+
+    if (toBeCroppedImageCoordinates) {
+      const xStart = toBeCroppedImageCoordinates.start.x;
+      const xEnd = toBeCroppedImageCoordinates.end.x;
+      const yStart = toBeCroppedImageCoordinates.start.y;
+      const yEnd = toBeCroppedImageCoordinates.end.y;
+
+      let removedCentroids = [];
+      for (let i = centroids.length - 1; i >= 0; i--) {
+        if (
+          centroids[i].x >= xStart &&
+          centroids[i].x <= xEnd &&
+          centroids[i].y >= yStart &&
+          centroids[i].y <= yEnd
+        ) {
+          removedCentroids.push(centroids[i]);
+          centroids.splice(i, 1);
+        }
+      }
+    }
+
+    // Obtain colours for the centroids
+    let colouredCentroids = colourCentroidsByCoordinates(
+      originalImageData,
+      centroids
+    );
+
     const colourMap = [];
     Array(colouredCentroids.length)
       .fill()
@@ -189,7 +198,7 @@ export const resultFromNaiveEdgesSobel = (
             });
 
             // Colour the pixels
-            svg
+            fullSvg
               .append("rect")
               .attr("x", x)
               .attr("y", y)
@@ -203,7 +212,7 @@ export const resultFromNaiveEdgesSobel = (
 
     // Render the edges with a certain colour and thickness
     if (displayEdges) {
-      svg
+      fullSvg
         .selectAll("path")
         .style("stroke", selectedEdgeColour)
         .style("stroke-width", selectedEdgeThickness);
@@ -212,7 +221,7 @@ export const resultFromNaiveEdgesSobel = (
     // Render the centroids with a certain size and colour
     if (displayCentroids) {
       colouredCentroids.forEach(centroid => {
-        svg
+        fullSvg
           .append("circle")
           .attr("cx", centroid.x)
           .attr("cy", centroid.y)
@@ -220,9 +229,45 @@ export const resultFromNaiveEdgesSobel = (
           .attr("fill", selectedCentroidColour);
       });
     }
+
+    // Clone the image to the viewbox voronoiResult
+    const clone = fullSvg.node().cloneNode(true);
+    // Clear old image
+    document.getElementById("voronoiResult").innerHTML = "";
+
+    const svg = d3
+      .select("#voronoiResult")
+      .append("svg")
+      .html(clone.outerHTML)
+      .attr(
+        "viewBox",
+        `0 0 ${originalImageData.width} ${originalImageData.height}`
+      )
+      .attr("width", document.getElementById("resultContainer").offsetWidth)
+      .attr("height", document.getElementById("resultContainer").offsetHeight);
+
+    svg.on("click", () => {
+      // TODO: Using the d3.mouse(d3.event.target) coordinates to obtain the colour does not work and
+      // TODO: results in a black cell. This way, we get the colour of some point close to our point...
+      const colour = colourCentroidsByCoordinates(originalImageData, [
+        { x: d3.event.layerX, y: d3.event.layerY }
+      ])[0].colour;
+
+      // Add the new centroid to the list of centroids with a colour
+      colouredCentroids.push({
+        x: d3.mouse(d3.event.target)[0],
+        y: d3.mouse(d3.event.target)[1],
+        colour: colour
+      });
+
+      // Update the result
+      update();
+    });
   };
 
   update();
+
+  return update;
 };
 
 export const computeEuclideanDistance = (a, b) => {

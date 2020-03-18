@@ -49,15 +49,6 @@ export const resultFromDelaunayCorners = (
     imageData.height
   );
 
-  // Set the initial configuration of the svg
-  let fullSvg = d3
-    .select("#voronoiFullResult")
-    .append("svg")
-    .attr("width", originalImageData.width)
-    .attr("height", originalImageData.height)
-    .attr("id", "fullResultSVG")
-    .style("background-color", "black");
-
   // Store the centroids based on the corners
   let centroids = [];
   for (let i = 0; i < corners.length; i += 2) {
@@ -87,6 +78,17 @@ export const resultFromDelaunayCorners = (
     coordinateMargins,
     toBeCroppedImageCoordinates
   ) => {
+    // Clear old image
+    document.getElementById("voronoiFullResult").innerHTML = "";
+    // Set the initial configuration of the svg
+    let fullSvg = d3
+      .select("#voronoiFullResult")
+      .append("svg")
+      .attr("width", originalImageData.width)
+      .attr("height", originalImageData.height)
+      .attr("id", "fullResultSVG")
+      .style("background-color", "black");
+
     if (croppedImageData && coordinateMargins) {
       imageData = croppedImageData;
     }
@@ -182,6 +184,7 @@ export const resultFromDelaunayCorners = (
 
     // Render the centroids with a certain size and colour
     if (displayCentroids) {
+      console.log(centroids, colouredCentroids);
       centroids.forEach(centroid => {
         fullSvg
           .append("circle")

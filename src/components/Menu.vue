@@ -101,19 +101,14 @@
                   </v-menu>
                 </template>
               </v-text-field>
-              <v-slider
+              <v-text-field
                 v-if="displayEdges"
-                track-color="blue-grey lighten-3"
                 color="blue-grey darken-3"
                 label="Edge thickness"
                 class="mt-4 ml-4"
                 v-model="selectedEdgeThickness"
                 :rules="edgeThicknessRules"
-                step="0.1"
-                min="0.01"
-                max="10"
-                :thumb-label="true"
-                hide-details
+                type="number"
               />
               <v-checkbox
                 color="blue-grey darken-3"
@@ -152,19 +147,14 @@
                   </v-menu>
                 </template>
               </v-text-field>
-              <v-slider
+              <v-text-field
                 v-if="displayCentroids"
-                track-color="blue-grey lighten-3"
                 color="blue-grey darken-3"
                 label="Centroid size"
                 class="mt-4 ml-4"
                 v-model="selectedCentroidSize"
                 :rules="centroidSizeRules"
-                step="0.1"
-                min="0.01"
-                max="10"
-                :thumb-label="true"
-                hide-details
+                type="number"
               />
               <v-checkbox
                 color="blue-grey darken-3"
@@ -229,6 +219,16 @@
                 hint="This algorithms will be used to generate the result."
                 :rules="algorithmRules"
               />
+              <!-- Number of nearest neighbours -->
+              <v-text-field
+                color="blue-grey darken-3"
+                label="Number of nearest neighbours"
+                v-show="this.selectedAlgorithm === 'Naive'"
+                v-model="selectedNumberOfNeighbours"
+                class="ml-4"
+                :rules="numberOfNeighboursRules"
+                type="number"
+              />
               <!-- Field to select method for centroid generation -->
               <v-select
                 color="blue-grey darken-3"
@@ -245,79 +245,52 @@
                 hint="This method will be used for picking the centroids."
               />
               <!-- Threshold for number of centroids -->
-              <v-slider
+              <v-text-field
                 color="blue-grey darken-3"
-                track-color="blue-grey lighten-3"
                 label="Threshold"
                 v-show="this.selectedMethod === 'Corner detection'"
                 v-model="selectedThreshold"
                 :rules="thresholdRules"
-                step="1"
-                min="1"
-                max="100"
-                :thumb-label="true"
+                class="ml-4"
+                type="number"
                 hint="A lower threshold results in more centroids."
               />
               <!-- Minimum radius for poissoin disc sampling -->
-              <v-slider
+              <v-text-field
                 color="blue-grey darken-3"
-                track-color="blue-grey lighten-3"
                 label="Minimum distance for between points"
                 v-show="this.selectedMethod === 'Poisson disc sampling'"
                 v-model="selectedPoissonDistance"
                 :rules="poissonDistanceRules"
-                step="0.5"
-                min="0"
-                max="100"
-                :thumb-label="true"
+                type="number"
+                class="ml-4"
                 hint="The minimum distance (in pixels) between points when using poisson disc sampling."
               />
-              <!-- Number of nearest neighbours -->
-              <v-slider
-                color="blue-grey darken-3"
-                track-color="blue-grey lighten-3"
-                label="Number of nearest neighbours"
-                v-show="this.selectedAlgorithm === 'Naive'"
-                v-model="selectedNumberOfNeighbours"
-                :rules="numberOfNeighboursRules"
-                step="1"
-                min="0"
-                max="100"
-                :thumb-label="true"
-                hide-details
-              />
               <!-- Threshold for sobel edges -->
-              <v-slider
+              <v-text-field
                 color="blue-grey darken-3"
-                track-color="blue-grey lighten-3"
                 label="Threshold"
                 v-show="this.selectedMethod === 'Edge detection'"
                 v-model="selectedSobelThreshold"
                 :rules="sobelThresholdRules"
-                step="1"
-                min="0"
-                max="255"
-                :thumb-label="true"
-                hide-details
+                class="ml-4"
+                type="number"
               />
-              <v-slider
+              <v-text-field
                 color="blue-grey darken-3"
-                track-color="blue-grey lighten-3"
                 label="Threshold"
                 v-show="
                   this.selectedMethod === 'Based on greyscale intensities'
                 "
                 v-model="selectedGreyscaleThreshold"
                 :rules="greyscaleThresholdRules"
-                step="1"
-                min="0"
-                max="255"
-                :thumb-label="true"
+                type="number"
+                class="ml-4"
                 hide-details
               />
               <v-checkbox
                 color="blue-grey darken-3"
-                class="mb-4"
+                class="mb-4 ml-4"
                 v-show="
                   this.selectedMethod === 'Based on greyscale intensities'
                 "
@@ -325,35 +298,27 @@
                 label="Inverse threshold"
                 hide-details
               />
-              <v-slider
+              <v-text-field
                 color="blue-grey darken-3"
-                track-color="blue-grey lighten-3"
                 label="Skip x-axis pixels"
                 v-show="
                   this.selectedMethod === 'Based on greyscale intensities'
                 "
                 v-model="selectedGreyscaleX"
                 :rules="sobelThresholdRules"
-                step="1"
-                min="0"
-                max="500"
-                :thumb-label="true"
-                hide-details
+                type="number"
+                class="ml-4"
               />
-              <v-slider
+              <v-text-field
                 color="blue-grey darken-3"
-                track-color="blue-grey lighten-3"
                 label="Skip y-axis pixels"
                 v-show="
                   this.selectedMethod === 'Based on greyscale intensities'
                 "
                 v-model="selectedGreyscaleY"
                 :rules="sobelThresholdRules"
-                step="1"
-                min="0"
-                max="500"
-                :thumb-label="true"
-                hide-details
+                type="number"
+                class="ml-4"
               />
               <!-- Field to select method for centroid pruning -->
               <v-select
@@ -361,36 +326,38 @@
                 item-color="blue-grey darken-4"
                 :items="pruningMethods"
                 v-model="selectedPruningMethod"
-                label="Method for centroid pruning"
+                label="Method for pruning centroids"
                 hint="This method will be used to prune centroids."
               />
               <!-- Threshold percentage for centroid pruning -->
-              <v-slider
+              <v-text-field
                 color="blue-grey darken-3"
-                track-color="blue-grey lighten-3"
                 label="Pruning Threshold"
-                v-show="
-                  this.selectedPruningMethod === 'Random' ||
-                    this.selectedPruningMethod === 'Distance-based'
-                "
+                v-show="this.selectedPruningMethod === 'Random'"
                 v-model="pruningThreshold"
-                step="1"
-                min="0"
-                max="100"
-                :thumb-label="true"
-                hint="A lower threshold results in more centroids."
+                :rules="pruningThresholdRules"
+                type="number"
+                class="ml-4"
               />
-              <v-slider
+              <v-text-field
                 color="blue-grey darken-3"
-                track-color="blue-grey lighten-3"
                 label="Pruning distance"
                 v-show="this.selectedPruningMethod === 'Distance-based'"
                 v-model="pruningDistance"
-                step="0.5"
-                min="0"
-                max="100"
-                :thumb-label="true"
+                :rules="distanceThresholdRules"
+                type="number"
                 hint="Centroids with a lower distance to another will be pruned."
+                class="ml-4"
+              />
+              <v-text-field
+                color="blue-grey darken-3"
+                label="Number of clusters (centroids)"
+                v-show="this.selectedPruningMethod === 'Cluster-based'"
+                v-model="pruningClusterCount"
+                :rules="clusterRules"
+                type="number"
+                hide-details
+                class="ml-4"
               />
             </v-card-text>
           </v-card>
@@ -494,13 +461,28 @@ export default {
         (!!v && v <= 255 && v >= 0) ||
         "A threshold of at least 0 and at most 255 is required"
     ],
+    pruningThresholdRules: [
+      v =>
+        (!!v && v <= 100 && v >= 0) ||
+        "A threshold of at least 0 and at most 100 is required"
+    ],
+    distanceThresholdRules: [
+      v =>
+        (!!v && v <= 500 && v >= 0) ||
+        "A threshold of at least 0 and at most 500 is required"
+    ],
+    clusterRules: [
+      v =>
+        (!!v && v <= 5000 && v >= 1) ||
+        "A threshold of at least 1 and at most 5000 is required"
+    ],
 
     // Selected thickness and colour for edges with associated rules
     selectedEdgeThickness: 0.1,
     edgeThicknessRules: [
       v =>
-        (!!v && v <= 20 && v >= 0) ||
-        "A thickness of at least 0 and at most 20 is required"
+        (!!v && v <= 20 && v > 0) ||
+        "A thickness of at least 0.x and at most 20 is required"
     ],
     selectedEdgeColour: "#000000FF",
     edgeColourMask: "!#XXXXXXXX",
@@ -511,13 +493,13 @@ export default {
     centroidSizeRules: [
       v =>
         (!!v && v <= 20 && v >= 1) ||
-        "A thickness of at least 1 and at most 20 is required"
+        "A size of at least 1 and at most 20 is required"
     ],
     selectedCentroidColour: "#000000FF",
     centroidColourMenu: false,
     centroidColourMask: "!#XXXXXXXX",
 
-    selectedCellColour: "#FFFFFFFF",
+    selectedCellColour: "#000000FF",
     cellColourMenu: false,
     cellColourMask: "!#XXXXXXXX",
 
@@ -710,7 +692,8 @@ export default {
       this.selectedNumberOfNeighbours = 1;
       this.selectedEdgeThickness = 1;
       this.selectedCentroidSize = 1;
-      this.currentTab = "Image";
+      this.currentTab = "Display";
+      this.displayColour = true;
       this.pruningThreshold = 90;
       this.pruningDistance = 10;
     }

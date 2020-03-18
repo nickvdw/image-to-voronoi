@@ -52,21 +52,23 @@ export const resultFromDelaunayPoisson = (
   // Obtain colours for the centroids
   let colouredCentroids = colourCentroidsByCoordinates(imageData, centroids);
 
-  // Set the initial configuration of the svg
-  let fullSvg = d3
-    .select("#voronoiFullResult")
-    .append("svg")
-    .attr("width", originalImageData.width)
-    .attr("height", originalImageData.height)
-    .attr("id", "fullResultSVG")
-    .style("background-color", "black");
-
   // Redraw the canvas every time the 'update' method is called
   const update = (
     croppedImageData,
     coordinateMargins,
     toBeCroppedImageCoordinates
   ) => {
+    // Clear old image
+    document.getElementById("voronoiFullResult").innerHTML = "";
+    // Set the initial configuration of the svg
+    let fullSvg = d3
+      .select("#voronoiFullResult")
+      .append("svg")
+      .attr("width", originalImageData.width)
+      .attr("height", originalImageData.height)
+      .attr("id", "fullResultSVG")
+      .style("background-color", "black");
+
     if (croppedImageData && coordinateMargins) {
       imageData = croppedImageData;
     }
