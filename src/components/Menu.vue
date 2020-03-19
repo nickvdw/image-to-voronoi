@@ -23,7 +23,6 @@
         />
         <v-btn
           small
-          :disabled="true"
           outlined
           block
           color="blue-grey darken-3"
@@ -407,23 +406,18 @@
 <script>
 import { Cropper } from "vue-advanced-cropper";
 import { mask } from "vue-the-mask";
-
 export default {
   name: "Menu",
-
   directives: { mask },
-
   data: () => ({
     // Cropped image
     croppedImage: null,
     // Image data of the cropped image
     imageData: null,
     coordinateMargins: null,
-
     // Initial image and associated rules
     selectedImage: null,
     imageRules: [v => (!!v && v !== []) || "An image is required"],
-
     // Available methods for the centroid generation and associated rules
     delaunayMethods: [
       "Corner detection",
@@ -434,7 +428,6 @@ export default {
     naiveMethods: ["Based on greyscale intensities", "Edge detection"],
     methodRules: [v => !!v || "A method is required"],
     selectedMethod: "Corner detection",
-
     // Available methods for centroid pruning
     pruningMethods: [
       "Random",
@@ -448,12 +441,10 @@ export default {
     pruningDistance: 10,
     selectedPruningMethod: "Random",
     pruningClusterCount: 250,
-
     // Available methods for the algorithms and associated rules
     algorithms: ["Naive", "Delaunay triangulation"],
     algorithmRules: [v => !!v || "An algorithm is required"],
     selectedAlgorithm: "Delaunay triangulation",
-
     // Selected threshold and associated rules
     selectedThreshold: 40,
     thresholdRules: [
@@ -476,7 +467,6 @@ export default {
         (!!v && v <= 5000 && v >= 1) ||
         "A threshold of at least 1 and at most 5000 is required"
     ],
-
     // Selected thickness and colour for edges with associated rules
     selectedEdgeThickness: 0.1,
     edgeThicknessRules: [
@@ -487,7 +477,6 @@ export default {
     selectedEdgeColour: "#000000FF",
     edgeColourMask: "!#XXXXXXXX",
     edgeColourMenu: false,
-
     // Selected size and colour for centroids with associated rules
     selectedCentroidSize: 1,
     centroidSizeRules: [
@@ -498,39 +487,32 @@ export default {
     selectedCentroidColour: "#000000FF",
     centroidColourMenu: false,
     centroidColourMask: "!#XXXXXXXX",
-
     selectedCellColour: "#000000FF",
     cellColourMenu: false,
     cellColourMask: "!#XXXXXXXX",
-
     displayEdges: false,
     displayCentroids: false,
     displayColour: true,
-
     customColour: null,
     inverseThreshold: false,
-
     selectedNumberOfNeighbours: 1,
     numberOfNeighboursRules: [
       v =>
         (!!v && v <= 30 && v >= 1) ||
         "The number of nearest neighbours should be between 1 and 30"
     ],
-
     selectedPoissonDistance: 20,
     poissonDistanceRules: [
       v =>
         (!!v && v <= 2000 && v >= 1) ||
         "The distance should be between 1 and 2000 pixels."
     ],
-
     selectedSobelThreshold: 40,
     sobelThresholdRules: [
       v =>
         (!!v && v >= 0 && v <= 255) ||
         "The threshold should be between 0 and 255."
     ],
-
     selectedGreyscaleThreshold: 0.5,
     greyscaleThresholdRules: [
       v =>
@@ -538,35 +520,28 @@ export default {
     ],
     selectedGreyscaleX: 1,
     selectedGreyscaleY: 1,
-
     // Whether or not the form is valid
     valid: false,
     dialog: false,
-
     // All tabs
     tabItems: ["Display", "Methods"],
     currentTab: "Display",
-
     isLoading: false
   }),
-
   components: {
     Cropper
   },
-
   props: {
     loading: {
       type: Boolean,
       default: false
     }
   },
-
   watch: {
     loading() {
       this.isLoading = this.loading;
     }
   },
-
   computed: {
     swatchStyleEdgeColour() {
       const { selectedEdgeColour, edgeColourMenu } = this;
@@ -602,12 +577,10 @@ export default {
       };
     }
   },
-
   methods: {
     submitCrop() {
       // Obtain the coordinates of the cropped image selection
       const { coordinates, canvas } = this.$refs.cropper.getResult();
-
       const ctx = canvas.getContext("2d");
       this.imageData = ctx.getImageData(
         0,
@@ -615,17 +588,14 @@ export default {
         coordinates.width,
         coordinates.height
       );
-
       this.coordinateMargins = {
         width: coordinates.left,
         height: coordinates.top
       };
-
       this.dialog = false;
     },
     uploadImage() {
       var input = event.target;
-
       if (input.files) {
         // create a new FileReader to read this image and convert to base64 format
         const reader = new FileReader();
@@ -676,7 +646,6 @@ export default {
         });
       }
     },
-
     /**
      * Resets (i.e., clears) the form data.
      *
@@ -705,7 +674,6 @@ export default {
 .cropper {
   background: #ddd;
 }
-
 /* This removes the animation but also the weird popup */
 .v-window__container {
   height: 100% !important;
