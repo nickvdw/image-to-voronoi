@@ -239,12 +239,14 @@ export const resultFromNaiveEdgesSobel = (
       .select("#voronoiResult")
       .append("svg")
       .html(clone.outerHTML)
-      .attr(
-        "viewBox",
-        `0 0 ${originalImageData.width} ${originalImageData.height}`
-      )
-      .attr("width", document.getElementById("resultContainer").offsetWidth)
-      .attr("height", document.getElementById("resultContainer").offsetHeight);
+      // .attr(
+      //   "viewBox",
+      //   `0 0 ${originalImageData.width} ${originalImageData.height}`
+      // )
+      // .attr("width", document.getElementById("resultContainer").offsetWidth)
+      // .attr("height", document.getElementById("resultContainer").offsetHeight);
+      .attr("width", originalImageData.width)
+      .attr("height", originalImageData.height);
 
     svg.on("click", () => {
       // TODO: Using the d3.mouse(d3.event.target) coordinates to obtain the colour does not work and

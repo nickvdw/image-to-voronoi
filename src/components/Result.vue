@@ -144,8 +144,11 @@
             class="cropper"
             id="cropper"
             ref="cropper"
+            :restrictions="pixelsRestriction"
+            :minHeight="1"
+            :minWidth="1"
             :src="croppedImage"
-          ></cropper>
+          />
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -269,6 +272,12 @@ export default {
       this.croppedImage = await this.$html2canvas(this.$refs.fullResult, {
         type: "dataURL"
       });
+    },
+    pixelsRestriction({ minWidth, minHeight }) {
+      return {
+        minWidth: minWidth,
+        minHeight: minHeight
+      };
     },
     submitCrop() {
       console.log("lol");

@@ -203,12 +203,14 @@ export const resultFromNaiveGreyscaling = (
       .select("#voronoiResult")
       .append("svg")
       .html(clone.outerHTML)
-      .attr(
-        "viewBox",
-        `0 0 ${originalImageData.width} ${originalImageData.height}`
-      )
-      .attr("width", document.getElementById("resultContainer").offsetWidth)
-      .attr("height", document.getElementById("resultContainer").offsetHeight);
+      // .attr(
+      //   "viewBox",
+      //   `0 0 ${originalImageData.width} ${originalImageData.height}`
+      // )
+      // .attr("width", document.getElementById("resultContainer").offsetWidth)
+      // .attr("height", document.getElementById("resultContainer").offsetHeight);
+      .attr("width", originalImageData.width)
+      .attr("height", originalImageData.height);
 
     svg.on("click", () => {
       // Add the new centroid to the list of centroids
