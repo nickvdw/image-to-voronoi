@@ -87,10 +87,13 @@ export const colourCentroidsByCoordinates = (imageData, centroids) => {
  * Uses the FileReader API to read the file Input
  * The read image is drawn onto a canvas from which we can get image data per pixel
  * */
-export const uploadImage = image => {
+export const uploadImage = (image, downscaledWidth) => {
   return new Promise((resolve, reject) => {
     const canvas = document.createElement("CANVAS");
     const context = canvas.getContext("2d");
+    const oc = document.createElement("canvas");
+    const octx = oc.getContext("2d");
+
     const reader = new FileReader();
 
     // Image is interpreted as a data url and painted on a canvas
@@ -100,16 +103,60 @@ export const uploadImage = image => {
       // Sets image source to the read data url
       image.src = event.target.result;
 
-      // Draw the image onto the canvas so we can retrieve pixel data
-      image.addEventListener("load", () => {
-        canvas.width = image.width;
-        canvas.height = image.height;
-        context.drawImage(image, 0, 0);
-        const imageData = context.getImageData(0, 0, image.width, image.height);
-        resolve(imageData);
-      });
+      if (downscaledWidth > 0) {
+        // Draw the image onto the canvas so we can retrieve pixel data
+        image.addEventListener("load", () => {
+          canvas.width = image.width;
+          canvas.height = image.height;
 
-      image.onerror = reject;
+          let cur = {
+            width: Math.floor(image.width * 0.5),
+            height: Math.floor(image.height * 0.5)
+          };
+
+          oc.width = cur.width;
+          oc.height = cur.height;
+          octx.drawImage(image, 0, 0, cur.width, cur.height);
+
+          while (cur.width * 0.5 > downscaledWidth) {
+            cur = {
+              width: Math.floor(cur.width * 0.5),
+              height: Math.floor(cur.height * 0.5)
+            };
+            octx.drawImage(
+              oc,
+              0,
+              0,
+              cur.width * 2,
+              cur.height * 2,
+              0,
+              0,
+              cur.width,
+              cur.height
+            );
+          }
+
+          // context.drawImage(image, 0, 0);
+          const imageData = octx.getImageData(0, 0, cur.width, cur.height);
+          resolve(imageData);
+        });
+        image.onerror = reject;
+      } else {
+        // Draw the image onto the canvas so we can retrieve pixel data
+        image.addEventListener("load", () => {
+          canvas.width = image.width;
+          canvas.height = image.height;
+          context.drawImage(image, 0, 0);
+          const imageData = context.getImageData(
+            0,
+            0,
+            image.width,
+            image.height
+          );
+          resolve(imageData);
+        });
+        image.onerror = reject;
+      }
     };
 
     // Only use the image when there is an actual image

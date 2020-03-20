@@ -21,6 +21,21 @@
           @change="uploadImage"
           :rules="imageRules"
         />
+        <v-text-field
+          color="blue-grey darken-3"
+          :disabled="!selectedImage"
+          :label="
+            `Downscale image (original image width: ${this.imageSizes.width}px)`
+          "
+          v-model="downscaledWidth"
+          clearable
+          class="mb-2"
+          :rules="downscaleImageRules"
+          type="number"
+          :hint="
+            'This sets the new width of the image. This value is initially the original width of the image.'
+          "
+        />
         <v-btn
           small
           outlined
@@ -404,6 +419,7 @@
 </template>
 
 <script>
+import { uploadImage } from "@/scripts/imageHandler";
 import { Cropper } from "vue-advanced-cropper";
 import { mask } from "vue-the-mask";
 export default {
@@ -425,7 +441,12 @@ export default {
       "Based on greyscale intensities",
       "Poisson disc sampling"
     ],
-    naiveMethods: ["Based on greyscale intensities", "Edge detection"],
+    naiveMethods: [
+      "Based on greyscale intensities",
+      "Edge detection",
+      "Corner detection",
+      "Poisson disc sampling"
+    ],
     methodRules: [v => !!v || "A method is required"],
     selectedMethod: "Corner detection",
     // Available methods for centroid pruning
@@ -467,6 +488,7 @@ export default {
         (!!v && v <= 5000 && v >= 1) ||
         "A threshold of at least 1 and at most 5000 is required"
     ],
+
     // Selected thickness and colour for edges with associated rules
     selectedEdgeThickness: 0.1,
     edgeThicknessRules: [
@@ -526,7 +548,14 @@ export default {
     // All tabs
     tabItems: ["Display", "Methods"],
     currentTab: "Display",
-    isLoading: false
+    isLoading: false,
+    imageSizes: { width: 0, height: 0 },
+    downscaledWidth: 0,
+    downscaleImageRules: [
+      v =>
+        (!!v && v <= 0 && v >= 1) ||
+        `A width of at least 1 and at most 0 pixels is required.`
+    ]
   }),
   components: {
     Cropper
@@ -594,8 +623,9 @@ export default {
       };
       this.dialog = false;
     },
-    uploadImage() {
-      var input = event.target;
+    async uploadImage() {
+      let input = event.target;
+
       if (input.files) {
         // create a new FileReader to read this image and convert to base64 format
         const reader = new FileReader();
@@ -603,9 +633,23 @@ export default {
         reader.onload = e => {
           this.croppedImage = e.target.result;
         };
+
         // Start the reader job - read file as a data url (base64 format)
         reader.readAsDataURL(input.files[0]);
       }
+
+      const result = await uploadImage(this.selectedImage, 0);
+      this.imageSizes = {
+        width: result.width,
+        height: result.height
+      };
+      this.downscaledWidth = this.imageSizes.width;
+
+      this.downscaleImageRules = [
+        v =>
+          (!!v && v <= this.imageSizes.width && v >= 1) ||
+          `A width of at least 1 and at most ${this.imageSizes.width} pixels is required.`
+      ];
     },
     /**
      * Validates whether or not the form is valid (i.e., all REQUIRED
@@ -618,6 +662,7 @@ export default {
       if (this.$refs.form.validate()) {
         this.$emit("submit", {
           selectedImage: this.selectedImage,
+          downscaledWidth: this.downscaledWidth,
           selectedAlgorithm: this.selectedAlgorithm,
           selectedMethod: this.selectedMethod,
           selectedThreshold: this.selectedThreshold,
