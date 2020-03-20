@@ -73,7 +73,7 @@
       <!-- Progress bar -->
       <v-row
         style="height: 100%"
-        v-if="this.progressValue !== 0 && this.progressValue !== 100"
+        v-if="this.loading"
         class="fill-height"
         align-content="center"
         justify="center"
@@ -83,7 +83,7 @@
         </v-col>
         <v-col cols="6">
           <v-progress-linear
-            :value="progressValue"
+            indeterminate
             rounded
             color="blue-grey darken-3"
             height="12"
@@ -191,8 +191,7 @@ export default {
       saving: false,
       croppedImage: null,
       toBeCroppedImageCoordinates: null,
-      update: null,
-      progressValue: 0
+      update: null
     };
   },
   props: {
