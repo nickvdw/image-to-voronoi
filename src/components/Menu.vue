@@ -21,6 +21,19 @@
           @change="uploadImage"
           :rules="imageRules"
         />
+        <v-text-field
+          color="blue-grey darken-3"
+          :disabled="!selectedImage"
+          label="Downscale image"
+          v-model="downscaledWidth"
+          clearable
+          class="mb-2"
+          :rules="downscaleImageRules"
+          type="number"
+          :hint="
+            'This sets the new width of the image. Leave 0 for no downscaling.'
+          "
+        />
         <v-btn
           small
           outlined
@@ -472,6 +485,14 @@ export default {
         (!!v && v <= 5000 && v >= 1) ||
         "A threshold of at least 1 and at most 5000 is required"
     ],
+    downscaleImageRules: [
+      v =>
+        (!!v && v <= 1000 && v >= 1) ||
+        v == 0 ||
+        "A width of at least 1 and at most 1000 pixels is required. Set the input to 0 for no downscaling."
+    ],
+    downscaledWidth: 0,
+
     // Selected thickness and colour for edges with associated rules
     selectedEdgeThickness: 0.1,
     edgeThicknessRules: [
@@ -600,7 +621,8 @@ export default {
       this.dialog = false;
     },
     uploadImage() {
-      var input = event.target;
+      let input = event.target;
+
       if (input.files) {
         // create a new FileReader to read this image and convert to base64 format
         const reader = new FileReader();
@@ -608,6 +630,7 @@ export default {
         reader.onload = e => {
           this.croppedImage = e.target.result;
         };
+
         // Start the reader job - read file as a data url (base64 format)
         reader.readAsDataURL(input.files[0]);
       }
@@ -623,6 +646,7 @@ export default {
       if (this.$refs.form.validate()) {
         this.$emit("submit", {
           selectedImage: this.selectedImage,
+          downscaledWidth: this.downscaledWidth,
           selectedAlgorithm: this.selectedAlgorithm,
           selectedMethod: this.selectedMethod,
           selectedThreshold: this.selectedThreshold,

@@ -202,6 +202,7 @@ export default {
       default: function() {
         return {
           selectedImage: null,
+          downscaledWidth: null,
           selectedMethod: null,
           selectedThreshold: null,
           selectedAlgorithm: null,
@@ -247,7 +248,10 @@ export default {
       // Only continue if there is an actual image
       if (this.configuration.selectedImage) {
         this.loading = true;
-        const result = await uploadImage(this.configuration.selectedImage);
+        const result = await uploadImage(
+          this.configuration.selectedImage,
+          this.configuration.downscaledWidth
+        );
         this.originalImageData = {
           data: [...result.data],
           width: result.width,

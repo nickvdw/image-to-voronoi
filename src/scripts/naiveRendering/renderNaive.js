@@ -113,6 +113,7 @@ export const renderNaive = (
               .attr("height", 1)
               .attr("fill", colourMap[nearestCentroid]);
           });
+        console.log(x, imageData.width);
       });
 
     // TODO: This does not work. See what we can do with it since we colour pixels.
