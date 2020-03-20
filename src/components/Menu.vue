@@ -24,14 +24,16 @@
         <v-text-field
           color="blue-grey darken-3"
           :disabled="!selectedImage"
-          label="Downscale image"
+          :label="
+            `Downscale image (original image width: ${this.imageSizes.width}px)`
+          "
           v-model="downscaledWidth"
           clearable
           class="mb-2"
           :rules="downscaleImageRules"
           type="number"
           :hint="
-            'This sets the new width of the image. Leave 0 for no downscaling.'
+            'This sets the new width of the image. This value is initially the original width of the image.'
           "
         />
         <v-btn
@@ -417,6 +419,7 @@
 </template>
 
 <script>
+import { uploadImage } from "@/scripts/imageHandler";
 import { Cropper } from "vue-advanced-cropper";
 import { mask } from "vue-the-mask";
 export default {
@@ -485,13 +488,6 @@ export default {
         (!!v && v <= 5000 && v >= 1) ||
         "A threshold of at least 1 and at most 5000 is required"
     ],
-    downscaleImageRules: [
-      v =>
-        (!!v && v <= 1000 && v >= 1) ||
-        v == 0 ||
-        "A width of at least 1 and at most 1000 pixels is required. Set the input to 0 for no downscaling."
-    ],
-    downscaledWidth: 0,
 
     // Selected thickness and colour for edges with associated rules
     selectedEdgeThickness: 0.1,
@@ -552,7 +548,14 @@ export default {
     // All tabs
     tabItems: ["Display", "Methods"],
     currentTab: "Display",
-    isLoading: false
+    isLoading: false,
+    imageSizes: { width: 0, height: 0 },
+    downscaledWidth: 0,
+    downscaleImageRules: [
+      v =>
+        (!!v && v <= 0 && v >= 1) ||
+        `A width of at least 1 and at most 0 pixels is required.`
+    ]
   }),
   components: {
     Cropper
@@ -620,7 +623,7 @@ export default {
       };
       this.dialog = false;
     },
-    uploadImage() {
+    async uploadImage() {
       let input = event.target;
 
       if (input.files) {
@@ -634,6 +637,19 @@ export default {
         // Start the reader job - read file as a data url (base64 format)
         reader.readAsDataURL(input.files[0]);
       }
+
+      const result = await uploadImage(this.selectedImage, 0);
+      this.imageSizes = {
+        width: result.width,
+        height: result.height
+      };
+      this.downscaledWidth = this.imageSizes.width;
+
+      this.downscaleImageRules = [
+        v =>
+          (!!v && v <= this.imageSizes.width && v >= 1) ||
+          `A width of at least 1 and at most ${this.imageSizes.width} pixels is required.`
+      ];
     },
     /**
      * Validates whether or not the form is valid (i.e., all REQUIRED
