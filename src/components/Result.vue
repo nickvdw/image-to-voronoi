@@ -165,6 +165,8 @@ import { resultFromNaiveEdgesSobel } from "@/scripts/naiveRendering/centroidsFro
 import { resultFromDelaunayGreyscaling } from "@/scripts/delaunayBasedRendering/centroidsFromGreyscaling";
 import { resultFromDelaunayPoisson } from "@/scripts/delaunayBasedRendering/centroidsFromPoisson";
 import { resultFromNaiveGreyscaling } from "@/scripts/naiveRendering/centroidsFromGreyscaling";
+import { resultFromNaiveCorners } from "@/scripts/naiveRendering/centroidsFromCorners";
+import { resultFromNaivePoisson } from "@/scripts/naiveRendering/centroidsFromPoisson";
 
 import * as d3 from "d3";
 import Fullscreen from "vue-fullscreen/src/component.vue";
@@ -492,6 +494,54 @@ export default {
                 this.configuration.pruningDistance,
                 this.toBeCroppedImageCoordinates,
                 this.configuration.pruningClusterCount
+              );
+            } else if (
+              this.configuration.selectedMethod === "Corner detection"
+            ) {
+              this.update = resultFromNaiveCorners(
+                this.originalImageData,
+                parseInt(this.configuration.selectedThreshold),
+                this.configuration.selectedNumberOfNeighbours,
+                this.configuration.displayEdges,
+                this.configuration.displayCentroids,
+                this.configuration.displayColour,
+                this.configuration.croppedImageData,
+                this.configuration.coordinateMargins,
+                this.configuration.selectedEdgeThickness,
+                this.configuration.selectedEdgeColour,
+                this.configuration.selectedCentroidSize,
+                this.configuration.selectedCentroidColour,
+                this.configuration.selectedCellColour,
+                this.toBeCroppedImageCoordinates,
+                this.configuration.customColour,
+                this.configuration.selectedPruningMethod,
+                this.configuration.pruningThreshold,
+                this.configuration.pruningDistance,
+                this.configuration.pruningClusterCount
+              );
+            } else if (
+              this.configuration.selectedMethod === "Poisson disc sampling"
+            ) {
+              this.update = resultFromNaivePoisson(
+                this.originalImageData,
+                this.configuration.displayEdges,
+                this.configuration.displayCentroids,
+                this.configuration.displayColour,
+                this.configuration.croppedImageData,
+                this.configuration.coordinateMargins,
+                this.configuration.selectedPoissonDistance,
+                this.configuration.selectedEdgeThickness,
+                this.configuration.selectedEdgeColour,
+                this.configuration.selectedCentroidSize,
+                this.configuration.selectedCentroidColour,
+                this.configuration.selectedCellColour,
+                this.toBeCroppedImageCoordinates,
+                this.configuration.customColour,
+                this.configuration.selectedPruningMethod,
+                this.configuration.pruningThreshold,
+                this.configuration.pruningDistance,
+                this.configuration.pruningClusterCount,
+                this.configuration.selectedNumberOfNeighbours
               );
             }
           }

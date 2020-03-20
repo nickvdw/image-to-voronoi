@@ -208,7 +208,7 @@ export const resultFromDelaunayPoisson = (
   return update;
 };
 
-function* poissonDiscSampler(x0, y0, x1, y1, radius) {
+export function* poissonDiscSampler(x0, y0, x1, y1, radius) {
   const k = 30; // maximum number of samples before rejection
   const width = x1 - x0;
   const height = y1 - y0;

@@ -425,7 +425,12 @@ export default {
       "Based on greyscale intensities",
       "Poisson disc sampling"
     ],
-    naiveMethods: ["Based on greyscale intensities", "Edge detection"],
+    naiveMethods: [
+      "Based on greyscale intensities",
+      "Edge detection",
+      "Corner detection",
+      "Poisson disc sampling"
+    ],
     methodRules: [v => !!v || "A method is required"],
     selectedMethod: "Corner detection",
     // Available methods for centroid pruning
