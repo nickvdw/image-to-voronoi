@@ -118,6 +118,9 @@ export const uploadImage = (image, downscaledWidth) => {
           oc.height = cur.height;
           octx.drawImage(image, 0, 0, cur.width, cur.height);
 
+          // Quickly reduce the dize by 50% each time in few iterations until the size is less then
+          // 2x time the target size - the motivation for it, is to reduce the aliasing that would have been
+          // created with direct reduction of very big image to small image
           while (cur.width * 0.5 > downscaledWidth) {
             cur = {
               width: Math.floor(cur.width * 0.5),
@@ -136,8 +139,23 @@ export const uploadImage = (image, downscaledWidth) => {
             );
           }
 
-          // context.drawImage(image, 0, 0);
-          const imageData = octx.getImageData(0, 0, cur.width, cur.height);
+          context.drawImage(
+            oc,
+            0,
+            0,
+            cur.width,
+            cur.height,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+          );
+          const imageData = context.getImageData(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+          );
           resolve(imageData);
         });
         image.onerror = reject;
