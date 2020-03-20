@@ -147,8 +147,11 @@
             class="cropper"
             id="cropper"
             ref="cropper"
+            :restrictions="pixelsRestriction"
+            :minHeight="1"
+            :minWidth="1"
             :src="croppedImage"
-          ></cropper>
+          />
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -165,6 +168,8 @@ import { resultFromNaiveEdgesSobel } from "@/scripts/naiveRendering/centroidsFro
 import { resultFromDelaunayGreyscaling } from "@/scripts/delaunayBasedRendering/centroidsFromGreyscaling";
 import { resultFromDelaunayPoisson } from "@/scripts/delaunayBasedRendering/centroidsFromPoisson";
 import { resultFromNaiveGreyscaling } from "@/scripts/naiveRendering/centroidsFromGreyscaling";
+import { resultFromNaiveCorners } from "@/scripts/naiveRendering/centroidsFromCorners";
+import { resultFromNaivePoisson } from "@/scripts/naiveRendering/centroidsFromPoisson";
 
 import * as d3 from "d3";
 import Fullscreen from "vue-fullscreen/src/component.vue";
@@ -200,6 +205,7 @@ export default {
       default: function() {
         return {
           selectedImage: null,
+          downscaledWidth: null,
           selectedMethod: null,
           selectedThreshold: null,
           selectedAlgorithm: null,
@@ -245,7 +251,10 @@ export default {
       // Only continue if there is an actual image
       if (this.configuration.selectedImage) {
         this.loading = true;
-        const result = await uploadImage(this.configuration.selectedImage);
+        const result = await uploadImage(
+          this.configuration.selectedImage,
+          this.configuration.downscaledWidth
+        );
         this.originalImageData = {
           data: [...result.data],
           width: result.width,
@@ -273,8 +282,13 @@ export default {
         type: "dataURL"
       });
     },
+    pixelsRestriction({ minWidth, minHeight }) {
+      return {
+        minWidth: minWidth,
+        minHeight: minHeight
+      };
+    },
     submitCrop() {
-      console.log("lol");
       // Obtain the coordinates of the cropped image selection
       const { coordinates } = this.$refs.cropper.getResult();
 
@@ -486,6 +500,54 @@ export default {
                 this.configuration.pruningDistance,
                 this.toBeCroppedImageCoordinates,
                 this.configuration.pruningClusterCount
+              );
+            } else if (
+              this.configuration.selectedMethod === "Corner detection"
+            ) {
+              this.update = resultFromNaiveCorners(
+                this.originalImageData,
+                parseInt(this.configuration.selectedThreshold),
+                this.configuration.selectedNumberOfNeighbours,
+                this.configuration.displayEdges,
+                this.configuration.displayCentroids,
+                this.configuration.displayColour,
+                this.configuration.croppedImageData,
+                this.configuration.coordinateMargins,
+                this.configuration.selectedEdgeThickness,
+                this.configuration.selectedEdgeColour,
+                this.configuration.selectedCentroidSize,
+                this.configuration.selectedCentroidColour,
+                this.configuration.selectedCellColour,
+                this.toBeCroppedImageCoordinates,
+                this.configuration.customColour,
+                this.configuration.selectedPruningMethod,
+                this.configuration.pruningThreshold,
+                this.configuration.pruningDistance,
+                this.configuration.pruningClusterCount
+              );
+            } else if (
+              this.configuration.selectedMethod === "Poisson disc sampling"
+            ) {
+              this.update = resultFromNaivePoisson(
+                this.originalImageData,
+                this.configuration.displayEdges,
+                this.configuration.displayCentroids,
+                this.configuration.displayColour,
+                this.configuration.croppedImageData,
+                this.configuration.coordinateMargins,
+                this.configuration.selectedPoissonDistance,
+                this.configuration.selectedEdgeThickness,
+                this.configuration.selectedEdgeColour,
+                this.configuration.selectedCentroidSize,
+                this.configuration.selectedCentroidColour,
+                this.configuration.selectedCellColour,
+                this.toBeCroppedImageCoordinates,
+                this.configuration.customColour,
+                this.configuration.selectedPruningMethod,
+                this.configuration.pruningThreshold,
+                this.configuration.pruningDistance,
+                this.configuration.pruningClusterCount,
+                this.configuration.selectedNumberOfNeighbours
               );
             }
           }
