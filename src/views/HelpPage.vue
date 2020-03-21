@@ -271,7 +271,17 @@
                   4. Cluster-based
                 </v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  Gonna need some help here
+                  The cluster-based approach applies k-means clustering on the
+                  set of centroids to construct k clusters of centroids. Each
+                  cluster has a single centroid (this is not to be confused with
+                  the centroids from the input set of centroids). Let us call
+                  the centroid of a cluster the cluster centroid. As a result of
+                  k-means clustering, we have k cluster centroids. We use these
+                  cluster centroids as the `pruned' set of centroids. The user
+                  can specify the value of k in the graphical user interface. We
+                  use the k-means++ cluster initialisation method to solve the
+                  theoretic shortcomings of a random initialisation method.
+                  Additionally, we perform a maximum of 10.000 iterations.
                 </v-expansion-panel-content>
               </v-expansion-panel>
             </v-expansion-panels>
