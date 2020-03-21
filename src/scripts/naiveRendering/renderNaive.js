@@ -116,16 +116,6 @@ export const renderNaive = (
         console.log(x, imageData.width);
       });
 
-    // TODO: This does not work. See what we can do with it since we colour pixels.
-    // Render the edges with a certain colour and thickness
-    if (displayEdges) {
-      fullSvg
-        .selectAll("path")
-        .style("stroke", selectedEdgeColour)
-        .style("stroke-width", selectedEdgeThickness);
-    }
-
-    // TODO: This does not work. See what we can do with it since we colour pixels.
     // Render the centroids with a certain size and colour
     if (displayCentroids) {
       colouredCentroids.forEach(centroid => {
