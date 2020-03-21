@@ -84,7 +84,7 @@ export const resultFromNaiveCorners = (
     centroids
   );
 
-  update();
+  update(croppedImageData, coordinateMargins, toBeCroppedImageCoordinates);
 
   return update;
 };

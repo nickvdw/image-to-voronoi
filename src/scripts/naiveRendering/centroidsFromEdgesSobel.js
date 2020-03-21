@@ -10,6 +10,7 @@ export const resultFromNaiveEdgesSobel = (
   displayColour,
   croppedImageData,
   coordinateMargins,
+  toBeCroppedImageCoordinates,
   selectedEdgeThickness,
   selectedEdgeColour,
   selectedCentroidSize,
@@ -125,7 +126,7 @@ export const resultFromNaiveEdgesSobel = (
     centroids
   );
 
-  update();
+  update(croppedImageData, coordinateMargins, toBeCroppedImageCoordinates);
 
   return update;
 };

@@ -69,7 +69,7 @@ export const resultFromNaivePoisson = (
     centroids
   );
 
-  update();
+    update(croppedImageData, coordinateMargins, toBeCroppedImageCoordinates);
 
   return update;
 };
