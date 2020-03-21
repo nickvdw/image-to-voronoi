@@ -36,7 +36,7 @@
             'This sets the new width of the image. This value is initially the original width of the image.'
           "
         />
-        <v-btn
+        <!-- <v-btn
           small
           outlined
           block
@@ -44,7 +44,7 @@
           class="white--text mt-2"
         >
           Take a picture with your webcam
-        </v-btn>
+        </v-btn> -->
         <v-btn
           :disabled="!selectedImage"
           small
@@ -529,7 +529,7 @@ export default {
         (!!v && v <= 2000 && v >= 1) ||
         "The distance should be between 1 and 2000 pixels."
     ],
-    selectedSobelThreshold: 40,
+    selectedSobelThreshold: 50,
     sobelThresholdRules: [
       v =>
         (!!v && v >= 0 && v <= 255) ||
@@ -698,18 +698,34 @@ export default {
      */
     reset() {
       // Reset all form inputs
-      this.$refs.form.reset();
+      // this.$refs.form.reset();
       // Emit a submit event with a rest flag to the toolpage
       this.$emit("submit", "reset");
-      // We have to set the default threshold again because it is removed after the reset
-      this.selectedThreshold = 10;
+
+      // Reset everything regarding the image
+      this.selectedImage = null;
+      this.downscaledWidth = 0;
+      this.downscaleImageRules = [];
+      this.imageSizes.width = 0;
+
+      // Reset other stuff back to defaults
+      this.selectedAlgorithm = "Delaunay triangulation";
+      this.selectedMethod = "Edge detection";
+      this.selectedPruningMethod = "Random";
+      this.displayEdges = false;
+      this.displayCentroids = false;
+      this.customColour = false;
+      this.selectedSobelThreshold = 50;
+      this.selectedThreshold = 50;
       this.selectedNumberOfNeighbours = 1;
       this.selectedEdgeThickness = 1;
       this.selectedCentroidSize = 1;
       this.currentTab = "Display";
+      this.displayColour = false;
       this.displayColour = true;
-      this.pruningThreshold = 90;
+      this.pruningThreshold = 80;
       this.pruningDistance = 10;
+      this.valid = true;
     }
   }
 };
