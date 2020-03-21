@@ -460,7 +460,8 @@ export default {
                 this.configuration.pruningDistance,
                 this.configuration.croppedImageData,
                 this.configuration.coordinateMargins,
-                this.toBeCroppedImageCoordinates
+                this.toBeCroppedImageCoordinates,
+                this.configuration.pruningClusterCount
               );
             } else if (this.configuration.selectedMethod === "Edge detection") {
               this.update = resultFromNaiveEdgesSobel(
@@ -471,6 +472,7 @@ export default {
                 this.configuration.displayColour,
                 this.configuration.croppedImageData,
                 this.configuration.coordinateMargins,
+                this.toBeCroppedImageCoordinates,
                 this.configuration.selectedEdgeThickness,
                 this.configuration.selectedEdgeColour,
                 this.configuration.selectedCentroidSize,
@@ -480,7 +482,6 @@ export default {
                 this.configuration.selectedPruningMethod,
                 this.configuration.pruningThreshold,
                 this.configuration.pruningDistance,
-                this.toBeCroppedImageCoordinates,
                 this.configuration.pruningClusterCount
               );
             } else if (

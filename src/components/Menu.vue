@@ -36,7 +36,7 @@
             'This sets the new width of the image. This value is initially the original width of the image.'
           "
         />
-        <v-btn
+        <!-- <v-btn
           small
           outlined
           block
@@ -44,7 +44,7 @@
           class="white--text mt-2"
         >
           Take a picture with your webcam
-        </v-btn>
+        </v-btn> -->
         <v-btn
           :disabled="!selectedImage"
           small
@@ -396,13 +396,13 @@
     </v-card-actions>
 
     <!-- Dialog stuff -->
-    <v-dialog v-model="dialog" transition="dialog-bottom-transition">
+    <v-dialog v-model="dialog" fullscreen transition="dialog-bottom-transition">
       <v-card>
         <v-card-title class="headline"
           >Select the important region</v-card-title
         >
         <v-card-text>
-          <cropper class="cropper" ref="cropper" :src="croppedImage"></cropper>
+          <cropper class="cropper" ref="cropper" :src="croppedImage" />
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -448,7 +448,7 @@ export default {
       "Poisson disc sampling"
     ],
     methodRules: [v => !!v || "A method is required"],
-    selectedMethod: "Corner detection",
+    selectedMethod: "Edge detection",
     // Available methods for centroid pruning
     pruningMethods: [
       "Random",
@@ -458,7 +458,7 @@ export default {
       "None"
     ],
     // % of centroids to prune 0 - 100
-    pruningThreshold: 50,
+    pruningThreshold: 90,
     pruningDistance: 10,
     selectedPruningMethod: "Random",
     pruningClusterCount: 250,
@@ -529,7 +529,7 @@ export default {
         (!!v && v <= 2000 && v >= 1) ||
         "The distance should be between 1 and 2000 pixels."
     ],
-    selectedSobelThreshold: 40,
+    selectedSobelThreshold: 50,
     sobelThresholdRules: [
       v =>
         (!!v && v >= 0 && v <= 255) ||
@@ -698,18 +698,37 @@ export default {
      */
     reset() {
       // Reset all form inputs
-      this.$refs.form.reset();
+      // this.$refs.form.reset();
       // Emit a submit event with a rest flag to the toolpage
       this.$emit("submit", "reset");
-      // We have to set the default threshold again because it is removed after the reset
-      this.selectedThreshold = 10;
+
+      // Reset everything regarding the image
+      this.selectedImage = null;
+      this.downscaledWidth = 0;
+      this.downscaleImageRules = [];
+      this.imageSizes.width = 0;
+      this.imageSizes.heigth = 0;
+
+      // Reset other stuff back to defaults
+      this.selectedAlgorithm = "Delaunay triangulation";
+      this.selectedMethod = "Edge detection";
+      this.selectedPruningMethod = "Random";
+      this.imageData = null;
+
+      this.displayEdges = false;
+      this.displayCentroids = false;
+      this.customColour = false;
+      this.selectedSobelThreshold = 50;
+      this.selectedThreshold = 50;
       this.selectedNumberOfNeighbours = 1;
       this.selectedEdgeThickness = 1;
       this.selectedCentroidSize = 1;
       this.currentTab = "Display";
+      this.displayColour = false;
       this.displayColour = true;
-      this.pruningThreshold = 90;
+      this.pruningThreshold = 80;
       this.pruningDistance = 10;
+      this.valid = true;
     }
   }
 };
@@ -718,9 +737,14 @@ export default {
 <style>
 .cropper {
   background: #ddd;
+  height: 100% !important;
 }
 /* This removes the animation but also the weird popup */
 .v-window__container {
+  height: 100% !important;
+}
+
+.vue-advanced-cropper__area {
   height: 100% !important;
 }
 </style>
