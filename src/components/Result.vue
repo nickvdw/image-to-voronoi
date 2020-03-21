@@ -83,6 +83,7 @@
         </v-col>
         <v-col cols="6">
           <v-progress-linear
+            v-show="this.loading"
             indeterminate
             rounded
             color="blue-grey darken-3"
@@ -116,9 +117,6 @@
             v-show="fullscreen || dialog || saving"
           />
         </fullscreen>
-      </div>
-      <div>
-        <canvas v-show="this.displayEdges" id="findEdges" />
       </div>
     </v-card-text>
 
