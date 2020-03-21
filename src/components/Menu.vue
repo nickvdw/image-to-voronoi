@@ -396,13 +396,13 @@
     </v-card-actions>
 
     <!-- Dialog stuff -->
-    <v-dialog v-model="dialog" transition="dialog-bottom-transition">
+    <v-dialog v-model="dialog" fullscreen transition="dialog-bottom-transition">
       <v-card>
         <v-card-title class="headline"
           >Select the important region</v-card-title
         >
         <v-card-text>
-          <cropper class="cropper" ref="cropper" :src="croppedImage"></cropper>
+          <cropper class="cropper" ref="cropper" :src="croppedImage" />
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -448,7 +448,7 @@ export default {
       "Poisson disc sampling"
     ],
     methodRules: [v => !!v || "A method is required"],
-    selectedMethod: "Corner detection",
+    selectedMethod: "Edge detection",
     // Available methods for centroid pruning
     pruningMethods: [
       "Random",
@@ -458,7 +458,7 @@ export default {
       "None"
     ],
     // % of centroids to prune 0 - 100
-    pruningThreshold: 50,
+    pruningThreshold: 90,
     pruningDistance: 10,
     selectedPruningMethod: "Random",
     pruningClusterCount: 250,
@@ -707,11 +707,14 @@ export default {
       this.downscaledWidth = 0;
       this.downscaleImageRules = [];
       this.imageSizes.width = 0;
+      this.imageSizes.heigth = 0;
 
       // Reset other stuff back to defaults
       this.selectedAlgorithm = "Delaunay triangulation";
       this.selectedMethod = "Edge detection";
       this.selectedPruningMethod = "Random";
+      this.imageData = null;
+
       this.displayEdges = false;
       this.displayCentroids = false;
       this.customColour = false;
@@ -734,9 +737,14 @@ export default {
 <style>
 .cropper {
   background: #ddd;
+  height: 100% !important;
 }
 /* This removes the animation but also the weird popup */
 .v-window__container {
+  height: 100% !important;
+}
+
+.vue-advanced-cropper__area {
   height: 100% !important;
 }
 </style>
