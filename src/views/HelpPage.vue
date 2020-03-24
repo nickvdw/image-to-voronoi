@@ -191,7 +191,7 @@
                   This method is comparable to the corner detection method,
                   except that this looks for edges in the image. This is
                   performed using the Sobel method. More details about how this
-                  method w orks can be found
+                  method works can be found
                   <a
                     href="#"
                     onclick='window.open("https://en.wikipedia.org/wiki/Sobel_operator"); return false;'
