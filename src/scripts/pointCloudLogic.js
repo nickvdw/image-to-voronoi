@@ -24,7 +24,7 @@ export const pruneCentroidsByMethod = (
       return pruned;
     case "Distance-based":
       // pruned = distanceDelete(centroids, pruningDistance, true);
-      pruned = distanceDelete(centroids, pruningDistance, false);
+      pruned = distanceDelete(centroids, pruningDistance, true);
       console.log("# of centroids after pruning " + pruned.length);
       return pruned;
     case "Cluster-based":
@@ -98,13 +98,7 @@ export const kMeansClusterDelete = (centroids, k = 100) => {
     formatted.push([centroid.x, centroid.y]);
   });
   // Pick centroids randomly, do 10 iterations, use our distance function for the distance computations
-  const clusters = skmeans(
-    formatted,
-    k,
-    "kmrand",
-    10,
-    computeEuclideanDistance
-  );
+  const clusters = skmeans(formatted, k, "kmpp", 5, computeEuclideanDistance);
   // Return the found centroid of each cluster in the correct format
   return clusters.centroids.map(centroid => {
     return { x: centroid[0], y: centroid[1] };
