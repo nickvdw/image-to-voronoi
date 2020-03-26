@@ -1,0 +1,8 @@
+In case one cannot view the README.md file that contains
+all information about installing and running the application,
+one can navigate to the following link:
+
+https://github.com/nickvdw/image-to-voronoi/blob/master/README.md
+
+This link contains the same content as the READMe.md file and with
+working mark-up.
