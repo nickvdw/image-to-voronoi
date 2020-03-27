@@ -91,8 +91,8 @@ export const uploadImage = (image, downscaledWidth) => {
   return new Promise((resolve, reject) => {
     const canvas = document.createElement("CANVAS");
     const context = canvas.getContext("2d");
-    const oc = document.createElement("canvas");
-    const octx = oc.getContext("2d");
+    // const oc = document.createElement("canvas");
+    // const octx = oc.getContext("2d");
 
     const reader = new FileReader();
 
@@ -103,78 +103,36 @@ export const uploadImage = (image, downscaledWidth) => {
       // Sets image source to the read data url
       image.src = event.target.result;
 
-      if (downscaledWidth > 0) {
-        // Draw the image onto the canvas so we can retrieve pixel data
-        image.addEventListener("load", () => {
-          canvas.width = image.width;
-          canvas.height = image.height;
-
-          let cur = {
-            width: Math.floor(image.width * 0.5),
-            height: Math.floor(image.height * 0.5)
-          };
-
-          oc.width = cur.width;
-          oc.height = cur.height;
-          octx.drawImage(image, 0, 0, cur.width, cur.height);
-
-          // Quickly reduce the dize by 50% each time in few iterations until the size is less then
-          // 2x time the target size - the motivation for it, is to reduce the aliasing that would have been
-          // created with direct reduction of very big image to small image
-          while (cur.width * 0.5 > downscaledWidth) {
-            cur = {
-              width: Math.floor(cur.width * 0.5),
-              height: Math.floor(cur.height * 0.5)
-            };
-            octx.drawImage(
-              oc,
-              0,
-              0,
-              cur.width * 2,
-              cur.height * 2,
-              0,
-              0,
-              cur.width,
-              cur.height
-            );
-          }
-
+      // Draw the image onto the canvas so we can retrieve pixel data
+      image.addEventListener("load", () => {
+        canvas.width = image.width;
+        canvas.height = image.height;
+        let imageData;
+        if (downscaledWidth) {
           context.drawImage(
-            oc,
-            0,
-            0,
-            cur.width,
-            cur.height,
-            0,
-            0,
-            canvas.width,
-            canvas.height
-          );
-          const imageData = context.getImageData(
-            0,
-            0,
-            canvas.width,
-            canvas.height
-          );
-          resolve(imageData);
-        });
-        image.onerror = reject;
-      } else {
-        // Draw the image onto the canvas so we can retrieve pixel data
-        image.addEventListener("load", () => {
-          canvas.width = image.width;
-          canvas.height = image.height;
-          context.drawImage(image, 0, 0);
-          const imageData = context.getImageData(
+            image,
             0,
             0,
             image.width,
-            image.height
+            image.height,
+            0,
+            0,
+            downscaledWidth,
+            canvas.height * (downscaledWidth / canvas.width)
           );
-          resolve(imageData);
-        });
-        image.onerror = reject;
-      }
+          imageData = context.getImageData(
+            0,
+            0,
+            downscaledWidth,
+            canvas.height * (downscaledWidth / canvas.width)
+          );
+        } else {
+          context.drawImage(image, 0, 0);
+          imageData = context.getImageData(0, 0, image.width, image.height);
+        }
+        resolve(imageData);
+      });
+      image.onerror = reject;
     };
 
     // Only use the image when there is an actual image

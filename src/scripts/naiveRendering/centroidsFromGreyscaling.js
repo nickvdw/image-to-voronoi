@@ -24,6 +24,7 @@ export const resultFromNaiveGreyscaling = (
   pruningDistance,
   croppedImageData,
   coordinateMargins,
+  toBeCroppedImageCoordinates,
   pruningClusterCount
 ) => {
   let imageData = originalImageData;
@@ -81,7 +82,7 @@ export const resultFromNaiveGreyscaling = (
     centroids
   );
 
-  update();
+  update(croppedImageData, coordinateMargins, toBeCroppedImageCoordinates);
 
   return update;
 };
