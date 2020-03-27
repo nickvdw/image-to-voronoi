@@ -611,12 +611,44 @@ export default {
       // Obtain the coordinates of the cropped image selection
       const { coordinates, canvas } = this.$refs.cropper.getResult();
       const ctx = canvas.getContext("2d");
-      this.imageData = ctx.getImageData(
-        0,
-        0,
-        coordinates.width,
-        coordinates.height
-      );
+
+      const image = new Image();
+      image.src = this.croppedImage;
+
+      console.log(this.downscaledWidth);
+      if (this.downscaledWidth) {
+        // Draw the downscaled image
+        ctx.drawImage(
+          image,
+          0,
+          0,
+          image.width,
+          image.height,
+          0,
+          0,
+          this.downscaledWidth,
+          coordinates.height /
+            (canvas.height * (this.downscaledWidth / canvas.width))
+        );
+        // Get the important region from the downscaled image
+        this.imageData = ctx.getImageData(
+          0,
+          0,
+          // Get correct coordinates???
+          coordinates.width / (coordinates.width / this.downscaledWidth),
+          coordinates.height /
+            (coordinates.height /
+              (canvas.height * (this.downscaledWidth / canvas.width)))
+        );
+        console.log(this.imageData);
+      } else {
+        this.imageData = ctx.getImageData(
+          0,
+          0,
+          coordinates.width,
+          coordinates.height
+        );
+      }
       this.coordinateMargins = {
         width: coordinates.left,
         height: coordinates.top
