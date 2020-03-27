@@ -62,9 +62,20 @@ export const renderNaive = (
       }
     }
 
+    // Add margin to the centroids if we use the cropped image
+    if (croppedImageData && coordinateMargins) {
+      centroids = centroids.map(centroid => {
+        return {
+          x: centroid.x + coordinateMargins.width,
+          y: centroid.y + coordinateMargins.height,
+          colour: centroid.colour
+        };
+      });
+    }
+
     // Obtain colours for the centroids
     const colouredCentroids = colourCentroidsByCoordinates(
-      imageData,
+      originalImageData,
       centroids
     );
 
@@ -87,12 +98,12 @@ export const renderNaive = (
           )
         );
     }
-
+    console.log(imageData);
     // Loop over all pixels and compute the nearest centroid
-    Array(imageData.width)
+    Array(originalImageData.width)
       .fill()
       .map((_, x) => {
-        Array(imageData.height)
+        Array(originalImageData.height)
           .fill()
           .map((_, y) => {
             // Compute the nearest centroid for each pixel
@@ -113,7 +124,7 @@ export const renderNaive = (
               .attr("height", 1)
               .attr("fill", colourMap[nearestCentroid]);
           });
-        console.log(x, imageData.width);
+        console.log(x, originalImageData.width);
       });
 
     // Render the centroids with a certain size and colour

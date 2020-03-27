@@ -42,7 +42,7 @@ export const resultFromNaiveGreyscaling = (
 
   // Greyscale the image
   const greyScaleImageData = greyScaleImage(imageDataCopy);
-  console.log(greyScaleImageData);
+
   // Compute the centroid based on the greyscaled intensities
   let centroids = [
     ...computeCentroidsFromGreyScale(
