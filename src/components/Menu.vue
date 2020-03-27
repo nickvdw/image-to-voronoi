@@ -614,8 +614,24 @@ export default {
 
       const image = new Image();
       image.src = this.croppedImage;
+      console.log(coordinates);
+      let downscaledHeight = Math.floor(
+        canvas.height * (this.downscaledWidth / canvas.width)
+      );
 
-      console.log(this.downscaledWidth);
+      let downscaledCoordinates = {
+        left: Math.floor(
+          (coordinates.left / image.width) * this.downscaledWidth
+        ),
+        top: Math.floor((coordinates.top / image.height) * downscaledHeight),
+        width: Math.floor(
+          (coordinates.width / image.width) * this.downscaledWidth
+        ),
+        height: Math.floor(
+          (coordinates.height / image.height) * downscaledHeight
+        )
+      };
+      console.log(downscaledCoordinates);
       if (this.downscaledWidth) {
         // Draw the downscaled image
         ctx.drawImage(
@@ -627,20 +643,27 @@ export default {
           0,
           0,
           this.downscaledWidth,
-          coordinates.height /
-            (canvas.height * (this.downscaledWidth / canvas.width))
+          downscaledHeight
         );
         // Get the important region from the downscaled image
         this.imageData = ctx.getImageData(
           0,
           0,
           // Get correct coordinates???
-          coordinates.width / (coordinates.width / this.downscaledWidth),
-          coordinates.height /
-            (coordinates.height /
-              (canvas.height * (this.downscaledWidth / canvas.width)))
+          downscaledCoordinates.width,
+          downscaledCoordinates.height
         );
-        console.log(this.imageData);
+
+        this.coordinateMargins = {
+          width: downscaledCoordinates.left,
+          height: downscaledCoordinates.top
+        };
+        console.log(
+          coordinates.left / (coordinates.left / this.downscaledWidth)
+        );
+        console.log("unchanged coords", coordinates.left, coordinates.top);
+        console.log("Margins ", this.coordinateMargins);
+        console.log("resulting image data ", this.imageData);
       } else {
         this.imageData = ctx.getImageData(
           0,
@@ -648,11 +671,12 @@ export default {
           coordinates.width,
           coordinates.height
         );
+        this.coordinateMargins = {
+          width: coordinates.left,
+          height: coordinates.top
+        };
       }
-      this.coordinateMargins = {
-        width: coordinates.left,
-        height: coordinates.top
-      };
+
       this.dialog = false;
     },
     async uploadImage() {
