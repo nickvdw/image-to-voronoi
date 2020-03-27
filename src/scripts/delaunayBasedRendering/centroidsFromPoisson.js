@@ -24,21 +24,21 @@ export const resultFromDelaunayPoisson = (
   pruningDistance,
   pruningClusterCount
 ) => {
+  let imageData = originalImageData;
+  if (croppedImageData && coordinateMargins) {
+    imageData = croppedImageData;
+  }
+
   // Compute centroids basied on poisson disc sampling with a certain radius (distance)
   let centroids = [
     ...poissonDiscSampler(
       0,
       0,
-      originalImageData.width,
-      originalImageData.height,
+      imageData.width,
+      imageData.height,
       poissonDistance
     )
   ];
-
-  let imageData = originalImageData;
-  if (croppedImageData && coordinateMargins) {
-    imageData = croppedImageData;
-  }
 
   // Apply pruning
   centroids = pruneCentroidsByMethod(
@@ -49,8 +49,16 @@ export const resultFromDelaunayPoisson = (
     pruningClusterCount
   );
 
-  // Obtain colours for the centroids
-  let colouredCentroids = colourCentroidsByCoordinates(imageData, centroids);
+  // Add margin to the centroids if we use the cropped image
+  if (croppedImageData && coordinateMargins) {
+    centroids = centroids.map(centroid => {
+      return {
+        x: centroid.x + coordinateMargins.width,
+        y: centroid.y + coordinateMargins.height,
+        colour: centroid.colour
+      };
+    });
+  }
 
   // Redraw the canvas every time the 'update' method is called
   const update = (
@@ -94,7 +102,7 @@ export const resultFromDelaunayPoisson = (
     }
 
     // Recolour centroids
-    colouredCentroids = colourCentroidsByCoordinates(
+    const colouredCentroids = colourCentroidsByCoordinates(
       originalImageData,
       centroids
     );

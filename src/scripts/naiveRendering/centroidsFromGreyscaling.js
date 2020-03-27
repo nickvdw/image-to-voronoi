@@ -15,8 +15,9 @@ export const resultFromNaiveGreyscaling = (
   selectedEdgeColour,
   selectedCentroidSize,
   selectedCentroidColour,
-  // selectedCellColour
+  selectedCellColour,
   selectedGreyscaleThreshold,
+  inverseThreshold,
   selectedGreyscaleX,
   selectedGreyscaleY,
   selectedPruningMethod,
@@ -34,19 +35,20 @@ export const resultFromNaiveGreyscaling = (
 
   // This copy is needed as the greyscaleImage method edits the data
   const imageDataCopy = {
-    ...imageData,
+    width: imageData.width,
+    height: imageData.height,
     data: [...imageData.data]
   };
 
   // Greyscale the image
   const greyScaleImageData = greyScaleImage(imageDataCopy);
-
+  console.log(greyScaleImageData);
   // Compute the centroid based on the greyscaled intensities
   let centroids = [
     ...computeCentroidsFromGreyScale(
       greyScaleImageData,
       selectedGreyscaleThreshold,
-      false,
+      inverseThreshold,
       selectedGreyscaleX,
       selectedGreyscaleY
     )

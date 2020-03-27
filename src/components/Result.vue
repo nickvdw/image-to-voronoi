@@ -443,7 +443,7 @@ export default {
             ) {
               this.update = resultFromNaiveGreyscaling(
                 this.originalImageData,
-                this.configuration.selectedNumberOfNeighbours,
+                this.configuration.numberOfNeighbours,
                 this.configuration.displayEdges,
                 this.configuration.displayCentroids,
                 this.configuration.displayColour,
@@ -451,8 +451,9 @@ export default {
                 this.configuration.selectedEdgeColour,
                 this.configuration.selectedCentroidSize,
                 this.configuration.selectedCentroidColour,
-                // this.configuration.selectedCellColour,
+                this.configuration.selectedCellColour,
                 this.configuration.selectedGreyscaleThreshold,
+                this.configuration.inverseThreshold,
                 this.configuration.selectedGreyscaleX,
                 this.configuration.selectedGreyscaleY,
                 this.configuration.selectedPruningMethod,
