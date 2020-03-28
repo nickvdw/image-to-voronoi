@@ -616,14 +616,20 @@ export default {
       // We create this canvas so that we never overwrite the OG image in the region selector
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       const image = new Image();
       image.src = this.croppedImage;
-
+      console.log(
+        "DOWN WIDTH & OG IMAGE WIDTH ",
+        this.downscaledWidth,
+        image.width
+      );
       let downscaledHeight = Math.floor(
-        canvas.height * (this.downscaledWidth / canvas.width)
+        image.height * (this.downscaledWidth / image.width)
       );
 
+      // Downscaled coordinates of the cropper
       let downscaledCoordinates = {
         width: Math.floor(
           (coordinates.width / image.width) * this.downscaledWidth
@@ -637,6 +643,8 @@ export default {
         top: Math.floor((coordinates.top / image.height) * downscaledHeight)
       };
       console.log(this.downscaledWidth, downscaledHeight);
+      console.log(downscaledCoordinates);
+      console.log(coordinates);
       if (this.downscaledWidth !== image.width) {
         // Draw the downscaled image
         ctx.drawImage(
@@ -653,8 +661,8 @@ export default {
 
         // Get the important region from the downscaled image
         this.imageData = ctx.getImageData(
-          0,
-          0,
+          downscaledCoordinates.left,
+          downscaledCoordinates.top,
           downscaledCoordinates.width,
           downscaledCoordinates.height
         );
