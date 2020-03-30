@@ -618,58 +618,62 @@ export default {
       const ctx = canvas.getContext("2d");
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      const image = new Image();
-      image.src = this.croppedImage;
-      console.log(
-        "DOWN WIDTH & OG IMAGE WIDTH ",
-        this.downscaledWidth,
-        image.width
-      );
-      let downscaledHeight = Math.floor(
-        image.height * (this.downscaledWidth / image.width)
-      );
+      if (this.downscaledWidth) {
+        console.log("Downscale + region selected");
 
-      // Downscaled coordinates of the cropper
-      let downscaledCoordinates = {
-        width: Math.floor(
-          (coordinates.width / image.width) * this.downscaledWidth
-        ),
-        height: Math.floor(
-          (coordinates.height / image.height) * downscaledHeight
-        ),
-        left: Math.floor(
-          (coordinates.left / image.width) * this.downscaledWidth
-        ),
-        top: Math.floor((coordinates.top / image.height) * downscaledHeight)
-      };
-      console.log(this.downscaledWidth, downscaledHeight);
-      console.log(downscaledCoordinates);
-      console.log(coordinates);
-      if (this.downscaledWidth !== image.width) {
-        // Draw the downscaled image
-        ctx.drawImage(
-          image,
-          0,
-          0,
-          image.width,
-          image.height,
-          0,
-          0,
-          this.downscaledWidth,
-          downscaledHeight
-        );
+        const image = new Image();
+        // This is the full image
+        image.src = this.croppedImage;
+        image.onload = () => {
+          let downscaledHeight = Math.floor(
+            image.height * (this.downscaledWidth / image.width)
+          );
 
-        // Get the important region from the downscaled image
-        this.imageData = ctx.getImageData(
-          downscaledCoordinates.left,
-          downscaledCoordinates.top,
-          downscaledCoordinates.width,
-          downscaledCoordinates.height
-        );
+          // Downscaled coordinates of the cropper
+          let downscaledCoordinates = {
+            width: Math.floor(
+              (coordinates.width / image.width) * this.downscaledWidth
+            ),
+            height: Math.floor(
+              (coordinates.height / image.height) * downscaledHeight
+            ),
+            left: Math.floor(
+              (coordinates.left / image.width) * this.downscaledWidth
+            ),
+            top: Math.floor((coordinates.top / image.height) * downscaledHeight)
+          };
+          canvas.height = downscaledHeight;
+          canvas.width = this.downscaledWidth;
+          console.log(downscaledCoordinates);
+          console.log(coordinates);
+          console.log(image.width, image.height);
+          // Draw the downscaled image
+          ctx.drawImage(
+            image,
+            0,
+            0,
+            image.width,
+            image.height,
+            0,
+            0,
+            this.downscaledWidth,
+            downscaledHeight
+          );
+          console.log(this.downscaledWidth, downscaledHeight);
+          console.log(canvas.toDataURL());
 
-        this.coordinateMargins = {
-          width: downscaledCoordinates.left,
-          height: downscaledCoordinates.top
+          // Get the important region from the downscaled image
+          this.imageData = ctx.getImageData(
+            downscaledCoordinates.left,
+            downscaledCoordinates.top,
+            downscaledCoordinates.width,
+            downscaledCoordinates.height
+          );
+
+          this.coordinateMargins = {
+            width: downscaledCoordinates.left,
+            height: downscaledCoordinates.top
+          };
         };
       } else {
         console.log("only 1");
