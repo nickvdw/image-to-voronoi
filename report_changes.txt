@@ -1,10 +1,11 @@
 We have improved the final report based on Michael Burch's feedback.
 
 We describe these changes on a high level in this document.
-The list of detailed changes is located in the 'detailed_changes.txt' file.
+The list of detailed changes is located in the 'detailed_report_changes.txt' file.
 
 Changes:
 - We changed our shortened names to our full names (example: J. van Lith -> John van Lith).
+- We went from British English to American English.
 - We fixed some typos.
 - We shortened paragraphs where the paragraphs ended on a line with only a few (less than 3) words such that we could add an example of order-k Voronoi diagrams for 1 <= k <= 6.
 - We did a final proofread.
