@@ -1,0 +1,80 @@
+This is a list of more detailed changes.
+
+We changed all British English into American English.
+
+This includes the following words:
+emphasise -> emphasize
+customisable -> customizable
+customisation -> customization
+customise -> customize
+colour(s) -> color(s)
+generalisation -> generalization
+neighbour(s) -> neighbor(s)
+optimisation -> optimization
+initialising -> initializing
+behaviour -> behavior
+centre(s) -> center(s)
+
+We have also changed many sentences in order to create some extra space for examples of order-k Voronoi diagrams with 1 <= k <= 6.
+The detailed changes on a sentence level are located below. For each group of two sentences, the first sentence is the original sentence and the second sentence is the modified sentence.
+Note that these sentences are not in any particular order. We also shortened paragraphs where we ended with only a few (<3) words on a new line by removing "filler" words.
+
+In this section, the application refers to the application as a whole, whereas the tool refers to the \textit{tool} page in the application that leverages the capability to generate a Voronoi diagram from an image.
+In this section, the application refers to the application as a whole. In contrast, the tool refers to the \textit{tool} page in the application that leverages the capability to generate a Voronoi diagram from an image.
+
+This is quite long and because of it we are not easily able to experiment with many different values.
+Because of this rather long rendering time, we are not easily able to experiment with many different values. 
+
+We are still not quite satisfied with the Voronoi diagram because some Voronoi [...]
+We are still not entirely satisfied with the Voronoi diagram because some Voronoi [...]
+
+Next to the \textit{tool} page which can be used to transform the image into a Voronoi diagram, there are \textit{help} and \textit{about} pages, [...]
+Next to the \textit{tool} page, which can be used to transform the image into a Voronoi diagram, there are \textit{help} and \textit{about} pages, [...]
+
+This collection of configuration of parameters results in a highly customisable transformation from image to Voronoi diagram.
+This collection of configuration parameters results in a highly customizable transformation from an image to a Voronoi diagram.
+
+Blob detection tries to detecting pixels in an image that differ with respect to specific properties, such as brightness or colour, compared to surrounding pixels \cite{kong2013generalized}. 
+Blob detection tries to detect pixels in an image that differ with respect to specific properties, such as brightness or color, compared to surrounding pixels \cite{kong2013generalized}. 
+
+Consequently, the user can navigate to the \textit{help}, and \textit{about} pages by clicking on the buttons located at (2) and (3) respectively.
+Consequently, the user can navigate to the \textit{help} and \textit{about} pages by clicking on the buttons located at (2) and (3), respectively.
+
+After pressing the \textit{submit} button in the dialogue element, all centroids located in the customisable rectangle will be removed from the set of centroids to consider for construction the Voronoi diagram.
+After pressing the \textit{submit} button in the dialogue element, all centroids located in the customizable rectangle will be removed from the set of centroids that are used for the construction of the Voronoi diagram.
+
+In our case, the introduction of the order-$k$ Voronoi diagram yields in an additional parameter the user can play around with to construct aesthetically pleasing results.
+In our case, the introduction of the order-$k$ Voronoi diagram yields an additional parameter the user can play around with to construct aesthetically pleasing results.
+
+We have tight control on the number of pruned centroids together with the specific approach that is used to prune, [...]
+We have tight control over the number of pruned centroids together with the specific approach that is used to prune, [...]
+
+The user can specifcy the percentage of centroids in the graphical user interface.
+The user can specify the percentage of centroids in the graphical user interface.
+
+It performs a sampling process where each pixel in the image is subjected to an independent Bernoulli trial which determines whether the pixel becomes a centroid or not with a minimum distance between each centroid.
+It performs a sampling process where each pixel in the image is subjected to an independent Bernoulli trial, which determines whether the pixel becomes a centroid or not with a minimum distance between each centroid. 
+
+In the graphical user interface, we let the user set a threshold ranging from 1 to 100 that corresponds to the threshold used by FAST.
+In the graphical user interface, we let the user set a threshold ranging from 1 to 100, which corresponds to the threshold used by FAST.
+
+This is less so the case for \textit{corner detection} and is likely because \textit{corner detection} leads to a lower number of centroids compared to these other methods.
+This occurs less for \textit{corner detection} and is likely because \textit{corner detection} leads to a lower number of centroids compared to these other methods.
+
+Furthermore, it can easily be extended into an order-$k$ Voronoi diagram as we will see later.
+Furthermore, it can easily be extended into an order-$k$ Voronoi diagram, as we will see later.
+
+The result of a transformation from an image to a Voronoi diagram should be customisable such that the user can modify the result to their liking. 
+The result of a transformation from an image to a Voronoi diagram should be customizable such that the user can modify the result to their liking.
+
+J.W. van Lith, N.P.M. van de Waterlaat, and J.C.W. van Winden
+John van Lith, Nick van de Waterlaat, Jurriën van Winden
+
+We also consider an alternative definition where a Voronoi region is defined as the set of pixels having a particular set of $k$ centroids as its $k$ nearest neighbors. This alternative definition results in Voronoi regions that represent combinations of centroids and will result in a different Voronoi diagram compared to the ordinary order-$k$ Voronoi diagram. 
+Commented this out in the introduction since we don't use it
+
+It also contains information about where the application is hosted and a reference to both the source code and this paper.
+Removed this sentence.
+
+Since we are satisfied with the render of illustrated in Figure 9b, we decide to save it by pressing the save button in the top-right corner of the result component.
+Since we are satisfied with the render of illustrated in Figure 9b, we decide to save it by pressing on the save button.
