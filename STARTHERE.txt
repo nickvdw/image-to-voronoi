@@ -1,8 +1,28 @@
-In case one cannot view the README.md file that contains
+Welcome to the Voronoier application developed by Group 7.
+
+In this document, we explain various important files
+located in this folder.
+
+1. The first important file is the "README.md" file, which
+functions as a manual. It explains how the application
+can be accessed by either compiling the source code yourself
+or navigating to the URL the application is hosted on.
+In case one cannot view the "README.md" file that contains
 all information about installing and running the application,
 one can navigate to the following link:
 
 https://github.com/nickvdw/image-to-voronoi/blob/master/README.md
 
-This link contains the same content as the READMe.md file and with
+This link contains the same content as the "README.md" file and with
 working mark-up.
+
+2. The second important file is the "report_changes.txt" file.
+This file contains all changes made to the final report on a 
+higher level. In case one wants to see the detailed changes,
+one can open the "report_changes_detailed.txt" file.
+
+3. While not specifically located as a file within this folder,
+the video that demonstrates the Voronoier application can be found
+here: https://www.youtube.com/watch?v=tzt_l1i7y4Q. This video
+demonstrates the latest version of the Voronoier application
+described in the final report.
