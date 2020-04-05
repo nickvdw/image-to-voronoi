@@ -19,7 +19,10 @@ working mark-up.
 2. The second important file is the "report_changes.txt" file.
 This file contains all changes made to the final report on a 
 higher level. In case one wants to see the detailed changes,
-one can open the "report_changes_detailed.txt" file.
+one can open the "report_changes_detailed.txt" file. We use
+these simple txt files rather than creating a big changes 
+report because we only made a few changes to the final report
+based on Michael Burch's feedback.
 
 3. While not specifically located as a file within this folder,
 the video that demonstrates the Voronoier application can be found
