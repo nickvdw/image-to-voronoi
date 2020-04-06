@@ -66,11 +66,17 @@ export const resultFromDelaunayCorners = (
     pruningDistance,
     pruningClusterCount
   );
-  // Obtain colours for the centroids
-  let colouredCentroids = colourCentroidsByCoordinates(
-    originalImageData,
-    centroids
-  );
+
+  // Add margin to the centroids if we use the cropped image
+  if (croppedImageData && coordinateMargins) {
+    centroids = centroids.map(centroid => {
+      return {
+        x: centroid.x + coordinateMargins.width,
+        y: centroid.y + coordinateMargins.height,
+        colour: centroid.colour
+      };
+    });
+  }
 
   // Redraw the canvas every time the 'update' method is called
   const update = (
@@ -114,7 +120,7 @@ export const resultFromDelaunayCorners = (
     }
 
     // Recolour centroids
-    colouredCentroids = colourCentroidsByCoordinates(
+    const colouredCentroids = colourCentroidsByCoordinates(
       originalImageData,
       centroids
     );

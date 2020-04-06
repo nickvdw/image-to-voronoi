@@ -23,21 +23,21 @@ export const resultFromNaivePoisson = (
   pruningClusterCount,
   numberOfNeighbours
 ) => {
+  let imageData = originalImageData;
+  if (croppedImageData && coordinateMargins) {
+    imageData = croppedImageData;
+  }
+
   // Compute centroids basied on poisson disc sampling with a certain radius (distance)
   let centroids = [
     ...poissonDiscSampler(
       0,
       0,
-      originalImageData.width,
-      originalImageData.height,
+      imageData.width,
+      imageData.height,
       poissonDistance
     )
   ];
-
-  let imageData = originalImageData;
-  if (croppedImageData && coordinateMargins) {
-    imageData = croppedImageData;
-  }
 
   // Apply pruning
   centroids = pruneCentroidsByMethod(
