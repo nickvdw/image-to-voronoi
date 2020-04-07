@@ -10,7 +10,7 @@ There are several ways to access the *Voronoier* application. In this section, w
 
 ### Website
 
-The easiest way to access the application is by navigating to the website the application is hosted on. Any user with a browser and active internet connection can access the application by navigating to <https://voronoier.netlify.com.> The application is hosted with [Netlify](https://www.netlify.com), which is an all-in-one platform for automating modern web projects.
+The easiest way to access the application is by navigating to the website the application is hosted on. Any user with a browser and active internet connection can access the application by navigating to <https://voronoier.netlify.com>. The application is hosted with [Netlify](https://www.netlify.com), which is an all-in-one platform for automating modern web projects.
 
 ### Source Code
 

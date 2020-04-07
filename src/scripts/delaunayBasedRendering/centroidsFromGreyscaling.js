@@ -36,8 +36,10 @@ export const resultFromDelaunayGreyscaling = (
     imageData = croppedImageData;
   }
 
+  // This copy is needed as the greyscaleImage method edits the data
   const imageDataCopy = {
-    ...imageData,
+    width: imageData.width,
+    height: imageData.height,
     data: [...imageData.data]
   };
 
@@ -53,13 +55,6 @@ export const resultFromDelaunayGreyscaling = (
       selectedGreyscaleX,
       selectedGreyscaleY
     )
-    // ...computeCentroidsFromGreyScale(
-    //   greyScaleImageData,
-    //   selectedGreyscaleThreshold,
-    //   inverseThreshold,
-    //   20,
-    //   20
-    // )
   ];
 
   // Apply pruning
@@ -81,12 +76,6 @@ export const resultFromDelaunayGreyscaling = (
       };
     });
   }
-
-  // Obtain colours for the centroids
-  let colouredCentroids = colourCentroidsByCoordinates(
-    originalImageData,
-    centroids
-  );
 
   // Redraw the canvas every time the 'update' method is called
   const update = (
@@ -130,7 +119,7 @@ export const resultFromDelaunayGreyscaling = (
     }
 
     // Recolour centroids
-    colouredCentroids = colourCentroidsByCoordinates(
+    const colouredCentroids = colourCentroidsByCoordinates(
       originalImageData,
       centroids
     );

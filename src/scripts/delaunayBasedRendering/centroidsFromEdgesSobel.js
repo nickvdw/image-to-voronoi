@@ -116,12 +116,6 @@ export const resultFromDelaunayEdgesSobel = (
     });
   }
 
-  // Obtain colours for the centroids
-  let colouredCentroids = colourCentroidsByCoordinates(
-    originalImageData,
-    centroids
-  );
-
   // Redraw the canvas every time the 'update' method is called
   const update = (
     croppedImageData,
@@ -164,7 +158,7 @@ export const resultFromDelaunayEdgesSobel = (
     }
 
     // Recolour centroids
-    colouredCentroids = colourCentroidsByCoordinates(
+    const colouredCentroids = colourCentroidsByCoordinates(
       originalImageData,
       centroids
     );

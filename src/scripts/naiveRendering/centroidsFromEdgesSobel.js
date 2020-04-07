@@ -100,17 +100,6 @@ export const resultFromNaiveEdgesSobel = (
     pruningClusterCount
   );
 
-  // Add margin to the centroids if we use the cropped image
-  if (croppedImageData && coordinateMargins) {
-    centroids = centroids.map(centroid => {
-      return {
-        x: centroid.x + coordinateMargins.width,
-        y: centroid.y + coordinateMargins.height,
-        colour: centroid.colour
-      };
-    });
-  }
-
   const update = renderNaive(
     imageData,
     originalImageData,
