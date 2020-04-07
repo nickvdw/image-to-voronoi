@@ -248,7 +248,7 @@ export function* poissonDiscSampler(x0, y0, x1, y1, radius) {
 
       // Accept candidates that are inside the allowed extent
       // and farther than 2 * radius to all existing samples.
-      if (0 <= x && x < width - 10 && 0 <= y && y < height - 10 && far(x, y)) {
+      if (0 <= x && x < width - 1 && 0 <= y && y < height - 1 && far(x, y)) {
         yield sample(x, y);
         continue pick;
       }

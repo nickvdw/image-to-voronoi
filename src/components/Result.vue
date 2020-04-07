@@ -71,26 +71,7 @@
         </v-col>
       </v-row>
       <!-- Progress bar -->
-      <v-row
-        style="height: 100%"
-        v-if="this.loading"
-        class="fill-height"
-        align-content="center"
-        justify="center"
-      >
-        <v-col class="subtitle-1 text-center" cols="12">
-          Generating the result
-        </v-col>
-        <v-col cols="6">
-          <v-progress-linear
-            v-show="this.loading"
-            indeterminate
-            rounded
-            color="blue-grey darken-3"
-            height="12"
-          />
-        </v-col>
-      </v-row>
+      <LoadingBar :loading="this.loading" :value="this.progressValue" />
       <!-- Image result  -->
       <div v-show="!this.loading && this.configuration.selectedImage">
         <fullscreen
@@ -171,11 +152,13 @@ import { resultFromNaivePoisson } from "@/scripts/naiveRendering/centroidsFromPo
 
 import * as d3 from "d3";
 import Fullscreen from "vue-fullscreen/src/component.vue";
+import LoadingBar from "@/components/LoadingBar.vue";
 
 export default {
   name: "Result",
   components: {
-    Fullscreen
+    Fullscreen,
+    LoadingBar
   },
   data() {
     return {

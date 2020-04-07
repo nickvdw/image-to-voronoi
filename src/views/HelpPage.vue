@@ -47,8 +47,8 @@
               <v-col>
                 Take <i>k</i> = 2. We are now looking at Voronoi regions for the
                 second-nearest centroid. The second-nearest centroid for
-                everything in the green area is centroid 2, the second-nearest
-                centroid for everything in the blue area is centroid 1, and so
+                everything in the purple area is centroid 2, the second-nearest
+                centroid for everything in the pink area is centroid 1, and so
                 on...
               </v-col> </v-row
             ><br /><br />
