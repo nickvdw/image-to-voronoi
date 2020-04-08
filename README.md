@@ -14,7 +14,11 @@ The easiest way to access the application is by navigating to the website the ap
 
 ### Source Code
 
-It is also possible to run the application from the source code. The source code is hosted on [GitHub](https://github.com/nickvdw/image-to-voronoi). We assume the user has installed version 2.17.1 of `git`, version 6.4.1 of `npm`, and version 8.16.0 of `node.js`. The user can then perform step 1-3 in a terminal to install the application and step 4 to run the application:
+It is also possible to run the application from the source code. Let us consider two possible ways how we can run this source code.
+
+### GitHub
+
+The source code is hosted on [GitHub](https://github.com/nickvdw/image-to-voronoi). We assume the user has installed version 2.17.1 of `git`, version 6.4.1 of `npm`, and version 8.16.0 of `node.js`. The user can then perform step 1-3 in a terminal to install the application and step 4 to run the application:
 
 ```bash
 1. git clone https://github.com/nickvdw/image-to-voronoi.git
@@ -30,6 +34,16 @@ git clone https://github.com/nickvdw/image-to-voronoi.git && cd image-to-voronoi
 ```
 
 One can contact one of the students in case there are issues installing or running the application from source.
+
+### Folder
+
+It is also possible to run the code from the folder. From this folder, one can perform:
+
+```bash
+1. cd image-to-voronoi
+2. npm install
+3. npm run serve
+```
 
 ## Using the Application
 
