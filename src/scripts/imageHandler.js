@@ -68,8 +68,10 @@ export const greyScaleImage = imageData => {
 };
 
 export const colourCentroidsByCoordinates = (imageData, centroids) => {
+  console.log(imageData);
   return centroids.map(centroid => {
-    const imageDataIndex = centroid.y * 4 * imageData.width + centroid.x * 4;
+    const imageDataIndex =
+      Math.floor(centroid.y) * 4 * imageData.width + Math.floor(centroid.x) * 4;
 
     // Retrieve colour from coordinates
     centroid.colour = [
@@ -86,10 +88,13 @@ export const colourCentroidsByCoordinates = (imageData, centroids) => {
  * Uses the FileReader API to read the file Input
  * The read image is drawn onto a canvas from which we can get image data per pixel
  * */
-export const uploadImage = image => {
+export const uploadImage = (image, downscaledWidth) => {
   return new Promise((resolve, reject) => {
     const canvas = document.createElement("CANVAS");
     const context = canvas.getContext("2d");
+    // const oc = document.createElement("canvas");
+    // const octx = oc.getContext("2d");
+
     const reader = new FileReader();
 
     // Image is interpreted as a data url and painted on a canvas
@@ -103,11 +108,31 @@ export const uploadImage = image => {
       image.addEventListener("load", () => {
         canvas.width = image.width;
         canvas.height = image.height;
-        context.drawImage(image, 0, 0);
-        const imageData = context.getImageData(0, 0, image.width, image.height);
+        let imageData;
+        if (downscaledWidth) {
+          context.drawImage(
+            image,
+            0,
+            0,
+            image.width,
+            image.height,
+            0,
+            0,
+            downscaledWidth,
+            canvas.height * (downscaledWidth / canvas.width)
+          );
+          imageData = context.getImageData(
+            0,
+            0,
+            downscaledWidth,
+            canvas.height * (downscaledWidth / canvas.width)
+          );
+        } else {
+          context.drawImage(image, 0, 0);
+          imageData = context.getImageData(0, 0, image.width, image.height);
+        }
         resolve(imageData);
       });
-
       image.onerror = reject;
     };
 

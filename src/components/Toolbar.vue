@@ -55,9 +55,8 @@ export default {
 
   data() {
     return {
-      appTitle: "Application",
+      appTitle: "Voronoier",
       menuItems: [
-        { title: "Tool", path: "/tool", icon: "toolbox-outline" },
         { title: "Help", path: "/help", icon: "help-circle-outline" },
         { title: "About", path: "/about", icon: "information-outline" }
       ],

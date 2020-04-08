@@ -6,11 +6,6 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
-    name: "Home",
-    component: () => import("../views/LandingPage.vue")
-  },
-  {
-    path: "/tool",
     name: "Tool",
     component: () => import("../views/ToolPage.vue")
   },

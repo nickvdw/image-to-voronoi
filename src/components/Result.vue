@@ -54,7 +54,12 @@
     </v-card-title>
 
     <!-- Card content -->
-    <v-card-text id="resultContainer" class="pa-0 ma-0" style="height: 100%">
+    <v-card-text
+      id="resultContainer"
+      class="pa-0 ma-0"
+      style="height: 100%"
+      :loading="dialog"
+    >
       <v-row
         v-show="!this.configuration.selectedImage && !this.loading"
         class="fill-height"
@@ -66,25 +71,7 @@
         </v-col>
       </v-row>
       <!-- Progress bar -->
-      <v-row
-        style="height: 100%"
-        v-show="this.loading"
-        class="fill-height"
-        align-content="center"
-        justify="center"
-      >
-        <v-col class="subtitle-1 text-center" cols="12">
-          Generating the result
-        </v-col>
-        <v-col cols="6">
-          <v-progress-linear
-            indeterminate
-            rounded
-            color="blue-grey darken-3"
-            height="12"
-          />
-        </v-col>
-      </v-row>
+      <LoadingBar :loading="this.loading" :value="this.progressValue" />
       <!-- Image result  -->
       <div v-show="!this.loading && this.configuration.selectedImage">
         <fullscreen
@@ -139,8 +126,11 @@
             class="cropper"
             id="cropper"
             ref="cropper"
+            :restrictions="pixelsRestriction"
+            :minHeight="1"
+            :minWidth="1"
             :src="croppedImage"
-          ></cropper>
+          />
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -157,14 +147,18 @@ import { resultFromNaiveEdgesSobel } from "@/scripts/naiveRendering/centroidsFro
 import { resultFromDelaunayGreyscaling } from "@/scripts/delaunayBasedRendering/centroidsFromGreyscaling";
 import { resultFromDelaunayPoisson } from "@/scripts/delaunayBasedRendering/centroidsFromPoisson";
 import { resultFromNaiveGreyscaling } from "@/scripts/naiveRendering/centroidsFromGreyscaling";
+import { resultFromNaiveCorners } from "@/scripts/naiveRendering/centroidsFromCorners";
+import { resultFromNaivePoisson } from "@/scripts/naiveRendering/centroidsFromPoisson";
 
 import * as d3 from "d3";
 import Fullscreen from "vue-fullscreen/src/component.vue";
+import LoadingBar from "@/components/LoadingBar.vue";
 
 export default {
   name: "Result",
   components: {
-    Fullscreen
+    Fullscreen,
+    LoadingBar
   },
   data() {
     return {
@@ -181,7 +175,8 @@ export default {
       saving: false,
       croppedImage: null,
       toBeCroppedImageCoordinates: null,
-      update: null
+      update: null,
+      progressValue: 0
     };
   },
   props: {
@@ -192,6 +187,7 @@ export default {
       default: function() {
         return {
           selectedImage: null,
+          downscaledWidth: null,
           selectedMethod: null,
           selectedThreshold: null,
           selectedAlgorithm: null,
@@ -237,7 +233,10 @@ export default {
       // Only continue if there is an actual image
       if (this.configuration.selectedImage) {
         this.loading = true;
-        const result = await uploadImage(this.configuration.selectedImage);
+        const result = await uploadImage(
+          this.configuration.selectedImage,
+          this.configuration.downscaledWidth
+        );
         this.originalImageData = {
           data: [...result.data],
           width: result.width,
@@ -264,6 +263,12 @@ export default {
       this.croppedImage = await this.$html2canvas(this.$refs.fullResult, {
         type: "dataURL"
       });
+    },
+    pixelsRestriction({ minWidth, minHeight }) {
+      return {
+        minWidth: minWidth,
+        minHeight: minHeight
+      };
     },
     submitCrop() {
       // Obtain the coordinates of the cropped image selection
@@ -354,7 +359,8 @@ export default {
                 this.configuration.customColour,
                 this.configuration.selectedPruningMethod,
                 this.configuration.pruningThreshold,
-                this.configuration.pruningDistance
+                this.configuration.pruningDistance,
+                this.configuration.pruningClusterCount
               );
             } else if (this.configuration.selectedMethod === "Edge detection") {
               this.update = resultFromDelaunayEdgesSobel(
@@ -374,7 +380,8 @@ export default {
                 this.configuration.customColour,
                 this.configuration.selectedPruningMethod,
                 this.configuration.pruningThreshold,
-                this.configuration.pruningDistance
+                this.configuration.pruningDistance,
+                this.configuration.pruningClusterCount
               );
             } else if (
               this.configuration.selectedMethod ===
@@ -400,7 +407,8 @@ export default {
                 this.configuration.inverseThreshold,
                 this.configuration.selectedPruningMethod,
                 this.configuration.pruningThreshold,
-                this.configuration.pruningDistance
+                this.configuration.pruningDistance,
+                this.configuration.pruningClusterCount
               );
             } else if (
               this.configuration.selectedMethod === "Poisson disc sampling"
@@ -422,7 +430,8 @@ export default {
                 this.configuration.customColour,
                 this.configuration.selectedPruningMethod,
                 this.configuration.pruningThreshold,
-                this.configuration.pruningDistance
+                this.configuration.pruningDistance,
+                this.configuration.pruningClusterCount
               );
             } else {
               console.log("This method does not exist");
@@ -432,9 +441,9 @@ export default {
               this.configuration.selectedMethod ===
               "Based on greyscale intensities"
             ) {
-              resultFromNaiveGreyscaling(
+              this.update = resultFromNaiveGreyscaling(
                 this.originalImageData,
-                this.configuration.selectedNumberOfNeighbours,
+                this.configuration.numberOfNeighbours,
                 this.configuration.displayEdges,
                 this.configuration.displayCentroids,
                 this.configuration.displayColour,
@@ -442,18 +451,47 @@ export default {
                 this.configuration.selectedEdgeColour,
                 this.configuration.selectedCentroidSize,
                 this.configuration.selectedCentroidColour,
-                // this.configuration.selectedCellColour,
+                this.configuration.selectedCellColour,
                 this.configuration.selectedGreyscaleThreshold,
+                this.configuration.inverseThreshold,
                 this.configuration.selectedGreyscaleX,
                 this.configuration.selectedGreyscaleY,
                 this.configuration.selectedPruningMethod,
                 this.configuration.pruningThreshold,
-                this.configuration.pruningDistance
+                this.configuration.pruningDistance,
+                this.configuration.croppedImageData,
+                this.configuration.coordinateMargins,
+                this.toBeCroppedImageCoordinates,
+                this.configuration.pruningClusterCount
               );
             } else if (this.configuration.selectedMethod === "Edge detection") {
-              resultFromNaiveEdgesSobel(
+              this.update = resultFromNaiveEdgesSobel(
                 this.originalImageData,
                 this.configuration.selectedSobelThreshold,
+                this.configuration.displayEdges,
+                this.configuration.displayCentroids,
+                this.configuration.displayColour,
+                this.configuration.croppedImageData,
+                this.configuration.coordinateMargins,
+                this.toBeCroppedImageCoordinates,
+                this.configuration.selectedEdgeThickness,
+                this.configuration.selectedEdgeColour,
+                this.configuration.selectedCentroidSize,
+                this.configuration.selectedCentroidColour,
+                this.configuration.selectedCellColour,
+                this.configuration.selectedNumberOfNeighbours,
+                this.configuration.selectedPruningMethod,
+                this.configuration.pruningThreshold,
+                this.configuration.pruningDistance,
+                this.configuration.pruningClusterCount
+              );
+            } else if (
+              this.configuration.selectedMethod === "Corner detection"
+            ) {
+              this.update = resultFromNaiveCorners(
+                this.originalImageData,
+                parseInt(this.configuration.selectedThreshold),
+                this.configuration.selectedNumberOfNeighbours,
                 this.configuration.displayEdges,
                 this.configuration.displayCentroids,
                 this.configuration.displayColour,
@@ -464,10 +502,36 @@ export default {
                 this.configuration.selectedCentroidSize,
                 this.configuration.selectedCentroidColour,
                 this.configuration.selectedCellColour,
-                this.configuration.selectedNumberOfNeighbours,
+                this.toBeCroppedImageCoordinates,
+                this.configuration.customColour,
                 this.configuration.selectedPruningMethod,
                 this.configuration.pruningThreshold,
-                this.configuration.pruningDistance
+                this.configuration.pruningDistance,
+                this.configuration.pruningClusterCount
+              );
+            } else if (
+              this.configuration.selectedMethod === "Poisson disc sampling"
+            ) {
+              this.update = resultFromNaivePoisson(
+                this.originalImageData,
+                this.configuration.displayEdges,
+                this.configuration.displayCentroids,
+                this.configuration.displayColour,
+                this.configuration.croppedImageData,
+                this.configuration.coordinateMargins,
+                this.configuration.selectedPoissonDistance,
+                this.configuration.selectedEdgeThickness,
+                this.configuration.selectedEdgeColour,
+                this.configuration.selectedCentroidSize,
+                this.configuration.selectedCentroidColour,
+                this.configuration.selectedCellColour,
+                this.toBeCroppedImageCoordinates,
+                this.configuration.customColour,
+                this.configuration.selectedPruningMethod,
+                this.configuration.pruningThreshold,
+                this.configuration.pruningDistance,
+                this.configuration.pruningClusterCount,
+                this.configuration.selectedNumberOfNeighbours
               );
             }
           }

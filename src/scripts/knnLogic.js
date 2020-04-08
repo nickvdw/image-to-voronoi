@@ -7,7 +7,7 @@ import * as d3 from "d3";
 //   return colourMap[nearestCentroid.nearest_centroid].colour;
 // };
 
-const generateRandomColour = () => {
+export const generateRandomColour = () => {
   return "#".concat(
     Math.random()
       .toString(16)
@@ -19,24 +19,22 @@ export const computeEuclideanDistance = (a, b) => {
   return Math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2);
 };
 
-const computeNearestCentroid = (centroids, x, y, k) => {
+export const computeNearestCentroid = (centroids, x, y, k) => {
   // Compute euclidean distances between centroids and point
   const distances = [];
-  centroids.map(centroid =>
-    distances.push(computeEuclideanDistance([x, y], [centroid.x, centroid.y]))
+  centroids.map((centroid, index) =>
+    distances.push({
+      distance: computeEuclideanDistance([x, y], [centroid.x, centroid.y]),
+      index
+    })
   );
+
+  distances.sort((a, b) => a.distance - b.distance);
   // k for k-nearest centroid
-  if (k && k > 1) {
-    let i = k > centroids.length ? centroids.length : k;
-    // Remove the currently nearest centroid and loop until i = 1
-    while (i > 1) {
-      distances.splice(distances.indexOf(Math.min.apply(null, distances)), 1);
-      i -= 1;
-    }
+  if (k > 0) {
+    return distances[k - 1].index;
   }
-  // For k > 1 we have removed the nearest centroid k - 1 times so we return the k-nearest centroid here
-  // Else this just returns the nearest centroid
-  return distances.indexOf(Math.min.apply(null, distances));
+  return distances[0].index;
 };
 
 export const renderVoronoi = (centroids, width, height, k) => {

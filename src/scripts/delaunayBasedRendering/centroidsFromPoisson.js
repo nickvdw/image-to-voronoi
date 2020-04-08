@@ -21,43 +21,44 @@ export const resultFromDelaunayPoisson = (
   customColour,
   selectedPruningMethod,
   pruningThreshold,
-  pruningDistance
+  pruningDistance,
+  pruningClusterCount
 ) => {
+  let imageData = originalImageData;
+  if (croppedImageData && coordinateMargins) {
+    imageData = croppedImageData;
+  }
+
   // Compute centroids basied on poisson disc sampling with a certain radius (distance)
   let centroids = [
     ...poissonDiscSampler(
       0,
       0,
-      originalImageData.width,
-      originalImageData.height,
+      imageData.width,
+      imageData.height,
       poissonDistance
     )
   ];
-
-  let imageData = originalImageData;
-  if (croppedImageData && coordinateMargins) {
-    imageData = croppedImageData;
-  }
 
   // Apply pruning
   centroids = pruneCentroidsByMethod(
     centroids,
     selectedPruningMethod,
     pruningThreshold,
-    pruningDistance
+    pruningDistance,
+    pruningClusterCount
   );
 
-  // Obtain colours for the centroids
-  let colouredCentroids = colourCentroidsByCoordinates(imageData, centroids);
-
-  // Set the initial configuration of the svg
-  let fullSvg = d3
-    .select("#voronoiFullResult")
-    .append("svg")
-    .attr("width", originalImageData.width)
-    .attr("height", originalImageData.height)
-    .attr("id", "fullResultSVG")
-    .style("background-color", "black");
+  // Add margin to the centroids if we use the cropped image
+  if (croppedImageData && coordinateMargins) {
+    centroids = centroids.map(centroid => {
+      return {
+        x: centroid.x + coordinateMargins.width,
+        y: centroid.y + coordinateMargins.height,
+        colour: centroid.colour
+      };
+    });
+  }
 
   // Redraw the canvas every time the 'update' method is called
   const update = (
@@ -65,6 +66,17 @@ export const resultFromDelaunayPoisson = (
     coordinateMargins,
     toBeCroppedImageCoordinates
   ) => {
+    // Clear old image
+    document.getElementById("voronoiFullResult").innerHTML = "";
+    // Set the initial configuration of the svg
+    let fullSvg = d3
+      .select("#voronoiFullResult")
+      .append("svg")
+      .attr("width", originalImageData.width)
+      .attr("height", originalImageData.height)
+      .attr("id", "fullResultSVG")
+      .style("background-color", "black");
+
     if (croppedImageData && coordinateMargins) {
       imageData = croppedImageData;
     }
@@ -90,7 +102,7 @@ export const resultFromDelaunayPoisson = (
     }
 
     // Recolour centroids
-    colouredCentroids = colourCentroidsByCoordinates(
+    const colouredCentroids = colourCentroidsByCoordinates(
       originalImageData,
       centroids
     );
@@ -204,7 +216,7 @@ export const resultFromDelaunayPoisson = (
   return update;
 };
 
-function* poissonDiscSampler(x0, y0, x1, y1, radius) {
+export function* poissonDiscSampler(x0, y0, x1, y1, radius) {
   const k = 30; // maximum number of samples before rejection
   const width = x1 - x0;
   const height = y1 - y0;
@@ -236,7 +248,7 @@ function* poissonDiscSampler(x0, y0, x1, y1, radius) {
 
       // Accept candidates that are inside the allowed extent
       // and farther than 2 * radius to all existing samples.
-      if (0 <= x && x < width && 0 <= y && y < height && far(x, y)) {
+      if (0 <= x && x < width - 1 && 0 <= y && y < height - 1 && far(x, y)) {
         yield sample(x, y);
         continue pick;
       }

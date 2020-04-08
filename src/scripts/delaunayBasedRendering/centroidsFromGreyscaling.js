@@ -28,15 +28,18 @@ export const resultFromDelaunayGreyscaling = (
   inverseThreshold,
   selectedPruningMethod,
   pruningThreshold,
-  pruningDistance
+  pruningDistance,
+  pruningClusterCount
 ) => {
   let imageData = originalImageData;
   if (croppedImageData && coordinateMargins) {
     imageData = croppedImageData;
   }
 
+  // This copy is needed as the greyscaleImage method edits the data
   const imageDataCopy = {
-    ...imageData,
+    width: imageData.width,
+    height: imageData.height,
     data: [...imageData.data]
   };
 
@@ -52,13 +55,6 @@ export const resultFromDelaunayGreyscaling = (
       selectedGreyscaleX,
       selectedGreyscaleY
     )
-    // ...computeCentroidsFromGreyScale(
-    //   greyScaleImageData,
-    //   selectedGreyscaleThreshold,
-    //   inverseThreshold,
-    //   20,
-    //   20
-    // )
   ];
 
   // Apply pruning
@@ -66,7 +62,8 @@ export const resultFromDelaunayGreyscaling = (
     centroids,
     selectedPruningMethod,
     pruningThreshold,
-    pruningDistance
+    pruningDistance,
+    pruningClusterCount
   );
 
   // Add margin to the centroids if we use the cropped image
@@ -80,27 +77,23 @@ export const resultFromDelaunayGreyscaling = (
     });
   }
 
-  // Obtain colours for the centroids
-  let colouredCentroids = colourCentroidsByCoordinates(
-    originalImageData,
-    centroids
-  );
-
-  // Set the initial configuration of the svg
-  let fullSvg = d3
-    .select("#voronoiFullResult")
-    .append("svg")
-    .attr("width", originalImageData.width)
-    .attr("height", originalImageData.height)
-    .attr("id", "fullResultSVG")
-    .style("background-color", "black");
-
   // Redraw the canvas every time the 'update' method is called
   const update = (
     croppedImageData,
     coordinateMargins,
     toBeCroppedImageCoordinates
   ) => {
+    // Clear old image
+    document.getElementById("voronoiFullResult").innerHTML = "";
+    // Set the initial configuration of the svg
+    let fullSvg = d3
+      .select("#voronoiFullResult")
+      .append("svg")
+      .attr("width", originalImageData.width)
+      .attr("height", originalImageData.height)
+      .attr("id", "fullResultSVG")
+      .style("background-color", "black");
+
     if (croppedImageData && coordinateMargins) {
       imageData = croppedImageData;
     }
@@ -126,7 +119,7 @@ export const resultFromDelaunayGreyscaling = (
     }
 
     // Recolour centroids
-    colouredCentroids = colourCentroidsByCoordinates(
+    const colouredCentroids = colourCentroidsByCoordinates(
       originalImageData,
       centroids
     );
