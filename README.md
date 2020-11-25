@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In this document, we present a description of how to access the *Voronoier* application.
+In this document, we present a description of how to access the *Voronoier* application. This application is associated with [this](https://www.researchgate.net/publication/344822620_Voronoier_From_Images_to_Voronoi_Diagrams) paper that was submitted to VINCI 2020.
 
 ## Accessing the Application
 
