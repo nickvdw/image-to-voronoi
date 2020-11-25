@@ -1,10 +1,10 @@
 <template>
   <v-container fluid>
     <p class="display-1 text-center py-5">
-      Voronoier was brought to you by these three wonderful developers
+      Voronoier was brought to you by these wonderful people:
     </p>
     <v-row dense justify="center">
-      <v-col v-for="item in items" :key="item.name" align="center" cols="3">
+      <v-col v-for="item in items" :key="item.name" align="center" cols="2">
         <v-card outlined width="350px">
           <v-img
             :src="item.image"
@@ -13,6 +13,7 @@
             height="400px"
           />
           <v-card-title class="justify-center">{{ item.name }}</v-card-title>
+          <v-card-subtitle class="justify-center">{{ item.caption }}</v-card-subtitle>
         </v-card>
       </v-col>
     </v-row>
@@ -39,13 +40,24 @@ export default {
     return {
       drawer: null,
       items: [
-        { name: "John van Lith", image: require("../../public/img/john.png") },
+        { 
+          name: "dr. rer. nat. Michael Burch",
+          caption: "Project supervisor",
+          image: require("../../public/img/michael.png")
+        },
+        { 
+          name: "John van Lith",
+          caption: "Developer",
+          image: require("../../public/img/john.png")
+        },
         {
           name: "Nick van de Waterlaat",
+          caption: "Developer",
           image: require("../../public/img/nick.png")
         },
         {
           name: "Jurriën van Winden",
+          caption: "Developer",
           image: require("../../public/img/jurrien.png")
         }
       ]
