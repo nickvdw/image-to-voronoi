@@ -1,5 +1,6 @@
 # Voronoier
 
+We are proud to announce that our work got accepted at the Visual Information Communication and Interaction (VINCI) conference in 2020. The relevant publication can be found [here](https://www.researchgate.net/publication/344822620_Voronoier_From_Images_to_Voronoi_Diagrams).
 ## Introduction
 
 In this document, we present a description of how to access the *Voronoier* application. This application is associated with [this](https://www.researchgate.net/publication/344822620_Voronoier_From_Images_to_Voronoi_Diagrams) paper that was submitted to VINCI 2020.
